@@ -39,13 +39,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #66B2FF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectshop.LoginController">
+
+<AnchorPane style="-fx-background-color: #66B2FF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simpleApp.source.LoginController">
    <children>
-      <Button id="loginButton" layoutX="328.0" layoutY="219.0" mnemonicParsing="false" onAction="#loginButtonClicked" prefHeight="45.0" prefWidth="222.0" text="Login" />
-      <Button id="registerButton" fx:id="registerButton" layoutX="328.0" layoutY="284.0" mnemonicParsing="false" onMouseClicked="#registerButtonClicked" prefHeight="45.0" prefWidth="222.0" text="Register" />
-      <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="292.0" layoutY="146.0" prefHeight="25.0" prefWidth="294.0" promptText="password" />
       <TextField id="textInput" fx:id="tfLogin" layoutX="292.0" layoutY="95.0" prefHeight="25.0" prefWidth="294.0" promptText="login" />
+      <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="292.0" layoutY="146.0" prefHeight="25.0" prefWidth="294.0" promptText="password" />
       <Pane layoutY="-7.0" prefHeight="408.0" prefWidth="270.0" style="-fx-background-color: #5037CD;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="330.0" AnchorPane.topAnchor="-8.0" />
+      <Button id="loginButton" layoutX="328.0" layoutY="219.0" mnemonicParsing="false" onAction="#loginButtonClicked" prefHeight="45.0" prefWidth="222.0" text="Login" />
+      <Button id="registerButton" fx:id="registerButton" layoutX="328.0" layoutY="284.0" mnemonicParsing="false" onAction="#registerButtonClicked" onMouseClicked="#registerButtonClicked" prefHeight="45.0" prefWidth="222.0" text="Register" />
    </children>
    <padding>
       <Insets top="1.0" />

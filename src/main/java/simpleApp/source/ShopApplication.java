@@ -1,4 +1,4 @@
-package com.example.projectshop;
+package simpleApp.source;
 
 
 import javafx.application.Application;

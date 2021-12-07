@@ -5,9 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectshop.ClientController">
-   <children>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simpleApp.source.ClientController">
       <Label layoutX="159.0" layoutY="73.0" prefHeight="137.0" prefWidth="427.0" style="-fx-background-color: pink;" text="Client Scene" />
       <Button layoutX="29.0" layoutY="257.0" mnemonicParsing="false" onAction="#logoutButtonClicked" prefHeight="80.0" prefWidth="291.0" text="GOBACK" />
-   </children>
 </AnchorPane>

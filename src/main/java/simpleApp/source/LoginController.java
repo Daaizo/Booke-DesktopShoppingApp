@@ -1,6 +1,6 @@
-package com.example.projectshop;
+package simpleApp.source;
 
-import com.example.projectshop.databaseconnection.MySqlConnection;
+import simpleApp.source.databaseconnection.MySqlConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,39 +19,29 @@ import java.sql.Statement;
 
 
 public class LoginController {
+    private final String adminSceneUrl = "adminGUI.fxml";
+    private final String clientSceneUrl = "clientGUI.fxml";
+    private final String registerSceneUrl = "registerGUI.fxml";
 
-    private Stage stage;
-    private Scene adminScene,clientScene;
-    private Parent root;
-    private void adminLogin(ActionEvent event){
+
+    private void switchScene(ActionEvent event, String url){
+        Stage stage;
+        Parent root;
+        Scene newScene;
         try {
-            root = FXMLLoader.load(getClass().getResource("adminGUI.fxml"));
+            root = FXMLLoader.load(getClass().getResource(url));
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            adminScene = new Scene(root);
-            stage.setScene(adminScene);
+            newScene = new Scene(root);
+            stage.setScene(newScene);
             stage.show();
         }
         catch (IOException e){
-            System.out.println("error with switching scene to admin");
-
-        }
-    }
-    private void clientLogin(ActionEvent event){
-        try {
-            root = FXMLLoader.load(getClass().getResource("clientGUI.fxml"));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            clientScene = new Scene(root);
-            stage.setScene(clientScene);
-            stage.show();
-        }
-        catch (Exception e){
-            System.out.println("error with switching scene to client");
+            System.out.println("error with switching scene");
 
         }
     }
 
-    @FXML
-    private Button registerButton;
+
     @FXML
     private TextField tfLogin;
     @FXML
@@ -67,29 +57,25 @@ public class LoginController {
             Statement stm = con.createStatement();
             ResultSet data = stm.executeQuery(query);
             if(data.next() ){
-                System.out.println("success");  //handling successful login
+                System.out.println("success");
                 if(login.compareTo("admin") == 0){
-                    adminLogin(event);
+                    switchScene(event, adminSceneUrl);
                 }
                 else{
-                    clientLogin(event);
+                    switchScene(event, clientSceneUrl);
                 }
-
-
-
             }
             else {
-                System.out.println(data.next());
+                System.out.println("login failed");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    void registerButtonClicked(MouseEvent event) {
-
+    void registerButtonClicked(ActionEvent event) {
+            switchScene(event, registerSceneUrl);
     }
 
 }

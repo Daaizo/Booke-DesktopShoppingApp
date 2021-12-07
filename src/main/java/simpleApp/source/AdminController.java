@@ -1,4 +1,4 @@
-package com.example.projectshop;
+package simpleApp.source;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,10 +11,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ClientController {
+public class AdminController {
     private Stage stage;
     private Scene loginScene;
     private Parent root;
+    @FXML
+    private Button btnLogout;
 
     @FXML
     void logoutButtonClicked(ActionEvent event) {
@@ -30,4 +32,5 @@ public class ClientController {
 
         }
     }
+
 }
