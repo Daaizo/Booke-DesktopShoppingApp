@@ -40,7 +40,7 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<AnchorPane style="-fx-background-color: #66B2FF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simpleApp.source.LoginController">
+<AnchorPane style="-fx-background-color: #66B2FF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controllers.LoginController">
    <children>
       <TextField id="textInput" fx:id="tfLogin" layoutX="292.0" layoutY="95.0" prefHeight="25.0" prefWidth="294.0" promptText="login" />
       <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="292.0" layoutY="146.0" prefHeight="25.0" prefWidth="294.0" promptText="password" />

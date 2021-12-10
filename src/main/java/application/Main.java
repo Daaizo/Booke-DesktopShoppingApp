@@ -1,32 +1,32 @@
-package simpleApp.source;
+package application;
 
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 
-public class ShopApplication extends Application {
+public class Main extends Application {
+
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-
-        FXMLLoader mainScene = new FXMLLoader(ShopApplication.class.getResource("loginGUI.fxml"));
-        Scene login = new Scene(mainScene.load());
-        primaryStage.setTitle("Login");
-        primaryStage.setScene(login);
+        Parent root = FXMLLoader.load(getClass().getResource("/application/loginGUI.fxml"));
+        Scene newScene = new Scene(root);
+        primaryStage.setScene(newScene);
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main() {
         try{
             launch();
         }
         catch (Exception e){
-
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
