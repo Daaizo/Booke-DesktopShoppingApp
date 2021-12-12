@@ -10,19 +10,17 @@ public class MySqlConnection {
     private static final String user = "root";
     private static final String password = "root";
     private static MySqlConnection instance = null;
-    private Connection connection = null;
+    public Connection connection = null;
 
     private MySqlConnection() {
-
         loadJdbcDriver();
         connectToDatabase();
     }
 
-    public MySqlConnection createInstance(){
+    public static MySqlConnection createInstance(){
         if (instance == null) {
             try {
                 MySqlConnection con = new MySqlConnection();
-                System.out.println("connection created");
                 return con;
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "problem with creating instance of connection");
@@ -33,9 +31,11 @@ public class MySqlConnection {
             }
         return  null;
     }
-    public void connectToDatabase() {
+
+    private void connectToDatabase() {
         try {
             this.connection = DriverManager.getConnection(url, user, password);
+            System.out.println("connection to data base success");
         }
         catch (SQLException e) {
             System.out.println("connection to data base failed ");
@@ -44,12 +44,9 @@ public class MySqlConnection {
 
 
 
-    public void loadJdbcDriver() {
+    private void loadJdbcDriver() {
         try {
-
             Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver loaded");
-
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Cannot find the driver in the classpath!");
         }

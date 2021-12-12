@@ -1,10 +1,12 @@
 package application.Controllers;
 
+import dataBase.MySqlConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -24,6 +26,14 @@ public abstract class Controller {
         }
         catch (IOException e){
             System.out.println("error with switching scene");
+        }
+    }
+    public void checkConnectionWithDataBaseAndDisplayError(){
+        MySqlConnection instance = MySqlConnection.createInstance();
+        while(instance.connection == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR,"Connection to data base failed");
+            alert.showAndWait();
+            instance = MySqlConnection.createInstance();
         }
     }
 }
