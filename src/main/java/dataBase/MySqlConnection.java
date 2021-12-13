@@ -20,8 +20,8 @@ public class MySqlConnection {
     public static MySqlConnection createInstance(){
         if (instance == null) {
             try {
-                MySqlConnection con = new MySqlConnection();
-                return con;
+                instance = new MySqlConnection();
+                return instance;
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "problem with creating instance of connection");
             }
@@ -29,13 +29,12 @@ public class MySqlConnection {
         else {
                 System.out.println("data base connection already exists");
             }
-        return  null;
+        return  instance;
     }
 
     private void connectToDatabase() {
         try {
             this.connection = DriverManager.getConnection(url, user, password);
-            System.out.println("connection to data base success");
         }
         catch (SQLException e) {
             System.out.println("connection to data base failed ");

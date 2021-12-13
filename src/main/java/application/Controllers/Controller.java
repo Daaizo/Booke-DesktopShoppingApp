@@ -14,7 +14,7 @@ public abstract class Controller {
     public final String loginScene = "/application/loginGUI.fxml";
     public final String registrationScene = "/application/registerGUI.fxml";
     public final String adminScene = "/application/adminGUI.fxml";
-    public final String clientScene = "/application/loginGUI.fxml";
+    public final String clientScene = "/application/clientGUI.fxml";
 
     public void switchScene(ActionEvent event, String url){
         try {

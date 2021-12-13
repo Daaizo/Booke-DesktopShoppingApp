@@ -41,7 +41,7 @@ abstract class User {
 
     public ResultSet getDataFromDataBase(Connection connection){
         try{
-            String query = "select * from shop.`user`";
+            String query = "select * from shop.`user`"; //where user is name of user in Database
             Statement stm = connection.createStatement();
             ResultSet allUsersFromDataBase = stm.executeQuery(query);
             return  allUsersFromDataBase;
