@@ -2,11 +2,11 @@ package users;
 
 public class Admin extends User{
     private static Admin instance = null;
-    private final String userName = "admin";
     private Admin(){
         this.lastName = "admin";
         this.name = "admin";
         this.password = "admin";
+        this.userName = "admin";
     }
     public static Admin createAdmin(){
         try {
