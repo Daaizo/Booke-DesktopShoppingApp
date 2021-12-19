@@ -27,8 +27,9 @@ public class MySqlConnection {
             }
         }
         else {
-                System.out.println("data base connection already exists");
-            }
+            System.out.println("data base connection already exists //trying to reconnect ");
+            instance.connectToDatabase();
+        }
         return  instance;
     }
 

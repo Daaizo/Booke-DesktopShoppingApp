@@ -2,34 +2,53 @@ package application.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import users.Client;
 
-import java.io.IOException;
+import java.sql.Connection;
 
-public class RegisterController extends Controller{
+public class RegisterController extends Controller {
 
     @FXML
-    private TextField t;
+    private TextField tfLastName, tfLogin, tfPassword, tfName, tfRepeatPassword;
+
 
     @FXML
     void goBackButtonClicked(ActionEvent event) {
-        switchScene(event,loginScene );
+        switchScene(event, loginScene);
     }
+
     @FXML
     void clearButtonClicked(ActionEvent event) {
-
+        tfLogin.clear();
+        tfName.clear();
+        tfLastName.clear();
+        tfPassword.clear();
+        tfRepeatPassword.clear();
     }
 
 
+    private Client newUser() {
+        String login = tfLogin.getText().trim();
+        String name = tfName.getText().trim();
+        String lastName = tfLastName.getText().trim();
+        String password = tfPassword.getText().trim();
+        Client client = new Client(login, name, lastName, password);
+        return client;
+    }
 
     @FXML
     void saveButtonClicked(ActionEvent event) {
-
+        Client client = newUser();
+        checkConnectionWithDataBaseAndDisplayError();
+        Connection connection = getConnection();
+        boolean isUserAdded = client.addUserToDatabase(connection);
+        if (isUserAdded) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "User created");
+            alert.showAndWait();
+            switchScene(event, loginScene);
+        }
     }
 
 }

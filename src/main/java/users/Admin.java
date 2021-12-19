@@ -23,9 +23,7 @@ public class Admin extends User{
         }
         return null;
     }
-    public boolean isAdminCreated(){
-        return instance == null ? false : true;
-    }
+
 
     @Override
     public void changeData() {

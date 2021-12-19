@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import users.Admin;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,12 +16,17 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 
-public class Main extends Application{
+public class Main extends Application {
     public static ResultSet allUsersFromDatabase;
-    public static HashMap<String,String> loginValues = new HashMap<>();
+    public static HashMap<String, String> loginValues = new HashMap<>();
+
+
+    public static void main(String[] args) {
+        launch();
+    }
 
     @Override // MAIN METHOD that start with the app
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) {
         try {
             createWindow(primaryStage);
             Connection connection = connectToDataBase();
@@ -38,10 +44,10 @@ public class Main extends Application{
     private void createHashMapWithLoginValues() {
         try {
             while(allUsersFromDatabase.next()){ // from result set to hash map
-                loginValues.put(allUsersFromDatabase.getString("username"), allUsersFromDatabase.getString("password"));
+                loginValues.put(allUsersFromDatabase.getString("login"), allUsersFromDatabase.getString("password"));
             }
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
         }
     }
     private void createWindow(Stage primaryStage){
