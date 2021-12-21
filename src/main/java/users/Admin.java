@@ -6,7 +6,7 @@ public class Admin extends User{
         this.lastName = "admin";
         this.name = "admin";
         this.password = "admin";
-        this.userName = "admin";
+        this.login = "admin";
     }
     public static Admin createAdmin(){
         try {

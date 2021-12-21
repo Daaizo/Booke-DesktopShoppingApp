@@ -1,31 +1,37 @@
 package application.Controllers;
 
-import application.Main;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
-import java.util.HashMap;
-
 
 public class LoginController extends Controller {
-    private final HashMap<String,String> loginValues = Main.loginValues; // username - key, password - value
 
     @FXML
-    private TextField tfLogin,tfPassword;
+    private TextField tfLogin, tfPassword;
 
-    //TODO instead of error message inside the window
-    private void loginError(){
-        Alert unsuccessfulLogin= new Alert(Alert.AlertType.INFORMATION, "login or password is incorrect");
+
+    private void loginError() {
+        //TODO instead of error message inside the window
+        Alert unsuccessfulLogin = new Alert(Alert.AlertType.INFORMATION, "login or password is incorrect");
         unsuccessfulLogin.showAndWait();
         tfPassword.clear();
     }
+
+    private boolean passwordMatches(String password, String login) {
+        return password.compareTo(login) == 0 ? true : false;
+    }
+
+    private boolean isAdmin(String username) {
+        return username.compareTo("admin") == 0 ? true : false;
+    }
+
     private void checkLogin(String username, String password, ActionEvent event) {
         String pass = loginValues.get(username);
-        if (pass != null && pass.compareTo(password) == 0) {
-
-            if (username.compareTo("admin") == 0) {
+        if (passwordMatches(pass, password)) {
+            if (isAdmin(username)) {
                 switchScene(event, adminScene);
             } else {
                 switchScene(event, clientScene);

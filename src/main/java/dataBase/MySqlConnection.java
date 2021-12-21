@@ -10,7 +10,7 @@ public class MySqlConnection {
     private static final String user = "root";
     private static final String password = "root";
     private static MySqlConnection instance = null;
-    public Connection connection = null;
+    private Connection connection = null;
 
     private MySqlConnection() {
         loadJdbcDriver();
@@ -40,9 +40,7 @@ public class MySqlConnection {
         catch (SQLException e) {
             System.out.println("connection to data base failed ");
             }
-        }
-
-
+    }
 
     private void loadJdbcDriver() {
         try {
@@ -52,5 +50,10 @@ public class MySqlConnection {
         }
 
     }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
+
 }
 

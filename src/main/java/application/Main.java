@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import users.Admin;
 
@@ -21,36 +22,23 @@ public class Main extends Application {
     public static HashMap<String, String> loginValues = new HashMap<>();
 
 
-    public static void main(String[] args) {
-        launch();
-    }
-
-    @Override // MAIN METHOD that start with the app
-    public void start(Stage primaryStage) {
+    private static void createHashMapWithLoginValues() {
         try {
-            createWindow(primaryStage);
-            Connection connection = connectToDataBase();
-
-            Admin admin = Admin.createAdmin();
-            allUsersFromDatabase = admin.getDataFromDataBase(connection);
-            createHashMapWithLoginValues();
-
-
-        }catch (Exception e){
-            System.out.println(e.getMessage() + "error from start method");
-        }
-    }
-
-    private void createHashMapWithLoginValues() {
-        try {
-            while(allUsersFromDatabase.next()){ // from result set to hash map
+            while (allUsersFromDatabase.next()) { // from result set to hash map
                 loginValues.put(allUsersFromDatabase.getString("login"), allUsersFromDatabase.getString("password"));
             }
-        }catch (SQLException e){
-            //System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
-    private void createWindow(Stage primaryStage){
+
+    public static void getUsersToHashMap(Connection con) {
+        Admin admin = Admin.createAdmin();
+        allUsersFromDatabase = admin.getDataFromDataBase(con);
+        createHashMapWithLoginValues();
+    }
+
+    private void createWindow(Stage primaryStage) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/application/loginGUI.fxml"));
             Scene newScene = new Scene(root);
@@ -61,10 +49,28 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-    private Connection connectToDataBase(){
-        MySqlConnection instance = MySqlConnection.createInstance();
-        return  instance.connection;
+
+    @Override // MAIN METHOD that start with the app
+    public void start(Stage primaryStage) {
+        try {
+            createWindow(primaryStage);
+            Connection connection = connectToDatabase();
+            getUsersToHashMap(connection);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + "error from start method");
+        }
     }
 
-
+    private Connection connectToDatabase() {
+        MySqlConnection sqlConnection = MySqlConnection.createInstance();
+        Connection sqlQueryConnection = sqlConnection.getConnection();
+        while (sqlQueryConnection == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
+            alert.showAndWait();
+            MySqlConnection.createInstance();
+            sqlQueryConnection = sqlConnection.getConnection();
+        }
+        return sqlQueryConnection;
+    }
 }
