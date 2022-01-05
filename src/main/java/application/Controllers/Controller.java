@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.Glow;
@@ -67,11 +68,19 @@ public abstract class Controller {
         field.setEffect(shadow);
     }
 
-    protected void basicTheme(TextField field) {
+    protected void displayLabelWithGivenText(Label label, String text) {
+        label.setText(text);
+        label.setVisible(true);
+
+
+    }
+
+    protected void basicTheme(TextField field, Label label) {
 
         //TODO some nice theme to input fields
         Glow glow = new Glow();
         field.setEffect(glow);
+        label.setVisible(false);
 
     }
 

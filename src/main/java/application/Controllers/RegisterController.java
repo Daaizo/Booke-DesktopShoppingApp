@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import users.Client;
 
@@ -16,7 +15,7 @@ public class RegisterController extends Controller {
     @FXML
     private TextField tfLastName, tfLogin, tfPassword, tfName, tfPasswordRepeat;
     @FXML
-    private Label tfPassInfo, tfLoginEmpty, tfPassEmpty, tfPassRepEmpty;
+    private Label passwordLabel, loginLabel, repeatPasswordLabel;
 
     @FXML
     void goBackButtonClicked(ActionEvent event) {
@@ -33,23 +32,22 @@ public class RegisterController extends Controller {
     }
 
     private boolean isPasswordEmpty() {
-        tfPassInfo.setVisible(false);
+
         if (tfPassword.getText().isEmpty()) {
-            tfPassEmpty.setVisible(true);
+            displayLabelWithGivenText(passwordLabel, "Password required");
             colorField(tfPassword, Color.RED);
             return true;
         } else {
-            basicTheme(tfPasswordRepeat);
-            tfPassEmpty.setVisible(false);
+            basicTheme(tfPassword, passwordLabel);
 
         }
         if (tfPasswordRepeat.getText().isEmpty()) {
-            tfPassRepEmpty.setVisible(true);
+            displayLabelWithGivenText(repeatPasswordLabel, "Password required.");
             colorField(tfPasswordRepeat, Color.RED);
             return true;
         } else {
-            basicTheme(tfPasswordRepeat);
-            tfPassRepEmpty.setVisible(false);
+            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
+
         }
         return false;
 
@@ -58,16 +56,15 @@ public class RegisterController extends Controller {
 
     private boolean passFieldMatches() {
 
-
         if (tfPassword.getText().compareTo(tfPasswordRepeat.getText()) != 0) {
             colorField(tfPassword, Color.RED);
             colorField(tfPasswordRepeat, Color.RED);
-            tfPassInfo.setVisible(true);
+            displayLabelWithGivenText(passwordLabel, "Passwords are not identical");
             return false;
         } else {
-            basicTheme(tfPasswordRepeat);
-            basicTheme(tfPassword);
-            tfPassInfo.setVisible(false);
+            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
+            basicTheme(tfPassword, passwordLabel);
+
             return true;
         }
 
@@ -77,13 +74,13 @@ public class RegisterController extends Controller {
     private boolean isLoginEmpty() {
         if (tfLogin.getText().isEmpty()) {
             colorField(tfLogin, Color.RED);
-            tfLoginEmpty.setVisible(true);
+            displayLabelWithGivenText(loginLabel, "Login name required");
+
             return true;
         } else {
             //TODO nice effect
-            Glow glow = new Glow();
-            tfLogin.setEffect(glow);
-            tfLoginEmpty.setVisible(false);
+            basicTheme(tfLogin, loginLabel);
+
 
             return false;
         }
@@ -100,7 +97,7 @@ public class RegisterController extends Controller {
 
     @FXML
     void saveButtonClicked(ActionEvent event) {
-        if (!isLoginEmpty() && !isPasswordEmpty() && passFieldMatches()) {
+        if (!isLoginEmpty() && !isPasswordEmpty() && passFieldMatches() && isLoginUnique()) {
 
             Client newUser = newUser();
             checkConnectionWithDataBaseAndDisplayError();
@@ -114,8 +111,16 @@ public class RegisterController extends Controller {
 
     }
 
-    private void addUserToDb() {
-
+    private boolean isLoginUnique() {
+        String login = tfLogin.getText().trim();
+        if (loginValues.containsKey(login)) {
+            displayLabelWithGivenText(loginLabel, "Account with that login exists");
+            colorField(tfLogin, Color.RED);
+            return false;
+        }
+        basicTheme(tfLogin, loginLabel);
+        loginLabel.setVisible(false);
+        return true;
     }
 
 }
