@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import users.Admin;
+import users.Client;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -33,8 +33,8 @@ public class Main extends Application {
     }
 
     public static void getUsersToHashMap(Connection con) {
-        Admin admin = Admin.createAdmin();
-        allUsersFromDatabase = admin.getDataFromDataBase(con);
+
+        allUsersFromDatabase = Client.getDataFromDataBase(con);
         createHashMapWithLoginValues();
     }
 
@@ -62,7 +62,7 @@ public class Main extends Application {
         }
     }
 
-    private Connection connectToDatabase() {
+    public static Connection connectToDatabase() {
         MySqlConnection sqlConnection = MySqlConnection.createInstance();
         Connection sqlQueryConnection = sqlConnection.getConnection();
         while (sqlQueryConnection == null) {

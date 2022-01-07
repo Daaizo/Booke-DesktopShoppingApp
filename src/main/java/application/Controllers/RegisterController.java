@@ -86,6 +86,11 @@ public class RegisterController extends Controller {
         }
     }
 
+    private boolean areFieldsFilledCorrectlyAndLoginIsUnique() {
+
+        return !isLoginEmpty() && !isPasswordEmpty() && passFieldMatches() && isLoginUnique();
+    }
+
     private Client newUser() {
         String login = tfLogin.getText().trim();
         String name = tfName.getText().trim();
@@ -97,8 +102,7 @@ public class RegisterController extends Controller {
 
     @FXML
     void saveButtonClicked(ActionEvent event) {
-        if (!isLoginEmpty() && !isPasswordEmpty() && passFieldMatches() && isLoginUnique()) {
-
+        if (areFieldsFilledCorrectlyAndLoginIsUnique()) {
             Client newUser = newUser();
             checkConnectionWithDataBaseAndDisplayError();
             Connection connection = getConnection();
@@ -108,7 +112,6 @@ public class RegisterController extends Controller {
             updateHashMapWithLoginValues(newUser.getLogin(), newUser.getPassword());
             switchScene(event, loginScene);
         }
-
     }
 
     private boolean isLoginUnique() {

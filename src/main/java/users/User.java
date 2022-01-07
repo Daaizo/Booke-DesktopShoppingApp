@@ -30,16 +30,15 @@ abstract class User {
 
     public abstract void changeData();
 
-    public ResultSet getDataFromDataBase(Connection connection){
-        try{
+    public static ResultSet getDataFromDataBase(Connection connection) {
+        try {
             String query = "select * from shop.`user`"; //where user is name of user in Database
             Statement stm = connection.createStatement();
             ResultSet allUsersFromDataBase = stm.executeQuery(query);
-            return  allUsersFromDataBase;
-        }
-        catch (SQLException e){
+            return allUsersFromDataBase;
+        } catch (SQLException e) {
             System.out.println("error with executing SQL query");
         }
-            return  null;
-        }
+        return null;
+    }
 }
