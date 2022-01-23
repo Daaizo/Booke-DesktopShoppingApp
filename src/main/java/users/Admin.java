@@ -1,14 +1,14 @@
 package users;
 
 public class Admin extends User{
-    private Admin instance = null;
+    private static Admin instance = null;
     private Admin(){
-        this.userName = "admin";
         this.lastName = "admin";
         this.name = "admin";
         this.password = "admin";
+        this.login = "admin";
     }
-    public Admin createAdmin(){
+    public static Admin createAdmin(){
         try {
             if (instance == null) {
                 instance = new Admin();
@@ -23,9 +23,7 @@ public class Admin extends User{
         }
         return null;
     }
-    public boolean isAdminCreated(){
-        return instance == null ? false : true;
-    }
+
 
     @Override
     public void changeData() {

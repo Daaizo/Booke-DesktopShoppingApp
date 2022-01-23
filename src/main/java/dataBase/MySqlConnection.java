@@ -13,47 +13,47 @@ public class MySqlConnection {
     private Connection connection = null;
 
     private MySqlConnection() {
-
         loadJdbcDriver();
         connectToDatabase();
     }
 
-    public MySqlConnection createInstance(){
+    public static MySqlConnection createInstance(){
         if (instance == null) {
             try {
-                MySqlConnection con = new MySqlConnection();
-                System.out.println("connection created");
-                return con;
+                instance = new MySqlConnection();
+                return instance;
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "problem with creating instance of connection");
             }
         }
         else {
-                System.out.println("data base connection already exists");
-            }
-        return  null;
+            System.out.println("data base connection already exists //trying to reconnect ");
+            instance.connectToDatabase();
+        }
+        return  instance;
     }
-    public void connectToDatabase() {
+
+    private void connectToDatabase() {
         try {
             this.connection = DriverManager.getConnection(url, user, password);
         }
         catch (SQLException e) {
             System.out.println("connection to data base failed ");
             }
-        }
+    }
 
-
-
-    public void loadJdbcDriver() {
+    private void loadJdbcDriver() {
         try {
-
             Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver loaded");
-
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Cannot find the driver in the classpath!");
         }
 
     }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
+
 }
 

@@ -1,86 +1,61 @@
 package application.Controllers;
 
-import dataBase.MySqlConnection;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 
 public class LoginController extends Controller {
-    private final String adminSceneUrl = "adminGUI.fxml";
-    private final String clientSceneUrl = "clientGUI.fxml";
-    private final String registerSceneUrl = "/application/registerGUI.fxml";
-    @FXML
-    private Button registerButton;
-    @FXML
-    private TextField tfLogin,tfPassword;
-
-
-
-
 
     @FXML
-    private void loginButtonClicked(ActionEvent event) {
-        System.out.println("jd");
-        /*
-           private void switchScene(ActionEvent event, String url){
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(url));
-            //Stage window = (Stage)registerButton.getScene().getWindow();
-            Stage window = new Stage();
-            Scene newScene = new Scene(root);
-            window.setScene(newScene);
-            window.show();
-        }
-        catch (IOException e){
-            System.out.println("error with switching scene");
-        }
+    private TextField tfLogin, tfPassword;
+
+
+    private void loginError() {
+        //TODO instead of error message inside the window
+        Alert unsuccessfulLogin = new Alert(Alert.AlertType.INFORMATION, "login or password is incorrect");
+        unsuccessfulLogin.showAndWait();
+        tfPassword.clear();
     }
 
+    private boolean passwordMatches(String password, String login) {
+        return password.compareTo(login) == 0 ? true : false;
+    }
 
-        String login = tfLogin.getText();
-        String password = tfPassword.getText();
-        try {
+    private boolean isAdmin(String username) {
+        return username.compareTo("admin") == 0 ? true : false;
+    }
 
-            String query = "select username from shop.user where username='" + login +"' and password = '" +password +"'";
-            Connection con = MySqlConnection.connectToDatabase();
-            Statement stm = con.createStatement();
-            ResultSet data = stm.executeQuery(query);
-            if(data.next() ){
-                System.out.println("success");
-                if(login.compareTo("admin") == 0){
-                    switchScene(event, adminSceneUrl);
-                }
-                else{
-                    switchScene(event, clientSceneUrl);
-                }
+    private void checkLogin(String username, String password, ActionEvent event) {
+        String pass = loginValues.get(username);
+        if (passwordMatches(pass, password)) {
+            if (isAdmin(username)) {
+                switchScene(event, adminScene);
+            } else {
+                switchScene(event, clientScene);
             }
-            else {
-                System.out.println("login failed");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            loginError();
+        }
+    }
+    @FXML
+    private void loginButtonClicked(ActionEvent event) {
+        if (!tfLogin.getText().isEmpty() || !tfPassword.getText().isEmpty()) {
+            checkConnectionWithDataBaseAndDisplayError();
+            String login = tfLogin.getText();
+            String password = tfPassword.getText();
+            checkLogin(login, password, event);
         }
 
-         */
     }
 
 
 
     @FXML
     void registerButtonClicked(ActionEvent event) {
-            switchScene(event, registerSceneUrl);
+            switchScene(event, registrationScene);
     }
 
 }
