@@ -24,7 +24,7 @@ public class Main extends Application {
 
     private static void createHashMapWithLoginValues() {
         try {
-            while (allUsersFromDatabase.next()) { // from result set to hash map
+            while (allUsersFromDatabase.next()) {
                 loginValues.put(allUsersFromDatabase.getString("login"), allUsersFromDatabase.getString("password"));
             }
         } catch (SQLException e) {

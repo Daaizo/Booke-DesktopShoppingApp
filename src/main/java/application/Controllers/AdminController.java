@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import users.Client;
+import users.ClientTable;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,19 +16,19 @@ import java.sql.SQLException;
 
 public class AdminController extends Controller {
     @FXML
-    private TableColumn<Client, String> userFirstNameColumn;
+    private TableColumn<ClientTable, String> userFirstNameColumn;
 
     @FXML
-    private TableColumn<Client, String> userIDColumn;
+    private TableColumn<ClientTable, String> userIDColumn;
     @FXML
-    private TableColumn<Client, String> userLoginColumn;
+    private TableColumn<ClientTable, String> userLoginColumn;
 
     @FXML
-    private TableColumn<Client, String> userLastNameColumn;
+    private TableColumn<ClientTable, String> userLastNameColumn;
 
     @FXML
 
-    private TableView<Client> userTableView;
+    private TableView<ClientTable> userTableView;
 
 
     @FXML
@@ -40,11 +41,11 @@ public class AdminController extends Controller {
         Connection con = Main.connectToDatabase();
 
         ResultSet users = Client.getDataFromDataBase(con);
-        ObservableList<Client> listOfUsers = Client.getUsers(users);
-        userIDColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("id"));
-        userLoginColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("login"));
-        userLastNameColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("lastName"));
-        userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("name"));
+        ObservableList<ClientTable> listOfUsers = ClientTable.getUsers(users);
+        userIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        userLoginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
+        userLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         userTableView.setItems(listOfUsers);
     }
 
