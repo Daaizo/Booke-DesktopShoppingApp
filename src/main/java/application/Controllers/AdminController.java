@@ -18,7 +18,7 @@ public class AdminController extends Controller {
     private TableColumn<Client, String> userFirstNameColumn;
 
     @FXML
-    private TableColumn<Client, Integer> userIDColumn;
+    private TableColumn<Client, String> userIDColumn;
     @FXML
     private TableColumn<Client, String> userLoginColumn;
 
@@ -41,13 +41,11 @@ public class AdminController extends Controller {
 
         ResultSet users = Client.getDataFromDataBase(con);
         ObservableList<Client> listOfUsers = Client.getUsers(users);
-        userIDColumn.setCellValueFactory(new PropertyValueFactory<Client, Integer>("id"));
+        userIDColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("id"));
         userLoginColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("login"));
         userLastNameColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("lastName"));
         userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<Client, String>("name"));
         userTableView.setItems(listOfUsers);
-
-
     }
 
     @FXML

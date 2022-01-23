@@ -14,11 +14,11 @@
                     <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="userTableView" layoutY="6.0" prefHeight="371.0" prefWidth="600.0"
-                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                <TableView fx:id="userTableView" editable="true" layoutY="6.0" prefHeight="371.0"
+                                           prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <columns>
-                                        <TableColumn fx:id="userIDColumn" prefWidth="64.0" text="ID"/>
+                                        <TableColumn fx:id="userIDColumn" editable="false" prefWidth="64.0" text="ID"/>
                                         <TableColumn fx:id="userLoginColumn" prefWidth="103.0" text="Login"/>
                                         <TableColumn fx:id="userLastNameColumn" prefWidth="234.0" text="Last Name"/>
                                         <TableColumn fx:id="userFirstNameColumn" prefWidth="198.0" text="First Name"/>
