@@ -66,8 +66,9 @@ public class Main extends Application {
         MySqlConnection sqlConnection = MySqlConnection.createInstance();
         Connection sqlQueryConnection = sqlConnection.getConnection();
         while (sqlQueryConnection == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Connection to data base failed. Reconnect and try again.");
             alert.showAndWait();
+
             MySqlConnection.createInstance();
             sqlQueryConnection = sqlConnection.getConnection();
         }

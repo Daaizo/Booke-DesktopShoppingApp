@@ -99,6 +99,7 @@ public class RegisterController extends Controller {
         Client newUser = new Client(login, name, lastName, password);
         return newUser;
     }
+    //TODO is all that shit necessary ?
 
     @FXML
     void saveButtonClicked(ActionEvent event) {
