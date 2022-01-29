@@ -76,13 +76,10 @@ public class LoginController extends Controller {
 
         } else if (isLoginEmpty()) {
             colorField(tfLogin, Color.RED);
-            System.out.println("login empty");
             displayLabelWithGivenText(loginLabel, "Filed is empty");
 
         } else if (isPasswordEmpty()) {
             colorField(tfPassword, Color.RED);
-            System.out.println("password empty");
-
             displayLabelWithGivenText(passwordLabel, "Filed is empty");
         }
 

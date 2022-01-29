@@ -34,7 +34,7 @@ public class Main extends Application {
 
     public static void getUsersToHashMap(Connection con) {
 
-        allUsersFromDatabase = Client.getDataFromDataBase(con);
+        allUsersFromDatabase = Client.getUsersFromDataBase(con);
         createHashMapWithLoginValues();
     }
 
@@ -43,6 +43,7 @@ public class Main extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/application/loginGUI.fxml"));
             Scene newScene = new Scene(root);
             primaryStage.setScene(newScene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (IOException e) {
             System.out.println("creating first window failed");

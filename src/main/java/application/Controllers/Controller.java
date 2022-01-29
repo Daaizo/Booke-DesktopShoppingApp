@@ -38,6 +38,7 @@ public abstract class Controller {
         }
         catch (IOException e){
             System.out.println("error with switching scene");
+            e.printStackTrace();
         }
     }
 

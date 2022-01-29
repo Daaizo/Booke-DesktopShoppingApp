@@ -56,7 +56,7 @@ abstract class User {
 
     public abstract void changeData();
 
-    public static ResultSet getDataFromDataBase(Connection connection) {
+    public static ResultSet getUsersFromDataBase(Connection connection) {
         try {
             String query = "select * from DAAIZO.CUSTOMER";
             Statement stm = connection.createStatement();
