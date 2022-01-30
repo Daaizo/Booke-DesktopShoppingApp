@@ -3,27 +3,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="591.0" prefWidth="809.0" xmlns="http://javafx.com/javafx/17"
+            minWidth="-Infinity" prefHeight="665.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.AdminController">
     <children>
-        <TabPane layoutX="-149.0" layoutY="1.0" prefHeight="591.0" prefWidth="809.0" tabClosingPolicy="UNAVAILABLE"
-                 AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
+        <TabPane layoutX="-149.0" layoutY="1.0" prefHeight="665.0" prefWidth="870.0" tabClosingPolicy="UNAVAILABLE"
+                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                 AnchorPane.topAnchor="0.0">
             <tabs>
                 <Tab text="All users">
                     <content>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane prefHeight="621.0" prefWidth="869.0">
                             <children>
-                                <TableView fx:id="userTableView" editable="true" layoutY="6.0" prefHeight="562.0"
-                                           prefWidth="809.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                <TableView fx:id="userTableView" editable="true" layoutY="6.0" prefHeight="586.0"
+                                           prefWidth="870.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0"
                                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <columns>
                                         <TableColumn fx:id="userIDColumn" prefWidth="64.0" sortType="DESCENDING"
                                                      text="ID"/>
-                                        <TableColumn fx:id="userLoginColumn" prefWidth="209.0" text="Login"/>
-                                        <TableColumn fx:id="userLastNameColumn" prefWidth="235.0" text="Last Name"/>
-                                        <TableColumn fx:id="userFirstNameColumn" prefWidth="300.0" text="First Name"/>
+                                        <TableColumn fx:id="userLoginColumn" prefWidth="267.0" text="Login"/>
+                                        <TableColumn fx:id="userLastNameColumn" prefWidth="258.0" text="Last Name"/>
+                                        <TableColumn fx:id="userFirstNameColumn" prefWidth="280.0" text="First Name"/>
                                     </columns>
                                 </TableView>
+                                <Button layoutX="14.0" layoutY="597.0" mnemonicParsing="false" prefHeight="25.0"
+                                        prefWidth="132.0" text="Add new user"/>
                             </children>
                         </AnchorPane>
                     </content>
@@ -32,19 +35,22 @@
                     <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="productTableView" editable="true" prefHeight="562.0"
-                                           prefWidth="809.0">
+                                <TableView fx:id="productTableView" editable="true" prefHeight="586.0" prefWidth="870.0"
+                                           AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <columns>
                                         <TableColumn fx:id="productIdColumn" prefWidth="69.0" sortType="DESCENDING"
                                                      text="ID"/>
-                                        <TableColumn fx:id="productNameColumn" prefWidth="285.0" text="Name"/>
-                                        <TableColumn fx:id="productPriceColumn" prefWidth="107.0" text="Price"/>
-                                        <TableColumn fx:id="productSubcategoryColumn" prefWidth="175.0"
+                                        <TableColumn fx:id="productNameColumn" prefWidth="378.0" text="Name"/>
+                                        <TableColumn fx:id="productPriceColumn" prefWidth="89.0" text="Price"/>
+                                        <TableColumn fx:id="productSubcategoryColumn" prefWidth="142.0"
                                                      text="Subcategory"/>
-                                        <TableColumn fx:id="productCategoryColumn" prefWidth="171.0"
+                                        <TableColumn fx:id="productCategoryColumn" prefWidth="191.0"
                                                      sortType="DESCENDING" text="Category"/>
                                     </columns>
                                 </TableView>
+                                <Button layoutX="14.0" layoutY="597.0" mnemonicParsing="false" prefHeight="25.0"
+                                        prefWidth="132.0" text="Add new product"/>
                             </children>
                         </AnchorPane>
                     </content>
