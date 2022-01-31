@@ -1,56 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="391.0" prefWidth="466.0" xmlns="http://javafx.com/javafx/17"
+            minWidth="-Infinity" prefHeight="510.0" prefWidth="730.0" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.RegisterController">
-   <top>
-      <Label alignment="CENTER" contentDisplay="BOTTOM" prefHeight="59.0" prefWidth="474.0" text="Registration"
-             textAlignment="CENTER" textOverrun="CLIP" BorderPane.alignment="CENTER">
-         <font>
-            <Font name="Dubai Regular" size="32.0"/>
-         </font>
-      </Label>
-   </top>
-   <bottom>
-      <AnchorPane prefHeight="72.0" prefWidth="466.0" BorderPane.alignment="CENTER">
-            <Button layoutX="73.0" layoutY="14.0" mnemonicParsing="false" onAction="#clearButtonClicked"
-                    prefHeight="25.0" prefWidth="153.0" text="clear" AnchorPane.leftAnchor="73.0"/>
-            <Button layoutX="276.0" layoutY="14.0" mnemonicParsing="false" onAction="#saveButtonClicked"
-                    prefHeight="25.0" prefWidth="152.0" text="Register" AnchorPane.rightAnchor="38.0"/>
-            <Button layoutX="397.0" layoutY="41.0" mnemonicParsing="false" onAction="#goBackButtonClicked"
-                    prefHeight="26.0" prefWidth="68.0" text="go back" AnchorPane.rightAnchor="1.0"/>
-      </AnchorPane>
-   </bottom>
-   <center>
-      <AnchorPane prefHeight="211.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-         <Label fx:id="loginLabel" disable="true" layoutX="187.0" layoutY="36.0" prefHeight="17.0" prefWidth="210.0"
-                visible="false"/>
-         <TextField fx:id="tfLogin" layoutX="182.0" layoutY="11.0" prefHeight="25.0" prefWidth="219.0"
-                    AnchorPane.leftAnchor="182.0" AnchorPane.rightAnchor="65.0"/>
-         <TextField fx:id="tfName" layoutX="180.0" layoutY="61.0" prefHeight="25.0" prefWidth="219.0"
-                    AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="67.0"/>
-         <TextField fx:id="tfLastName" layoutX="181.0" layoutY="110.0" prefHeight="25.0" prefWidth="219.0"
-                    AnchorPane.leftAnchor="181.0" AnchorPane.rightAnchor="66.0"/>
-         <PasswordField fx:id="tfPassword" layoutX="183.0" layoutY="164.0" prefHeight="25.0" prefWidth="219.0"
-                        AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="64.0"/>
-         <Label fx:id="passwordLabel" disable="true" layoutX="185.0" layoutY="185.0" prefHeight="22.0"
-                prefWidth="210.0" text="Passwords are not indetical." visible="false"/>
-         <PasswordField fx:id="tfPasswordRepeat" layoutX="183.0" layoutY="220.0" prefHeight="25.0" prefWidth="218.0"
-                        AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="65.0"/>
-         <Label layoutX="31.0" layoutY="15.0" prefHeight="16.0" prefWidth="121.0" text="Login"
-                AnchorPane.leftAnchor="31.0"/>
-         <Label layoutX="31.0" layoutY="65.0" prefHeight="16.0" prefWidth="121.0" text="Name"
-                AnchorPane.leftAnchor="31.0"/>
-         <Label layoutX="31.0" layoutY="114.0" prefHeight="16.0" prefWidth="121.0" text="Last Name"
-                AnchorPane.leftAnchor="31.0"/>
-         <Label layoutX="31.0" layoutY="168.0" prefHeight="16.0" prefWidth="121.0" text="Password"
-                AnchorPane.leftAnchor="31.0"/>
-            <Label layoutX="31.0" layoutY="224.0" prefHeight="16.0" prefWidth="121.0" text="Repeat Password"/>
-         <Label fx:id="repeatPasswordLabel" disable="true" layoutX="187.0" layoutY="245.0" prefHeight="17.0"
-                prefWidth="210.0" text="Password required." visible="false"/>
-      </AnchorPane>
-   </center>
+    <top>
+        <Label alignment="CENTER" contentDisplay="BOTTOM" prefHeight="73.0" prefWidth="766.0"
+               style="-fx-background-color: #5B84B1FF;" text="Create account" textAlignment="CENTER" textFill="#fc766a"
+               textOverrun="CLIP" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="Berlin Sans FB Demi Bold" size="32.0"/>
+            </font>
+            <effect>
+                <ColorAdjust/>
+            </effect>
+        </Label>
+    </top>
+    <bottom>
+        <AnchorPane prefHeight="136.0" prefWidth="720.0" style="-fx-background-color: #5B84B1FF;"
+                    BorderPane.alignment="CENTER">
+            <Button layoutX="170.0" layoutY="14.0" mnemonicParsing="false" onAction="#saveButtonClicked" opacity="0.87"
+                    prefHeight="50.0" prefWidth="467.0" style="-fx-background-color: #FC766AFF;" text="Register now"
+                    textFill="#5b84b1" AnchorPane.rightAnchor="116.0">
+                <effect>
+                    <DropShadow blurType="GAUSSIAN" height="22.465" radius="11.83125" width="26.86"/>
+                </effect>
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </Button>
+            <Label layoutX="485.0" layoutY="101.0" prefHeight="17.0" prefWidth="143.0"
+                   text="Already have an account ?"/>
+            <Button fx:id="goBackButtonClicked" alignment="BASELINE_LEFT" layoutX="628.0" layoutY="97.0"
+                    mnemonicParsing="false" onAction="#goBackButtonClicked" prefHeight="25.0" prefWidth="79.0"
+                    style="-fx-background-color: transparent;" text="Login here" textFill="#fc766a" underline="true"/>
+        </AnchorPane>
+    </bottom>
+    <center>
+        <AnchorPane focusTraversable="true" prefHeight="300.0" prefWidth="560.0"
+                    style="-fx-background-color: #5B84B1FF;" BorderPane.alignment="CENTER">
+            <Label fx:id="loginLabel" disable="true" layoutX="187.0" layoutY="36.0" prefHeight="17.0" prefWidth="210.0"
+                   textFill="#f51500" visible="false">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="tfLogin" layoutX="183.0" layoutY="13.0" prefHeight="25.0" prefWidth="219.0"
+                       AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="64.0"/>
+            <TextField fx:id="tfName" layoutX="183.0" layoutY="63.0" prefHeight="25.0" prefWidth="219.0"
+                       AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="64.0"/>
+            <TextField fx:id="tfLastName" layoutX="183.0" layoutY="112.0" prefHeight="25.0" prefWidth="219.0"
+                       AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="64.0"/>
+            <PasswordField fx:id="tfPassword" layoutX="183.0" layoutY="164.0" prefHeight="25.0" prefWidth="219.0"
+                           AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="64.0"/>
+            <Label fx:id="passwordLabel" disable="true" layoutX="185.0" layoutY="185.0" prefHeight="22.0"
+                   prefWidth="210.0" textFill="#f51500" visible="false">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+            <PasswordField fx:id="tfPasswordRepeat" layoutX="183.0" layoutY="220.0" prefHeight="25.0" prefWidth="218.0"
+                           AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="65.0"/>
+            <Label layoutX="31.0" layoutY="15.0" prefHeight="16.0" prefWidth="121.0" text="Login" textFill="#fc766a"
+                   AnchorPane.leftAnchor="31.0">
+                <font>
+                    <Font name="System Bold" size="15.0"/>
+                </font>
+            </Label>
+            <Label layoutX="31.0" layoutY="65.0" prefHeight="16.0" prefWidth="121.0" text="Name" textFill="#fc766a"
+                   AnchorPane.leftAnchor="31.0">
+                <font>
+                    <Font name="System Bold" size="15.0"/>
+                </font>
+            </Label>
+            <Label layoutX="31.0" layoutY="114.0" prefHeight="16.0" prefWidth="121.0" text="Last Name"
+                   textFill="#fc766a" AnchorPane.leftAnchor="31.0">
+                <font>
+                    <Font name="System Bold" size="15.0"/>
+                </font>
+            </Label>
+            <Label layoutX="31.0" layoutY="168.0" prefHeight="16.0" prefWidth="121.0" text="Password" textFill="#fc766a"
+                   AnchorPane.leftAnchor="31.0">
+                <font>
+                    <Font name="System Bold" size="15.0"/>
+                </font>
+            </Label>
+            <Label layoutX="31.0" layoutY="224.0" prefHeight="16.0" prefWidth="121.0" text="Repeat Password"
+                   textFill="#fc766a">
+                <font>
+                    <Font name="System Bold" size="15.0"/>
+                </font>
+            </Label>
+            <Label fx:id="repeatPasswordLabel" disable="true" layoutX="187.0" layoutY="245.0" prefHeight="17.0"
+                   prefWidth="210.0" textFill="#f51500" visible="false">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+            <CheckBox fx:id="checkbox" contentDisplay="BOTTOM" layoutX="183.0" layoutY="271.0" mnemonicParsing="false"
+                      prefHeight="17.0" prefWidth="321.0" text="I agree to the " textAlignment="JUSTIFY"/>
+            <Label layoutX="279.0" layoutY="271.0" prefHeight="17.0" prefWidth="144.0" text="Terms and conditions"
+                   textFill="#fc766a" underline="true"/>
+            <Label fx:id="nameLabel" disable="true" layoutX="187.0" layoutY="88.0" prefHeight="17.0" prefWidth="210.0"
+                   textFill="#f51500" visible="false">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+            <Label fx:id="lastnameLabel" disable="true" layoutX="187.0" layoutY="137.0" prefHeight="17.0"
+                   prefWidth="210.0" textFill="#f51500" visible="false">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+        </AnchorPane>
+    </center>
 </BorderPane>

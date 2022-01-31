@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import users.Admin;
+import users.Client;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -24,8 +24,8 @@ public class Main extends Application {
 
     private static void createHashMapWithLoginValues() {
         try {
-            while (allUsersFromDatabase.next()) { // from result set to hash map
-                loginValues.put(allUsersFromDatabase.getString("login"), allUsersFromDatabase.getString("password"));
+            while (allUsersFromDatabase.next()) {
+                loginValues.put(allUsersFromDatabase.getString("customerlogin"), allUsersFromDatabase.getString("customerpassword"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -33,8 +33,8 @@ public class Main extends Application {
     }
 
     public static void getUsersToHashMap(Connection con) {
-        Admin admin = Admin.createAdmin();
-        allUsersFromDatabase = admin.getDataFromDataBase(con);
+
+        allUsersFromDatabase = Client.getUsersFromDataBase(con);
         createHashMapWithLoginValues();
     }
 
@@ -43,6 +43,7 @@ public class Main extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/application/loginGUI.fxml"));
             Scene newScene = new Scene(root);
             primaryStage.setScene(newScene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (IOException e) {
             System.out.println("creating first window failed");
@@ -62,12 +63,13 @@ public class Main extends Application {
         }
     }
 
-    private Connection connectToDatabase() {
+    public static Connection connectToDatabase() {
         MySqlConnection sqlConnection = MySqlConnection.createInstance();
         Connection sqlQueryConnection = sqlConnection.getConnection();
         while (sqlQueryConnection == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Connection to data base failed. Reconnect and try again.");
             alert.showAndWait();
+
             MySqlConnection.createInstance();
             sqlQueryConnection = sqlConnection.getConnection();
         }

@@ -4,11 +4,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 
+//TODO button that closes app when connection to db fails
 
 public class MySqlConnection {
-    private static final String url = "jdbc:mysql://localhost:3306/shop";
-    private static final String user = "root";
-    private static final String password = "root";
+    private static final String url = "jdbc:oracle:thin:@localhost:1521:xe";
+    private static final String user = "daaizo";
+    private static final String password = "admin";
     private static MySqlConnection instance = null;
     private Connection connection = null;
 
@@ -17,7 +18,7 @@ public class MySqlConnection {
         connectToDatabase();
     }
 
-    public static MySqlConnection createInstance(){
+    public static MySqlConnection createInstance() {
         if (instance == null) {
             try {
                 instance = new MySqlConnection();
