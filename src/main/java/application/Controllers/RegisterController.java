@@ -22,7 +22,7 @@ public class RegisterController extends Controller {
     private Label passwordLabel, loginLabel, repeatPasswordLabel, nameLabel, lastnameLabel;
     @FXML
     private CheckBox checkbox;
-
+    //TODO password strength 1.easy way - text 2.hard way percent  bar ?
     @FXML
     void goBackButtonClicked(ActionEvent event) {
         switchScene(event, loginScene);
@@ -67,7 +67,6 @@ public class RegisterController extends Controller {
             displayLabelWithGivenText(loginLabel, "Login name required");
             return true;
         } else {
-            //TODO nice effect
             basicTheme(tfLogin, loginLabel);
             return false;
         }
