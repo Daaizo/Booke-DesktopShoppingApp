@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import users.Client;
 
 import java.io.IOException;
@@ -43,7 +44,9 @@ public class Main extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/application/loginGUI.fxml"));
             Scene newScene = new Scene(root);
             primaryStage.setScene(newScene);
-            primaryStage.setResizable(false);
+            // primaryStage.setResizable(false);
+            primaryStage.initStyle(StageStyle.TRANSPARENT);
+
             primaryStage.show();
         } catch (IOException e) {
             System.out.println("creating first window failed");

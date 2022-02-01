@@ -13,7 +13,7 @@
                style="-fx-background-color: #5B84B1FF;" text="Create account" textAlignment="CENTER" textFill="#fc766a"
                textOverrun="CLIP" BorderPane.alignment="CENTER">
             <font>
-                <Font name="Berlin Sans FB Demi Bold" size="32.0"/>
+                <Font name="Berlin Sans FB Demi Bold" size="39.0"/>
             </font>
             <effect>
                 <ColorAdjust/>
@@ -44,9 +44,9 @@
         <AnchorPane focusTraversable="true" prefHeight="300.0" prefWidth="560.0"
                     style="-fx-background-color: #5B84B1FF;" BorderPane.alignment="CENTER">
             <Label fx:id="loginLabel" disable="true" layoutX="187.0" layoutY="36.0" prefHeight="17.0" prefWidth="210.0"
-                   textFill="#f51500" visible="false">
+                   text="Login name required" textFill="#ff1100" visible="false">
                 <font>
-                    <Font size="13.0"/>
+                    <Font name="Arial Bold" size="15.0"/>
                 </font>
             </Label>
             <TextField fx:id="tfLogin" layoutX="183.0" layoutY="13.0" prefHeight="25.0" prefWidth="219.0"
@@ -58,9 +58,9 @@
             <PasswordField fx:id="tfPassword" layoutX="183.0" layoutY="164.0" prefHeight="25.0" prefWidth="219.0"
                            AnchorPane.leftAnchor="183.0" AnchorPane.rightAnchor="64.0"/>
             <Label fx:id="passwordLabel" disable="true" layoutX="185.0" layoutY="185.0" prefHeight="22.0"
-                   prefWidth="210.0" textFill="#f51500" visible="false">
+                   prefWidth="210.0" textFill="#ff1100" visible="false">
                 <font>
-                    <Font size="13.0"/>
+                    <Font name="Arial Bold" size="15.0"/>
                 </font>
             </Label>
             <PasswordField fx:id="tfPasswordRepeat" layoutX="183.0" layoutY="220.0" prefHeight="25.0" prefWidth="218.0"
@@ -96,9 +96,9 @@
                 </font>
             </Label>
             <Label fx:id="repeatPasswordLabel" disable="true" layoutX="187.0" layoutY="245.0" prefHeight="17.0"
-                   prefWidth="210.0" textFill="#f51500" visible="false">
+                   prefWidth="210.0" textFill="#ff1100" visible="false">
                 <font>
-                    <Font size="13.0"/>
+                    <Font name="Arial Bold" size="15.0"/>
                 </font>
             </Label>
             <CheckBox fx:id="checkbox" contentDisplay="BOTTOM" layoutX="183.0" layoutY="271.0" mnemonicParsing="false"
@@ -106,15 +106,15 @@
             <Label layoutX="279.0" layoutY="271.0" prefHeight="17.0" prefWidth="144.0" text="Terms and conditions"
                    textFill="#fc766a" underline="true"/>
             <Label fx:id="nameLabel" disable="true" layoutX="187.0" layoutY="88.0" prefHeight="17.0" prefWidth="210.0"
-                   textFill="#f51500" visible="false">
+                   textFill="#ff1100" visible="false">
                 <font>
-                    <Font size="13.0"/>
+                    <Font name="Arial Bold" size="15.0"/>
                 </font>
             </Label>
             <Label fx:id="lastnameLabel" disable="true" layoutX="187.0" layoutY="137.0" prefHeight="17.0"
-                   prefWidth="210.0" textFill="#f51500" visible="false">
+                   prefWidth="210.0" textFill="#ff1100" visible="false">
                 <font>
-                    <Font size="13.0"/>
+                    <Font name="Arial Bold" size="15.0"/>
                 </font>
             </Label>
         </AnchorPane>

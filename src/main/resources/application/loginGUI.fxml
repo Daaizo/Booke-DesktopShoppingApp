@@ -34,25 +34,53 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<AnchorPane style="-fx-background-color: #66B2FF;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controllers.LoginController">
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="463.0" prefWidth="756.0"
+            style="-fx-background-color: #5B84B1FF;" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.LoginController">
    <children>
-      <TextField id="textInput" fx:id="tfLogin" layoutX="292.0" layoutY="95.0" prefHeight="25.0" prefWidth="294.0"
+      <TextField id="textInput" fx:id="tfLogin" layoutX="421.0" layoutY="108.0" prefHeight="25.0" prefWidth="294.0"
                  promptText="login"/>
-      <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="292.0" layoutY="146.0" prefHeight="25.0"
+      <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="421.0" layoutY="167.0" prefHeight="25.0"
                      prefWidth="294.0" promptText="password"/>
-      <Pane layoutY="-7.0" prefHeight="408.0" prefWidth="270.0" style="-fx-background-color: #5037CD;"
-            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="330.0"
-            AnchorPane.topAnchor="-8.0"/>
-      <Button id="loginButton" layoutX="328.0" layoutY="219.0" mnemonicParsing="false" onAction="#loginButtonClicked"
-              prefHeight="45.0" prefWidth="222.0" text="Login"/>
-      <Button id="registerButton" fx:id="registerButton" layoutX="328.0" layoutY="284.0" mnemonicParsing="false"
+      <Pane layoutX="-3.0" layoutY="-8.0" prefHeight="472.0" prefWidth="382.0" style="-fx-background-color: #fc766a;"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="377.0"
+            AnchorPane.topAnchor="-9.0">
+         <children>
+            <ImageView fx:id="logo" fitHeight="190.0" fitWidth="180.0" layoutX="93.0" layoutY="86.0">
+               <image>
+                  <Image url="file:/C:/Users/Daaizo/IdeaProjects/simple_app/src/main/resources/application/Icons/shopping-bag.png"/>
+               </image>
+            </ImageView>
+            <Label layoutX="125.0" layoutY="285.0" prefHeight="45.0" prefWidth="180.0" style="-fx-font-family: Rooney;"
+                   text="Bokke " textFill="#5b84b1">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="38.0"/>
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="330.0" prefHeight="45.0" prefWidth="382.0"
+                   text="your online shop for games and books" textFill="#5b84b1">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="19.0"/>
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Button id="loginButton" layoutX="460.0" layoutY="242.0" mnemonicParsing="false" onAction="#loginButtonClicked"
+              prefHeight="45.0" prefWidth="230.0" text="Login"/>
+      <Button id="registerButton" fx:id="registerButton" layoutX="460.0" layoutY="316.0" mnemonicParsing="false"
               onAction="#registerButtonClicked" onMouseClicked="#registerButtonClicked" prefHeight="45.0"
-              prefWidth="222.0" text="Register"/>
+              prefWidth="230.0" text="Register"/>
       <Label fx:id="loginLabel" disable="true" layoutX="372.0" layoutY="120.0" prefHeight="17.0" prefWidth="98.0"
              text="Label" visible="false"/>
       <Label fx:id="passwordLabel" disable="true" layoutX="372.0" layoutY="171.0" prefHeight="17.0" prefWidth="98.0"
              text="Label" visible="false"/>
+      <Button fx:id="closeButton" cancelButton="true" layoutX="705.0" layoutY="14.0" mnemonicParsing="false"
+              onAction="#closeButtonClicked" prefHeight="17.0" prefWidth="20.0"
+              style="-fx-background-color: transparent;"/>
    </children>
    <padding>
       <Insets top="1.0" />
