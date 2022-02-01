@@ -1,6 +1,7 @@
 # simple_app
 simple project for educational purposes
 using javafx with scenebuilder for app, oracle sql develper and oracle server to manage database
+all icons are free from : www.flaticon.com
 
 The idea is to have desktop app that has : 
 1. Loginning page
