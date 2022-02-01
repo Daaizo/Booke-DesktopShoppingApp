@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 
 public class LoginController extends Controller {
@@ -24,17 +23,7 @@ public class LoginController extends Controller {
     @FXML
     private Label passwordLabel, loginLabel;
 
-    @FXML
-    void closeButtonClicked(ActionEvent event) {
-        ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
-    }
 
-    @FXML
-    public void initialize() {
-        closeButton.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
-
-
-    }
 
     private void loginError() {
         Alert unsuccessfulLogin = new Alert(Alert.AlertType.INFORMATION, "login or password is incorrect");

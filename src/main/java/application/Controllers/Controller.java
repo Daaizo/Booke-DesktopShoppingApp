@@ -2,17 +2,24 @@ package application.Controllers;
 
 import application.Main;
 import dataBase.MySqlConnection;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.InnerShadow;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -27,20 +34,43 @@ public abstract class Controller {
     public final String clientScene = "/application/clientGUI.fxml";
     private MySqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
+    @FXML
+    private AnchorPane anchor;
 
-    public void switchScene(ActionEvent event, String url){
+    @FXML
+    public void initialize() {
+        Button closeButton = new Button();
+        closeButton.setBackground(Background.EMPTY);
+        closeButton.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
+        closeButton.setOnAction(actionEvent -> Platform.exit());
+        anchor.getChildren().add(closeButton);
+
+    }
+
+    @FXML
+    void Dragging(MouseEvent event) {
+        Stage stage = (Stage) anchor.getScene().getWindow();
+        anchor.setOnMousePressed(pressEvent -> {
+            anchor.setOnMouseDragged(dragEvent -> {
+                stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+                stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+            });
+        });
+    }
+
+    public void switchScene(ActionEvent event, String url) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(url));
-            Stage window =  (Stage)((Node)event.getSource()).getScene().getWindow();
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene newScene = new Scene(root);
             window.setScene(newScene);
             window.show();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println("error with switching scene");
             e.printStackTrace();
         }
     }
+
 
     public void checkConnectionWithDataBaseAndDisplayError() {
         instance = MySqlConnection.createInstance();
