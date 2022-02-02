@@ -23,6 +23,14 @@ public class RegisterController extends Controller {
     @FXML
     private CheckBox checkbox;
     //TODO password strength 1.easy way - text 2.hard way percent  bar ?
+
+
+    @FXML
+    public void initialize() {
+        createAnchorAndExitButton();
+    }
+
+
     @FXML
     void goBackButtonClicked(ActionEvent event) {
         switchScene(event, loginScene);

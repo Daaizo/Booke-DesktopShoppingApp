@@ -23,6 +23,10 @@ public class LoginController extends Controller {
     @FXML
     private Label passwordLabel, loginLabel;
 
+    @FXML
+    public void initialize() {
+        createAnchorAndExitButton();
+    }
 
 
     private void loginError() {

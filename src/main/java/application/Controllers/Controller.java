@@ -37,8 +37,7 @@ public abstract class Controller {
     @FXML
     private AnchorPane anchor;
 
-    @FXML
-    public void initialize() {
+    public void createAnchorAndExitButton() {
         Button closeButton = new Button();
         closeButton.setBackground(Background.EMPTY);
         closeButton.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
@@ -46,8 +45,8 @@ public abstract class Controller {
         closeButton.setLayoutX(1000);
         closeButton.setLayoutY(10);
         anchor.getChildren().add(closeButton);
-        anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px ");
-        anchor.setMaxSize(1050, 694);
+        anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px;-fx-background-color : #5B84B1FF ");
+        anchor.setMinSize(1050, 694);
     }
 
     @FXML

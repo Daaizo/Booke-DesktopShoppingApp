@@ -84,8 +84,10 @@ public class AdminController extends Controller {
         fillProductColumnsWithData(listOfProducts);
     }
 
+
     @FXML
     public void initialize() {
+        createAnchorAndExitButton();
         try {
             displayUsers();
         } catch (SQLException e) {
