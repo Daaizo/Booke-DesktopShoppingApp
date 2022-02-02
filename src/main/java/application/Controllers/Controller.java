@@ -43,8 +43,11 @@ public abstract class Controller {
         closeButton.setBackground(Background.EMPTY);
         closeButton.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
         closeButton.setOnAction(actionEvent -> Platform.exit());
+        closeButton.setLayoutX(1000);
+        closeButton.setLayoutY(10);
         anchor.getChildren().add(closeButton);
-
+        anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px ");
+        anchor.setMaxSize(1050, 694);
     }
 
     @FXML
