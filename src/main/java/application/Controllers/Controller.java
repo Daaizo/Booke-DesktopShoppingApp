@@ -28,10 +28,10 @@ import java.sql.Connection;
 import java.util.HashMap;
 
 public abstract class Controller {
-    public final String loginScene = "/application/loginGUI.fxml";
-    public final String registrationScene = "/application/registerGUI.fxml";
-    public final String adminScene = "/application/adminGUI.fxml";
-    public final String clientScene = "/application/clientGUI.fxml";
+    public final String loginScene = "/application/FXML/loginGUI.fxml";
+    public final String registrationScene = "/application/FXML/registerGUI.fxml";
+    public final String adminScene = "/application/FXML/adminGUI.fxml";
+    public final String clientScene = "/application/FXML/clientGUI.fxml";
     private MySqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
@@ -109,12 +109,19 @@ public abstract class Controller {
     }
 
     protected void basicTheme(TextField field, Label label) {
-
-        //TODO some nice theme to input fields
+        //resetting theme, used to undo red border on registration and login
         Glow glow = new Glow();
         field.setEffect(glow);
         label.setVisible(false);
+    }
+
+    protected void setImageToButtonAndPlaceItOnX(Button buttonName, String imageName, double x) {
+        buttonName.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\" + imageName));
+        buttonName.setBackground(Background.EMPTY);
+        buttonName.setLayoutY(10);
+        buttonName.setLayoutX(x);
 
     }
+
 
 }

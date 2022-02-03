@@ -48,7 +48,7 @@
                <children>
                   <ImageView fx:id="logo" fitHeight="210.0" fitWidth="216.0" layoutX="179.0" layoutY="187.0">
                      <image>
-                        <Image url="@Icons/shopping-bag.png"/>
+                        <Image url="@../Icons/shopping-bag.png"/>
                      </image>
                   </ImageView>
                   <Label layoutX="212.0" layoutY="397.0" prefHeight="76.0" prefWidth="216.0"

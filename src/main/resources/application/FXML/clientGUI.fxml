@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="694.0"
+            prefWidth="1050.0" style="-fx-background-color: gray;" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.ClientController">
+   <Button fx:id="logoutButton" layoutX="899.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutButtonClicked"
+           prefHeight="27.0" prefWidth="64.0"/>
+   <AnchorPane fx:id="ebooksAnchorPane" layoutX="71.0" layoutY="41.0" prefHeight="694.0" prefWidth="1050.0"
+               visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0">
+      <children>
+         <Label layoutX="280.0" layoutY="316.0" prefHeight="17.0" prefWidth="404.0" text="EBOKS"/>
+      </children>
+   </AnchorPane>
+   <AnchorPane fx:id="gamesAnchorPane" prefHeight="694.0" prefWidth="1050.0" visible="false"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0">
+      <children>
+         <Label layoutX="490.0" layoutY="289.0" prefHeight="17.0" prefWidth="404.0" text="GAMES"/>
+      </children>
+   </AnchorPane>
+   <Pane fx:id="categoryPickingPane" layoutX="-5.0" layoutY="64.0" prefHeight="630.0" prefWidth="1045.0"
+         style="-fx-border-color: #fc766a; -fx-border-width: 0px;" AnchorPane.bottomAnchor="0.0"
+         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0">
+      <children>
+         <Button id="button" fx:id="gamesButton" layoutX="124.0" layoutY="380.0" mnemonicParsing="false"
+                 onAction="#gamesButtonClicked" onMouseEntered="#gamesButtonOnMouseEntered"
+                 onMouseExited="#gamesButtonOnMouseExited" prefHeight="165.0" prefWidth="781.0"
+                 style="-fx-background-color: #5b84b1; -fx-border-color: #fc766a;" text="Games" textFill="#fc766a">
+            <font>
+               <Font name="System Bold Italic" size="75.0"/>
+            </font>
+            <effect>
+               <Blend mode="SRC_ATOP"/>
+            </effect>
+         </Button>
+         <Button fx:id="ebooksButton" graphicTextGap="10.0" layoutX="130.0" layoutY="128.0" mnemonicParsing="false"
+                 onAction="#ebooksButtonClicked" onMouseEntered="#ebookOnMouseEntered"
+                 onMouseExited="#ebookOnMouseExited" prefHeight="125.0" prefWidth="769.0"
+                 style="-fx-background-color: #5b84b1; -fx-border-color: #fc766a;" text="E-Books" textFill="#fc766a">
+            <font>
+               <Font name="System Bold Italic" size="75.0"/>
+            </font>
+         </Button>
+      </children>
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+   </Pane>
+   <Button fx:id="goBackButton" layoutX="43.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonClicked"
+           prefHeight="27.0" prefWidth="64.0"/>
+   <AnchorPane layoutY="52.0" prefHeight="3.0" prefWidth="1050.0" style="-fx-background-color: #fc766a;"
+               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+</AnchorPane>

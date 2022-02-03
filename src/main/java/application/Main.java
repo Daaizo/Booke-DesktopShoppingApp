@@ -41,7 +41,7 @@ public class Main extends Application {
 
     private void createWindow(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/application/loginGUI.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/application/FXML/loginGUI.fxml"));
             Scene newScene = new Scene(root);
             primaryStage.setScene(newScene);
             // primaryStage.setResizable(false);
