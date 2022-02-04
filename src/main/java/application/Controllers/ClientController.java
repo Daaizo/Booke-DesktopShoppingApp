@@ -20,6 +20,8 @@ public class ClientController extends Controller {
     @FXML
     public void initialize() {
         categoryPickingPane.setVisible(true);
+        ebooksAnchorPane.setVisible(false);
+        gamesAnchorPane.setVisible(false);
         createAnchorAndExitButton();
         setImageToButtonAndPlaceItOnX(logoutButton, "logout.png", 950);
         setImageToButtonAndPlaceItOnX(goBackButton, "back-button.png", 910);
@@ -48,7 +50,6 @@ public class ClientController extends Controller {
 
     @FXML
     void goBackButtonClicked(ActionEvent event) {
-        System.out.println("back button clicekd");
         categoryPickingPane.setVisible(true);
         ebooksAnchorPane.setVisible(false);
         gamesAnchorPane.setVisible(false);

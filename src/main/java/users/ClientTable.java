@@ -9,10 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClientTable {
-    private SimpleIntegerProperty id;
-    private SimpleStringProperty login;
-    private SimpleStringProperty lastName;
-    private SimpleStringProperty name;
+    private final SimpleIntegerProperty id;
+    private final SimpleStringProperty login;
+    private final SimpleStringProperty lastName;
+    private final SimpleStringProperty name;
 
     public ClientTable(Client c) {
         this.id = new SimpleIntegerProperty(c.getId());
@@ -32,7 +32,6 @@ public class ClientTable {
                 String name = users.getString(3);
                 String lastName = users.getString(4);
                 String password = users.getString(5);
-                String idButInString = id + "";
                 listOfUsers.add(new ClientTable(new Client(id, login, name, lastName)));
             }
         } catch (SQLException exception) {

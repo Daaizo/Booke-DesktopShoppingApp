@@ -1,7 +1,7 @@
 package application.Controllers;
 
 import application.Main;
-import dataBase.MySqlConnection;
+import dataBase.SqlConnection;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,13 +26,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Objects;
 
 public abstract class Controller {
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
     public final String clientScene = "/application/FXML/clientGUI.fxml";
-    private MySqlConnection instance;
+    private SqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
     private AnchorPane anchor;
@@ -52,17 +53,15 @@ public abstract class Controller {
     @FXML
     void Dragging(MouseEvent event) {
         Stage stage = (Stage) anchor.getScene().getWindow();
-        anchor.setOnMousePressed(pressEvent -> {
-            anchor.setOnMouseDragged(dragEvent -> {
-                stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
-                stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
-            });
-        });
+        anchor.setOnMousePressed(pressEvent -> anchor.setOnMouseDragged(dragEvent -> {
+            stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+            stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+        }));
     }
 
     public void switchScene(ActionEvent event, String url) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource(url));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(url)));
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene newScene = new Scene(root);
             window.setScene(newScene);
@@ -75,11 +74,11 @@ public abstract class Controller {
 
 
     public void checkConnectionWithDataBaseAndDisplayError() {
-        instance = MySqlConnection.createInstance();
+        instance = SqlConnection.createInstance();
         while (instance.getConnection() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
             alert.showAndWait();
-            instance = MySqlConnection.createInstance();
+            instance = SqlConnection.createInstance();
         }
     }
 

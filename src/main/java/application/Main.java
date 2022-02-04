@@ -1,7 +1,7 @@
 package application;
 
 
-import dataBase.MySqlConnection;
+import dataBase.SqlConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class Main extends Application {
@@ -39,19 +40,17 @@ public class Main extends Application {
         createHashMapWithLoginValues();
     }
 
-    private void createWindow(Stage primaryStage) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/application/FXML/loginGUI.fxml"));
-            Scene newScene = new Scene(root);
-            primaryStage.setScene(newScene);
-            // primaryStage.setResizable(false);
-            primaryStage.initStyle(StageStyle.TRANSPARENT);
+    public static Connection connectToDatabase() {
+        SqlConnection sqlConnection = SqlConnection.createInstance();
+        Connection sqlQueryConnection = sqlConnection.getConnection();
+        while (sqlQueryConnection == null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Connection to data base failed. Reconnect and try again.");
+            alert.showAndWait();
 
-            primaryStage.show();
-        } catch (IOException e) {
-            System.out.println("creating first window failed");
-            e.printStackTrace();
+            SqlConnection.createInstance();
+            sqlQueryConnection = sqlConnection.getConnection();
         }
+        return sqlQueryConnection;
     }
 
     @Override // MAIN METHOD that start with the app
@@ -66,16 +65,18 @@ public class Main extends Application {
         }
     }
 
-    public static Connection connectToDatabase() {
-        MySqlConnection sqlConnection = MySqlConnection.createInstance();
-        Connection sqlQueryConnection = sqlConnection.getConnection();
-        while (sqlQueryConnection == null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Connection to data base failed. Reconnect and try again.");
-            alert.showAndWait();
+    private void createWindow(Stage primaryStage) {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/application/FXML/loginGUI.fxml")));
+            Scene newScene = new Scene(root);
+            primaryStage.setScene(newScene);
+            // primaryStage.setResizable(false);
+            primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-            MySqlConnection.createInstance();
-            sqlQueryConnection = sqlConnection.getConnection();
+            primaryStage.show();
+        } catch (IOException e) {
+            System.out.println("creating first window failed");
+            e.printStackTrace();
         }
-        return sqlQueryConnection;
     }
 }
