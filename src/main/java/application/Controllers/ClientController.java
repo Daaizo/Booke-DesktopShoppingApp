@@ -5,11 +5,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.util.Callback;
 import users.Product;
 import users.ProductTable;
 
@@ -31,6 +35,8 @@ public class ClientController extends Controller {
     private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, ebooksNameColumn, ebooksSubcategoryColumn;
     @FXML
     private TableColumn<ProductTable, Double> gamesPriceColumn, ebooksPriceColumn;
+    @FXML
+    private TableColumn<ProductTable, String> ebooksButtonColumn;
     @FXML
     private TableView<ProductTable> gamesTableView, ebooksTableView;
 
@@ -56,6 +62,34 @@ public class ClientController extends Controller {
         ebooksNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         ebooksPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+        Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>> cellFactory
+                = //
+                new Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>>() {
+                    @Override
+                    public TableCell call(final TableColumn<ProductTable, String> param) {
+                        final TableCell<ProductTable, String> cell = new TableCell<ProductTable, String>() {
+
+                            final Button btn = new Button();
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+
+                                btn.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
+                                btn.setBackground(Background.EMPTY);
+                                btn.setOnAction(event -> {
+                                    System.out.println("kliknietey przycisk");
+                                    System.out.println("row " + getTableRow());
+                                });
+                                setGraphic(btn);
+
+                                setText(null);
+                            }
+                        };
+                        return cell;
+                    }
+                };
+        ebooksButtonColumn.setCellFactory(cellFactory);
         ebooksTableView.setItems(list);
     }
 
@@ -64,6 +98,7 @@ public class ClientController extends Controller {
         ResultSet products = Product.getProductsFromDatabase(con);
         assert products != null;
         ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategory(products, "ebooks");
+
         fillEbooksColumnsWithData(listOfEbooks);
     }
 
