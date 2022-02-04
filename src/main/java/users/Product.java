@@ -20,20 +20,29 @@ public class Product {
         this.productSubcategory = subcategory;
     }
 
+    public Product(String name, String price, String subcategory) {
+        this.productName = name;
+        this.productPrice = price;
+        this.productSubcategory = subcategory;
+    }
+
+
     public static ResultSet getProductsFromDatabase(Connection connection) {
         try {
-            String query = "select p.productkey \"Id\", p.productname \"Name\", p.catalogprice || ' $' \"Price\", sc.subcategoryname \"Subcategory\", c.categoryname \"Category\" from product p \n" +
-                    "inner join subcategory sc on sc.subcategorykey = p.subcategorykey\n" +
-                    "inner join category c on c.categorykey = sc.categorykey\n";
+            String query = """
+                    select p.productkey "Id", p.productname "Name", p.catalogprice || ' $' "Price", sc.subcategoryname "Subcategory", c.categoryname "Category" from product p\s
+                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                    inner join category c on c.categorykey = sc.categorykey
+                    """;
             Statement stm = connection.createStatement();
-            ResultSet allProducts = stm.executeQuery(query);
-            return allProducts;
+            return stm.executeQuery(query);
         } catch (SQLException e) {
             System.out.println("error with executing SQL query");
             e.printStackTrace();
         }
         return null;
     }
+
 
     public String getProductSubcategory() {
         return productSubcategory;

@@ -18,31 +18,16 @@ import java.sql.SQLException;
 
 public class AdminController extends Controller {
     @FXML
-    private TableColumn<ClientTable, String> userFirstNameColumn;
-    @FXML
-    private TableColumn<ClientTable, String> userIDColumn;
-    @FXML
-    private TableColumn<ClientTable, String> userLoginColumn;
-
-    @FXML
-    private TableColumn<ClientTable, String> userLastNameColumn;
-
+    private TableColumn<ClientTable, String> userFirstNameColumn, userIDColumn, userLoginColumn, userLastNameColumn;
     @FXML
     private TableView<ClientTable> userTableView;
-    @FXML
-    private TableColumn<ProductTable, String> productCategoryColumn;
 
+    @FXML
+    private TableColumn<ProductTable, String> productCategoryColumn, productNameColumn, productSubcategoryColumn;
     @FXML
     private TableColumn<ProductTable, Integer> productIdColumn;
-
-    @FXML
-    private TableColumn<ProductTable, String> productNameColumn;
-
     @FXML
     private TableColumn<ProductTable, Double> productPriceColumn;
-
-    @FXML
-    private TableColumn<ProductTable, String> productSubcategoryColumn;
 
     @FXML
     private TableView<ProductTable> productTableView;
@@ -51,6 +36,17 @@ public class AdminController extends Controller {
     @FXML
     void logoutButtonClicked(ActionEvent clicked) {
         switchScene(clicked, loginScene);
+    }
+
+    @FXML
+    public void initialize() {
+        createAnchorAndExitButton();
+        try {
+            displayUsers();
+            displayProducts();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void fillUserColumnsWithData(ObservableList<ClientTable> list) {
@@ -64,6 +60,7 @@ public class AdminController extends Controller {
     void displayUsers() throws SQLException {
         Connection con = Main.connectToDatabase();
         ResultSet users = Client.getUsersFromDataBase(con);
+        assert users != null;
         ObservableList<ClientTable> listOfUsers = ClientTable.getUsers(users);
         fillUserColumnsWithData(listOfUsers);
     }
@@ -80,21 +77,10 @@ public class AdminController extends Controller {
     void displayProducts() throws SQLException {
         Connection con = Main.connectToDatabase();
         ResultSet products = Product.getProductsFromDatabase(con);
+        assert products != null;
         ObservableList<ProductTable> listOfProducts = ProductTable.getProducts(products);
         fillProductColumnsWithData(listOfProducts);
     }
 
-    @FXML
-    public void initialize() {
-        try {
-            displayUsers();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            displayProducts();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
 }

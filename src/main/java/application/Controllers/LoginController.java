@@ -4,18 +4,30 @@ package application.Controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 
 public class LoginController extends Controller {
 
     @FXML
+    private Button closeButton;
+    @FXML
+    private ImageView logo;
+    @FXML
     private TextField tfLogin, tfPassword;
 
     @FXML
     private Label passwordLabel, loginLabel;
+
+    @FXML
+    public void initialize() {
+        createAnchorAndExitButton();
+    }
+
 
     private void loginError() {
         Alert unsuccessfulLogin = new Alert(Alert.AlertType.INFORMATION, "login or password is incorrect");
@@ -38,6 +50,7 @@ public class LoginController extends Controller {
         return tfPassword.getText().isEmpty();
     }
 
+
     private boolean isAdmin(String username) {
         return username.compareTo("admin") == 0;
     }
@@ -45,6 +58,7 @@ public class LoginController extends Controller {
     private boolean isLoginInDatabase(String login) {
         return loginValues.get(login) != null;
     }
+
 
     private void checkPassword(String username, String password, ActionEvent event) {
 

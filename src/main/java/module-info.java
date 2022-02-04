@@ -2,6 +2,7 @@ module simpleApp.source {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires mysql.connector;
 
 
     opens application to javafx.fxml;

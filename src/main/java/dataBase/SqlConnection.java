@@ -6,28 +6,27 @@ import java.sql.SQLException;
 
 //TODO button that closes app when connection to db fails
 
-public class MySqlConnection {
+public class SqlConnection {
     private static final String url = "jdbc:oracle:thin:@localhost:1521:xe";
     private static final String user = "daaizo";
     private static final String password = "admin";
-    private static MySqlConnection instance = null;
+    private static SqlConnection instance = null;
     private Connection connection = null;
 
-    private MySqlConnection() {
+    private SqlConnection() {
         loadJdbcDriver();
         connectToDatabase();
     }
 
-    public static MySqlConnection createInstance() {
+    public static SqlConnection createInstance() {
         if (instance == null) {
             try {
-                instance = new MySqlConnection();
+                instance = new SqlConnection();
                 return instance;
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "problem with creating instance of connection");
             }
-        }
-        else {
+        } else {
             System.out.println("data base connection already exists //trying to reconnect ");
             instance.connectToDatabase();
         }

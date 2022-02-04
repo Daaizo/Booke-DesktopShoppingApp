@@ -42,6 +42,25 @@ public class ProductTable {
         return listOfProducts;
     }
 
+    public static ObservableList<ProductTable> getProductsFromCategory(ResultSet products, String categoryName) {
+        ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (products.next()) {
+                if (products.getString(5).compareTo(categoryName) == 0) {
+                    String name = products.getString(2);
+                    String price = products.getString(3);
+                    String subcategory = products.getString(4);
+                    listOfProducts.add(new ProductTable(new Product(name, price, subcategory)));
+                }
+
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
+    }
+
 
     public String getProductSubcategory() {
         return productSubcategory.get();
