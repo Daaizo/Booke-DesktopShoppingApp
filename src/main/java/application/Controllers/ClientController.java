@@ -1,15 +1,17 @@
 package application.Controllers;
 
 import application.Main;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
@@ -36,7 +38,7 @@ public class ClientController extends Controller {
     @FXML
     private TableColumn<ProductTable, Double> gamesPriceColumn, ebooksPriceColumn;
     @FXML
-    private TableColumn<ProductTable, String> ebooksButtonColumn;
+    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn;
     @FXML
     private TableView<ProductTable> gamesTableView, ebooksTableView;
 
@@ -58,10 +60,7 @@ public class ClientController extends Controller {
         setImageToButtonAndPlaceItOnX(goBackButton, "back-button.png", 910);
     }
 
-    private void fillEbooksColumnsWithData(ObservableList<ProductTable> list) {
-        ebooksNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        ebooksPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
-        ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+    private Callback createStartButtonInTableView() {
         Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>> cellFactory
                 = //
                 new Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>>() {
@@ -69,28 +68,90 @@ public class ClientController extends Controller {
                     public TableCell call(final TableColumn<ProductTable, String> param) {
                         final TableCell<ProductTable, String> cell = new TableCell<ProductTable, String>() {
 
-                            final Button btn = new Button();
+                            final Button cartBtn = new Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
                                 super.updateItem(item, empty);
 
-                                btn.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
-                                btn.setBackground(Background.EMPTY);
-                                btn.setOnAction(event -> {
+                                cartBtn.setGraphic(iconPath("add_cart.png"));
+                                cartBtn.setBackground(Background.EMPTY);
+                                cartBtn.setOnAction(event -> {
                                     System.out.println("kliknietey przycisk");
                                     System.out.println("row " + getTableRow());
                                 });
-                                setGraphic(btn);
-
-                                setText(null);
+                                setGraphic(cartBtn);
+                                setText("Add to cart");
                             }
                         };
                         return cell;
                     }
                 };
-        ebooksButtonColumn.setCellFactory(cellFactory);
+        return cellFactory;
+    }
+
+    private Callback createButtonInTableView(EventHandler eventHandler, String buttonIconName, String buttonText) {
+        Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>> cellFactory
+                = //
+                new Callback<>() {
+                    @Override
+                    public TableCell call(final TableColumn<ProductTable, String> param) {
+                        final TableCell<ProductTable, String> cell = new TableCell<>() {
+
+                            final Button button = new Button(buttonText);
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+
+                                button.setGraphic(iconPath(buttonIconName));
+                                button.setBackground(Background.EMPTY);
+                                button.setOnAction(eventHandler);
+                                setGraphic(button);
+                            }
+                        };
+                        return cell;
+                    }
+                };
+        return cellFactory;
+    }
+
+    private void fillEbooksColumnsWithData(ObservableList<ProductTable> list) {
+        ebooksNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        ebooksPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
+        ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+
+        ebooksStarButtonColumn.setCellFactory(createButtonInTableView(starOnAction(), "star.png", "add to favourite"));
+
+        ebooksCartButtonColumn.setCellFactory(createButtonInTableView(cartOnAction(), "add_cart.png", "add to cart"));
+        ebooksCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
+        ebooksStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
+
+
         ebooksTableView.setItems(list);
+        ebooksTableView.setFixedCellSize(100);
+        ebooksTableView.prefHeightProperty().bind(Bindings.size(ebooksTableView.getItems()).multiply(ebooksTableView.getFixedCellSize()).add(30));
+
+    }
+
+    private EventHandler starOnAction() {
+        EventHandler eventHandler = new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                System.out.println("kliknieto gwiazdke");
+            }
+        };
+        return eventHandler;
+    }
+
+    private EventHandler cartOnAction() {
+        EventHandler eventHandler = new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                System.out.println("kliknieto cart");
+            }
+        };
+        return eventHandler;
     }
 
     void displayEbooks() throws SQLException {
@@ -106,6 +167,8 @@ public class ClientController extends Controller {
         gamesNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         gamesPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         gamesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+
+
         gamesTableView.setItems(list);
     }
 
