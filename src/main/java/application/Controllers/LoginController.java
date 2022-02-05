@@ -7,21 +7,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 
 public class LoginController extends Controller {
 
+
     @FXML
-    private Button closeButton;
-    @FXML
-    private ImageView logo;
+    public Button registerButton;
+
     @FXML
     private TextField tfLogin, tfPassword;
 
     @FXML
     private Label passwordLabel, loginLabel;
+
 
     @FXML
     public void initialize() {
@@ -64,6 +64,8 @@ public class LoginController extends Controller {
 
         String pass = loginValues.get(username);
         if (passwordMatches(pass, password)) {
+            currentUserName = username;
+            System.out.println("username z logowania " + username);
             if (isAdmin(username)) {
                 switchScene(event, adminScene);
             } else {
@@ -99,11 +101,9 @@ public class LoginController extends Controller {
 
     }
 
-
-
     @FXML
     void registerButtonClicked(ActionEvent event) {
-            switchScene(event, registrationScene);
+        switchScene(event, registrationScene);
     }
 
 }
