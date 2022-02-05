@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public abstract class Controller {
+    public static String currentUserName;
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
@@ -38,6 +39,7 @@ public abstract class Controller {
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
     private AnchorPane anchor;
+
 
     public void createAnchorAndExitButton() {
         Button closeButton = new Button();
