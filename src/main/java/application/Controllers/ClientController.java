@@ -38,7 +38,7 @@ public class ClientController extends Controller {
     @FXML
     private TableColumn<ProductTable, Double> gamesPriceColumn, ebooksPriceColumn;
     @FXML
-    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn;
+    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn, gamesCartButtonColumn, gamesStarButtonColumn;
     @FXML
     private TableView<ProductTable> gamesTableView, ebooksTableView;
 
@@ -60,77 +60,40 @@ public class ClientController extends Controller {
         setImageToButtonAndPlaceItOnX(goBackButton, "back-button.png", 910);
     }
 
-    private Callback createStartButtonInTableView() {
-        Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>> cellFactory
-                = //
-                new Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>>() {
-                    @Override
-                    public TableCell call(final TableColumn<ProductTable, String> param) {
-                        final TableCell<ProductTable, String> cell = new TableCell<ProductTable, String>() {
-
-                            final Button cartBtn = new Button();
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                cartBtn.setGraphic(iconPath("add_cart.png"));
-                                cartBtn.setBackground(Background.EMPTY);
-                                cartBtn.setOnAction(event -> {
-                                    System.out.println("kliknietey przycisk");
-                                    System.out.println("row " + getTableRow());
-                                });
-                                setGraphic(cartBtn);
-                                setText("Add to cart");
-                            }
-                        };
-                        return cell;
-                    }
-                };
-        return cellFactory;
-    }
 
     private Callback createButtonInTableView(EventHandler eventHandler, String buttonIconName, String buttonText) {
-        Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>> cellFactory
-                = //
-                new Callback<>() {
+        return new Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>>() {
+            @Override
+            public TableCell call(final TableColumn<ProductTable, String> param) {
+                return new TableCell<ProductTable, String>() {
+
+                    final Button button = new Button(buttonText);
+
                     @Override
-                    public TableCell call(final TableColumn<ProductTable, String> param) {
-                        final TableCell<ProductTable, String> cell = new TableCell<>() {
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
 
-                            final Button button = new Button(buttonText);
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                button.setGraphic(iconPath(buttonIconName));
-                                button.setBackground(Background.EMPTY);
-                                button.setOnAction(eventHandler);
-                                setGraphic(button);
-                            }
-                        };
-                        return cell;
+                        button.setGraphic(iconPath(buttonIconName));
+                        button.setBackground(Background.EMPTY);
+                        button.setOnAction(eventHandler);
+                        setGraphic(button);
                     }
                 };
-        return cellFactory;
+            }
+        };
     }
 
     private void fillEbooksColumnsWithData(ObservableList<ProductTable> list) {
         ebooksNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         ebooksPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-
         ebooksStarButtonColumn.setCellFactory(createButtonInTableView(starOnAction(), "star.png", "add to favourite"));
-
         ebooksCartButtonColumn.setCellFactory(createButtonInTableView(cartOnAction(), "add_cart.png", "add to cart"));
         ebooksCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
         ebooksStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
-
-
         ebooksTableView.setItems(list);
-        ebooksTableView.setFixedCellSize(100);
-        ebooksTableView.prefHeightProperty().bind(Bindings.size(ebooksTableView.getItems()).multiply(ebooksTableView.getFixedCellSize()).add(30));
+        ebooksTableView.setFixedCellSize(70);
+        ebooksTableView.prefHeightProperty().bind(Bindings.size(ebooksTableView.getItems()).multiply(ebooksTableView.getFixedCellSize()).add(50));
 
     }
 
@@ -167,9 +130,14 @@ public class ClientController extends Controller {
         gamesNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         gamesPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         gamesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-
-
+        gamesStarButtonColumn.setCellFactory(createButtonInTableView(starOnAction(), "star.png", "add to favourite"));
+        gamesCartButtonColumn.setCellFactory(createButtonInTableView(cartOnAction(), "add_cart.png", "add to cart"));
+        gamesCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
+        gamesStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
         gamesTableView.setItems(list);
+        gamesTableView.setFixedCellSize(70);
+        gamesTableView.prefHeightProperty().bind(Bindings.size(gamesTableView.getItems()).multiply(gamesTableView.getFixedCellSize()).add(50));
+
     }
 
     void displayGames() throws SQLException {

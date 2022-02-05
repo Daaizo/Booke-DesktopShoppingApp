@@ -14,12 +14,15 @@ public class ClientTable {
     private final SimpleStringProperty lastName;
     private final SimpleStringProperty name;
 
+
+    private final SimpleStringProperty password;
+
     public ClientTable(Client c) {
         this.id = new SimpleIntegerProperty(c.getId());
         this.login = new SimpleStringProperty(c.getLogin());
         this.name = new SimpleStringProperty(c.getName());
         this.lastName = new SimpleStringProperty(c.getLastName());
-
+        this.password = new SimpleStringProperty(c.getPassword());
     }
 
     public static ObservableList<ClientTable> getUsers(ResultSet users) {
@@ -32,7 +35,7 @@ public class ClientTable {
                 String name = users.getString(3);
                 String lastName = users.getString(4);
                 String password = users.getString(5);
-                listOfUsers.add(new ClientTable(new Client(id, login, name, lastName)));
+                listOfUsers.add(new ClientTable(new Client(id, login, name, lastName, password)));
             }
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());
@@ -70,6 +73,15 @@ public class ClientTable {
 
     public void setName(String name) {
         this.name.set(name);
+    }
+
+    public String getPassword() {
+        return password.get();
+    }
+
+
+    public void setPassword(String password) {
+        this.password.set(password);
     }
 }
 

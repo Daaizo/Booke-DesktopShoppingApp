@@ -14,12 +14,12 @@ public class Client extends User {
 
     }
 
-    public Client(Integer d, String un, String ln, String n) {
+    public Client(Integer d, String un, String ln, String n, String p) {
         this.id = d;
         this.login = un;
         this.name = n;
         this.lastName = ln;
-
+        this.password = p;
     }
 
 
