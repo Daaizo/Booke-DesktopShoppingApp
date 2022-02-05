@@ -33,6 +33,7 @@ public abstract class Controller {
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
     public final String clientScene = "/application/FXML/clientGUI.fxml";
+    public final String absolutePathToIcons = "C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\";
     private SqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
@@ -41,13 +42,17 @@ public abstract class Controller {
     public void createAnchorAndExitButton() {
         Button closeButton = new Button();
         closeButton.setBackground(Background.EMPTY);
-        closeButton.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\close.png"));
+        closeButton.setGraphic(iconPath("close.png"));
         closeButton.setOnAction(actionEvent -> Platform.exit());
         closeButton.setLayoutX(1000);
         closeButton.setLayoutY(10);
         anchor.getChildren().add(closeButton);
         anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px;-fx-background-color : #5B84B1FF ");
         anchor.setMinSize(1050, 694);
+    }
+
+    public ImageView iconPath(String iconName) {
+        return new ImageView(absolutePathToIcons + iconName);
     }
 
     @FXML
@@ -104,7 +109,6 @@ public abstract class Controller {
         label.setText(text);
         label.setVisible(true);
 
-
     }
 
     protected void basicTheme(TextField field, Label label) {
@@ -115,7 +119,7 @@ public abstract class Controller {
     }
 
     protected void setImageToButtonAndPlaceItOnX(Button buttonName, String imageName, double x) {
-        buttonName.setGraphic(new ImageView("C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\" + imageName));
+        buttonName.setGraphic(iconPath(imageName));
         buttonName.setBackground(Background.EMPTY);
         buttonName.setLayoutY(10);
         buttonName.setLayoutX(x);
