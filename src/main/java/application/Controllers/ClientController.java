@@ -20,6 +20,7 @@ import users.ProductTable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ClientController extends Controller {
     @FXML
@@ -78,9 +79,13 @@ public class ClientController extends Controller {
                             ProductTable product = getTableView().getItems().get(getIndex());
                             if (buttonIconName.compareTo("star.png") == 0) {
                                 System.out.print(" gwiazdka ");
-                            } else
+
+                            } else {
                                 System.out.print(" koszyk ");
-                            System.out.println(product.getProductName() + product.getProductPrice() + currentUserName);
+                                addItemToUsersCart(product.getProductName());
+                                System.out.println(product.getProductName() + product.getProductPrice() + CURRENT_USERNAME);
+                            }
+
                         });
                         button.setOnMouseEntered(mouseEvent -> {
                                     button.setStyle("-fx-background-color : red");
@@ -107,12 +112,16 @@ public class ClientController extends Controller {
         ebooksCartButtonColumn.setCellFactory(createButtonInTableView("add_cart.png", "add to cart"));
         ebooksCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
         ebooksStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
-        ebooksTableView.setItems(list);
-        ebooksTableView.setFixedCellSize(70);
-        ebooksTableView.prefHeightProperty().bind(Bindings.size(ebooksTableView.getItems()).multiply(ebooksTableView.getFixedCellSize()).add(50));
+
+        showOnlyRowsWithData(ebooksTableView, list);
 
     }
 
+    private void showOnlyRowsWithData(TableView tableView, ObservableList list) {
+        tableView.setItems(list);
+        tableView.setFixedCellSize(70);
+        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
+    }
 
 
     void displayEbooks() throws SQLException {
@@ -132,9 +141,7 @@ public class ClientController extends Controller {
         gamesCartButtonColumn.setCellFactory(createButtonInTableView("add_cart.png", "add to cart"));
         gamesCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
         gamesStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
-        gamesTableView.setItems(list);
-        gamesTableView.setFixedCellSize(70);
-        gamesTableView.prefHeightProperty().bind(Bindings.size(gamesTableView.getItems()).multiply(gamesTableView.getFixedCellSize()).add(50));
+        showOnlyRowsWithData(gamesTableView, list);
 
     }
 
@@ -146,6 +153,22 @@ public class ClientController extends Controller {
         fillGamesColumnsWithData(listOfGames);
     }
 
+
+    private void addItemToUsersCart(String productName) { // since product name is always unique this is fine
+        checkConnectionWithDataBaseAndDisplayError();
+        Connection connection = getConnection();
+        try {
+            String addItemToCart = "insert into shoppingcartdetail (\n" +
+                    "    select customerkey, (select productkey from product where productname = '" + productName + "')  from customer where customername = '" + CURRENT_USERNAME + "' )";
+            Statement stm = connection.createStatement();
+            stm.execute(addItemToCart);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+    }
 
     @FXML
     void logoutButtonClicked(ActionEvent clicked) {
