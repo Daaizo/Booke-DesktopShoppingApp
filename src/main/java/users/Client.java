@@ -23,13 +23,14 @@ public class Client extends User {
     }
 
 
-
     public void addUserToDatabase(Connection connection) {
         try {
-            String query = "insert into DAAIZO.CUSTOMER (customerlogin,customername,customerlastname,customerpassword) values ('"
+            String userToDb = "insert into CUSTOMER (customerlogin,customername,customerlastname,customerpassword) values ('"
                     + this.login + "','" + this.name + "', '" + this.lastName + "','" + this.password + "')";
+            String cartAssignedToUser = "insert into SHOPPINGCART   ( select customerkey from customer where customerlogin = '" + this.login + "')";
             Statement stm = connection.createStatement();
-            stm.execute(query);
+            stm.execute(userToDb);
+            stm.execute(cartAssignedToUser);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
