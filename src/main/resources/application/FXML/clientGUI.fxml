@@ -5,7 +5,7 @@
 <?import javafx.scene.effect.Blend?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="694.0"
             prefWidth="1050.0" style="-fx-background-color: gray;" stylesheets="@../style.css"
             xmlns="http://javafx.com/javafx/17" fx:controller="application.Controllers.ClientController">
@@ -17,8 +17,8 @@
          <columns>
             <TableColumn id="ebooksNameColumn" fx:id="ebooksNameColumn" editable="false" prefWidth="179.0"
                          resizable="false" sortable="false" text="Name"/>
-            <TableColumn fx:id="ebooksPriceColumn" editable="false" prefWidth="130.0" resizable="false"
-                         sortable="false" text="Price"/>
+            <TableColumn fx:id="ebooksPriceColumn" editable="false" prefWidth="130.0" resizable="false" sortable="false"
+                         text="Price"/>
             <TableColumn fx:id="ebooksSubcategoryColumn" editable="false" prefWidth="164.0" resizable="false"
                          sortable="false" text="Subcategory"/>
             <TableColumn fx:id="ebooksCartButtonColumn" editable="false" prefWidth="211.0" resizable="false"
@@ -52,7 +52,7 @@
          </textFill>
       </Label>
    </AnchorPane>
-   <AnchorPane fx:id="gamesAnchorPane" layoutY="46.0" prefHeight="648.0" prefWidth="1050.0"
+   <AnchorPane fx:id="gamesAnchorPane" layoutY="46.0" prefHeight="648.0" prefWidth="1050.0" visible="false"
                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                AnchorPane.topAnchor="0.0">
       <TableView id="ebooksTableView" fx:id="gamesTableView" layoutX="68.0" layoutY="143.0" prefHeight="537.0"
@@ -60,8 +60,8 @@
          <columns>
             <TableColumn id="ebooksNameColumn" fx:id="gamesNameColumn" editable="false" prefWidth="172.0"
                          resizable="false" sortable="false" text="Name"/>
-            <TableColumn fx:id="gamesPriceColumn" editable="false" prefWidth="137.0" resizable="false"
-                         sortable="false" text="Price"/>
+            <TableColumn fx:id="gamesPriceColumn" editable="false" prefWidth="137.0" resizable="false" sortable="false"
+                         text="Price"/>
             <TableColumn fx:id="gamesSubcategoryColumn" editable="false" prefWidth="164.0" resizable="false"
                          sortable="false" text="Subcategory"/>
             <TableColumn fx:id="gamesCartButtonColumn" editable="false" prefWidth="211.0" resizable="false"
@@ -113,9 +113,9 @@
          </effect>
       </Button>
       <Button fx:id="ebooksButton" graphicTextGap="10.0" layoutX="130.0" layoutY="128.0" mnemonicParsing="false"
-              onAction="#ebooksButtonClicked" onMouseEntered="#ebookOnMouseEntered"
-              onMouseExited="#ebookOnMouseExited" prefHeight="125.0" prefWidth="769.0"
-              style="-fx-background-color: #5b84b1; -fx-border-color: #fc766a;" text="E-Books" textFill="#fc766a">
+              onAction="#ebooksButtonClicked" onMouseEntered="#ebookOnMouseEntered" onMouseExited="#ebookOnMouseExited"
+              prefHeight="125.0" prefWidth="769.0" style="-fx-background-color: #5b84b1; -fx-border-color: #fc766a;"
+              text="E-Books" textFill="#fc766a">
          <font>
             <Font name="System Bold Italic" size="75.0"/>
          </font>
@@ -125,6 +125,13 @@
                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
    <Button fx:id="logoutButton" layoutX="899.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutButtonClicked"
            prefHeight="27.0" prefWidth="64.0"/>
-   <Button fx:id="goBackButton" layoutX="43.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonClicked"
+   <Button fx:id="goBackButton" layoutX="818.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonClicked"
            prefHeight="27.0" prefWidth="64.0"/>
+   <Button fx:id="shoppingCartButton" mnemonicParsing="false" prefHeight="37.0" prefWidth="64.0"/>
+   <Label fx:id="cartQuantityLabel" layoutX="58.0" layoutY="11.0" prefHeight="27.0" prefWidth="33.0" text="0"
+          textFill="WHITE">
+      <font>
+         <Font size="15.0"/>
+      </font>
+   </Label>
 </AnchorPane>

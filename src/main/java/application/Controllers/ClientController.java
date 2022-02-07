@@ -1,34 +1,31 @@
 package application.Controllers;
 
-import application.Main;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import users.Client;
 import users.Product;
 import users.ProductTable;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ClientController extends Controller {
     @FXML
     private AnchorPane ebooksAnchorPane, gamesAnchorPane;
-
     @FXML
-    private Button ebooksButton, gamesButton, logoutButton, goBackButton;
-
+    private Button ebooksButton, gamesButton, logoutButton, goBackButton, shoppingCartButton;
+    @FXML
+    private Label cartQuantityLabel;
     @FXML
     private Pane categoryPickingPane;
-
     @FXML
     private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, ebooksNameColumn, ebooksSubcategoryColumn;
     @FXML
@@ -41,22 +38,32 @@ public class ClientController extends Controller {
 
     @FXML
     public void initialize() {
-        try {
-            displayEbooks();
-            displayGames();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
+        createAnchorAndExitButton();
         categoryPickingPane.setVisible(true);
         ebooksAnchorPane.setVisible(false);
         gamesAnchorPane.setVisible(false);
         goBackButton.setVisible(false);
-        createAnchorAndExitButton();
-        setImageToButtonAndPlaceItOnX(logoutButton, "logout.png", 950);
-        setImageToButtonAndPlaceItOnX(goBackButton, "back-button.png", 910);
+        setImageToButtonAndPlaceItOnXY(logoutButton, "logout.png", 950, 10);
+        setImageToButtonAndPlaceItOnXY(goBackButton, "back-button.png", -10, 10);
+        setImageToButtonAndPlaceItOnXY(shoppingCartButton, "cart.png", 30, 3);
+        try {
+            displayEbooks();
+            displayGames();
+            setQuantityLabel();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    private void setQuantityLabel() throws SQLException {
+        checkConnectionWithDb();
+        int quantity = Client.getQuantityOfProductsInCart(CURRENT_USER_LOGIN, getConnection());
+        if (quantity > 9)
+            displayLabelWithGivenText(cartQuantityLabel, "..");
+        else displayLabelWithGivenText(cartQuantityLabel, quantity + "");
+
+    }
 
     private Callback createButtonInTableView(String buttonIconName, String buttonText) {
         return new Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>>() {
@@ -80,11 +87,18 @@ public class ClientController extends Controller {
                             } else {
                                 System.out.print(" koszyk ");
                                 try {
-                                    addItemToUsersCart(product.getProductName());
+                                    checkConnectionWithDb();
+                                    Client.addItemToUsersCart(product.getProductName(), CURRENT_USER_LOGIN, getConnection());
                                 } catch (SQLException e) {
                                     System.out.println(e.getMessage());
+                                } finally {
+                                    try {
+                                        setQuantityLabel();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                                System.out.println(product.getProductName() + product.getProductPrice() + CURRENT_USERNAME);
+                                System.out.println(product.getProductName() + product.getProductPrice() + CURRENT_USER_LOGIN);
                             }
 
                         });
@@ -126,8 +140,8 @@ public class ClientController extends Controller {
 
 
     void displayEbooks() throws SQLException {
-        Connection con = Main.connectToDatabase();
-        ResultSet products = Product.getProductsFromDatabase(con);
+        checkConnectionWithDb();
+        ResultSet products = Product.getProductsFromDatabase(getConnection());
         assert products != null;
         ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategory(products, "ebooks");
 
@@ -147,39 +161,15 @@ public class ClientController extends Controller {
     }
 
     void displayGames() throws SQLException {
-        Connection con = Main.connectToDatabase();
-        ResultSet products = Product.getProductsFromDatabase(con);
+        checkConnectionWithDb();
+        ResultSet products = Product.getProductsFromDatabase(getConnection());
         assert products != null;
         ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategory(products, "games");
         fillGamesColumnsWithData(listOfGames);
     }
 
 
-    private void addItemToUsersCart(String productName) throws SQLException {
-        // since product name is always unique this is fine
-        checkConnectionWithDataBaseAndDisplayError();
-        Connection connection = getConnection();
-        try {
-            String addItemToCart = "insert into shoppingcart (customerkey,productkey)  (\n" +
-                    "    select customerkey, (select productkey from product where productname = '" + productName + "')  from customer where customerlogin = '" + CURRENT_USERNAME + "' )";
-            Statement stm = connection.createStatement();
-            stm.execute(addItemToCart);
-        } catch (SQLIntegrityConstraintViolationException exception) {
-            // only 1 way to do that - by adding product that is already in cart
-            String incrementQuantity = "update shoppingcart\n" +
-                    "Set quantity = quantity + 1\n" +
-                    "where customerkey = ( select customerkey from customer where customerlogin = '" + CURRENT_USERNAME + "' )\n" +
-                    "and productkey = (select productkey from product where productname = '" + productName + "')";
-            Statement stm = connection.createStatement();
-            stm.execute(incrementQuantity);
 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-
-    }
 
     @FXML
     void logoutButtonClicked(ActionEvent clicked) {
