@@ -1,6 +1,5 @@
 package application.Controllers;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,7 +20,7 @@ public class ClientController extends Controller {
     @FXML
     private AnchorPane ebooksAnchorPane, gamesAnchorPane;
     @FXML
-    private Button ebooksButton, gamesButton, logoutButton, goBackButton, shoppingCartButton;
+    private Button ebooksButton, gamesButton, shoppingCartButton;
     @FXML
     private Label cartQuantityLabel;
     @FXML
@@ -37,15 +36,28 @@ public class ClientController extends Controller {
 
 
     @FXML
+    void shoppingCartButtonClicked(ActionEvent event) {
+        switchScene(event, shoppingCartScene);
+    }
+
+
+    @FXML
     public void initialize() {
 
-        createAnchorAndExitButton();
+        prepareScene();
+        goBackButton.setOnAction(event -> {
+            categoryPickingPane.setVisible(true);
+            ebooksAnchorPane.setVisible(false);
+            gamesAnchorPane.setVisible(false);
+            goBackButton.setVisible(false);
+
+        });
         categoryPickingPane.setVisible(true);
         ebooksAnchorPane.setVisible(false);
         gamesAnchorPane.setVisible(false);
         goBackButton.setVisible(false);
-        setImageToButtonAndPlaceItOnXY(logoutButton, "logout.png", 950, 10);
-        setImageToButtonAndPlaceItOnXY(goBackButton, "back-button.png", -10, 10);
+
+        //  setImageToButtonAndPlaceItOnXY(goBackButton, "back-button.png", -10, 10);
         setImageToButtonAndPlaceItOnXY(shoppingCartButton, "cart.png", 30, 3);
         try {
             displayEbooks();
@@ -56,12 +68,28 @@ public class ClientController extends Controller {
         }
     }
 
+    @FXML
+    void gamesButtonClicked() {
+        gamesAnchorPane.setVisible(true);
+        categoryPickingPane.setVisible(false);
+        goBackButton.setVisible(true);
+
+    }
+
+    @FXML
+    void ebooksButtonClicked() {
+        ebooksAnchorPane.setVisible(true);
+        categoryPickingPane.setVisible(false);
+        goBackButton.setVisible(true);
+    }
+
+
     private void setQuantityLabel() throws SQLException {
         checkConnectionWithDb();
         int quantity = Client.getQuantityOfProductsInCart(CURRENT_USER_LOGIN, getConnection());
         if (quantity > 9)
-            displayLabelWithGivenText(cartQuantityLabel, "..");
-        else displayLabelWithGivenText(cartQuantityLabel, quantity + "");
+            displayLabelWithGivenText(cartQuantityLabel, "9+");
+        else displayLabelWithGivenText(cartQuantityLabel, " " + quantity);
 
     }
 
@@ -100,21 +128,13 @@ public class ClientController extends Controller {
                                 }
                                 System.out.println(product.getProductName() + product.getProductPrice() + CURRENT_USER_LOGIN);
                             }
-
                         });
-                        button.setOnMouseEntered(mouseEvent -> {
-                                    button.setStyle("-fx-background-color : red");
-
-                                }
-
+                        button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-border-color : #fc766a ;")
                         );
-                        button.setOnMouseExited(mouseEvent -> {
-                            button.setStyle("-fx-background-color : transparent");
-                        });
+                        button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: transparent"));
                         setGraphic(button);
                     }
                 };
-
             }
         };
     }
@@ -125,17 +145,11 @@ public class ClientController extends Controller {
         ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
         ebooksStarButtonColumn.setCellFactory(createButtonInTableView("star.png", "add to favourite"));
         ebooksCartButtonColumn.setCellFactory(createButtonInTableView("add_cart.png", "add to cart"));
-        ebooksCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
-        ebooksStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
+        ebooksCartButtonColumn.setStyle("  -fx-padding: 15 5 5 5px;");
+        ebooksStarButtonColumn.setStyle("  -fx-padding: 15 5 5 5px;");
 
         showOnlyRowsWithData(ebooksTableView, list);
 
-    }
-
-    private void showOnlyRowsWithData(TableView tableView, ObservableList list) {
-        tableView.setItems(list);
-        tableView.setFixedCellSize(70);
-        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
     }
 
 
@@ -171,37 +185,12 @@ public class ClientController extends Controller {
 
 
 
-    @FXML
-    void logoutButtonClicked(ActionEvent clicked) {
-        switchScene(clicked, loginScene);
-    }
 
-    @FXML
-    void gamesButtonClicked() {
-        gamesAnchorPane.setVisible(true);
-        categoryPickingPane.setVisible(false);
-        goBackButton.setVisible(true);
-
-    }
-
-    @FXML
-    void ebooksButtonClicked() {
-        ebooksAnchorPane.setVisible(true);
-        categoryPickingPane.setVisible(false);
-        goBackButton.setVisible(true);
-    }
-
-    @FXML
-    void goBackButtonClicked() {
-        categoryPickingPane.setVisible(true);
-        ebooksAnchorPane.setVisible(false);
-        gamesAnchorPane.setVisible(false);
-        goBackButton.setVisible(false);
-    }
 
     //simple hover effects
     @FXML
     void ebookOnMouseEntered() {
+
         ebooksButton.setStyle("-fx-background-color: #fc766a; -fx-text-fill:  #5B84B1FF;");
     }
 

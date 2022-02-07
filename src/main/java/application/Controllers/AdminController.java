@@ -2,9 +2,7 @@ package application.Controllers;
 
 import application.Main;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -32,18 +30,11 @@ public class AdminController extends Controller {
 
     @FXML
     private TableView<ProductTable> productTableView;
-    @FXML
-    private Button logoutButton;
 
-    @FXML
-    void logoutButtonClicked(ActionEvent clicked) {
-        switchScene(clicked, loginScene);
-    }
 
     @FXML
     public void initialize() {
-        createAnchorAndExitButton();
-        setImageToButtonAndPlaceItOnXY(logoutButton, "logout.png", 950, 10);
+        prepareScene();
         try {
             displayUsers();
             displayProducts();
