@@ -60,31 +60,30 @@
             </Label>
         </Pane>
         <Pane prefHeight="690.0" prefWidth="515.0" style="-fx-background-color: #5b84b1;">
-            <TextField id="textInput" fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0"
-                       prefWidth="318.0" promptText="login"/>
-            <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="83.0" layoutY="286.0"
-                           prefHeight="45.0" prefWidth="318.0" promptText="password"/>
+            <TextField id="textInput" fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0" prefWidth="318.0"
+                       promptText="login"/>
+            <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"
+                           prefWidth="318.0" promptText="password"/>
             <Button id="loginButton" layoutX="114.0" layoutY="393.0" mnemonicParsing="false"
                     onAction="#loginButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx"
-                    text="Login" textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
+                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx" text="Login"
+                    textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
                 <font>
                     <Font name="System Bold" size="14.0"/>
                 </font>
             </Button>
-            <Button id="registerButton" fx:id="registerButton" layoutX="114.0" layoutY="476.0"
-                    mnemonicParsing="false" onAction="#registerButtonClicked"
-                    onMouseClicked="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx"
-                    text="Register" textFill="#5b84b1">
+            <Button id="registerButton" fx:id="registerButton" layoutX="114.0" layoutY="476.0" mnemonicParsing="false"
+                    onAction="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0"
+                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx" text="Register"
+                    textFill="#5b84b1">
                 <font>
                     <Font name="System Bold" size="14.0"/>
                 </font>
             </Button>
-            <Label fx:id="loginLabel" layoutX="89.0" layoutY="257.0" prefHeight="17.0" prefWidth="98.0"
-                   text="Label" visible="false"/>
-            <Label fx:id="passwordLabel" layoutX="89.0" layoutY="334.0" prefHeight="17.0" prefWidth="98.0"
-                   text="Label" visible="false"/>
+            <Label fx:id="loginLabel" layoutX="89.0" layoutY="257.0" prefHeight="17.0" prefWidth="98.0" text="Label"
+                   visible="false"/>
+            <Label fx:id="passwordLabel" layoutX="89.0" layoutY="334.0" prefHeight="17.0" prefWidth="98.0" text="Label"
+                   visible="false"/>
         </Pane>
     </HBox>
 </AnchorPane>

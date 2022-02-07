@@ -121,17 +121,12 @@
          </font>
       </Button>
    </Pane>
-   <AnchorPane layoutY="52.0" prefHeight="3.0" prefWidth="1050.0" style="-fx-background-color: #fc766a;"
-               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
-   <Button fx:id="logoutButton" layoutX="899.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutButtonClicked"
-           prefHeight="27.0" prefWidth="64.0"/>
-   <Button fx:id="goBackButton" layoutX="818.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackButtonClicked"
-           prefHeight="27.0" prefWidth="64.0"/>
-   <Button fx:id="shoppingCartButton" mnemonicParsing="false" prefHeight="37.0" prefWidth="64.0"/>
-   <Label fx:id="cartQuantityLabel" layoutX="58.0" layoutY="11.0" prefHeight="27.0" prefWidth="33.0" text="0"
+   <Label fx:id="cartQuantityLabel" layoutX="55.0" layoutY="11.0" prefHeight="27.0" prefWidth="33.0" text="0"
           textFill="WHITE">
       <font>
          <Font size="15.0"/>
       </font>
    </Label>
+   <Button fx:id="shoppingCartButton" mnemonicParsing="false" onAction="#shoppingCartButtonClicked" prefHeight="37.0"
+           prefWidth="64.0"/>
 </AnchorPane>
