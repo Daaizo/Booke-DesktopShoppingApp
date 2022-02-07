@@ -17,10 +17,7 @@ import javafx.util.Callback;
 import users.Product;
 import users.ProductTable;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class ClientController extends Controller {
     @FXML
@@ -82,7 +79,11 @@ public class ClientController extends Controller {
 
                             } else {
                                 System.out.print(" koszyk ");
-                                addItemToUsersCart(product.getProductName());
+                                try {
+                                    addItemToUsersCart(product.getProductName());
+                                } catch (SQLException e) {
+                                    System.out.println(e.getMessage());
+                                }
                                 System.out.println(product.getProductName() + product.getProductPrice() + CURRENT_USERNAME);
                             }
 
@@ -154,14 +155,24 @@ public class ClientController extends Controller {
     }
 
 
-    private void addItemToUsersCart(String productName) { // since product name is always unique this is fine
+    private void addItemToUsersCart(String productName) throws SQLException {
+        // since product name is always unique this is fine
         checkConnectionWithDataBaseAndDisplayError();
         Connection connection = getConnection();
         try {
-            String addItemToCart = "insert into shoppingcartdetail (\n" +
-                    "    select customerkey, (select productkey from product where productname = '" + productName + "')  from customer where customername = '" + CURRENT_USERNAME + "' )";
+            String addItemToCart = "insert into shoppingcart (customerkey,productkey)  (\n" +
+                    "    select customerkey, (select productkey from product where productname = '" + productName + "')  from customer where customerlogin = '" + CURRENT_USERNAME + "' )";
             Statement stm = connection.createStatement();
             stm.execute(addItemToCart);
+        } catch (SQLIntegrityConstraintViolationException exception) {
+            // only 1 way to do that - by adding product that is already in cart
+            String incrementQuantity = "update shoppingcart\n" +
+                    "Set quantity = quantity + 1\n" +
+                    "where customerkey = ( select customerkey from customer where customerlogin = '" + CURRENT_USERNAME + "' )\n" +
+                    "and productkey = (select productkey from product where productname = '" + productName + "')";
+            Statement stm = connection.createStatement();
+            stm.execute(incrementQuantity);
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
