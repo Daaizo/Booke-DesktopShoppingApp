@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public abstract class Controller {
-    public static String currentUserName;
+    public static String CURRENT_USER_LOGIN;
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
@@ -79,14 +79,17 @@ public abstract class Controller {
         }
     }
 
-
-    public void checkConnectionWithDataBaseAndDisplayError() {
-        instance = SqlConnection.createInstance();
+    private void showConnectionAlertAndWait() {
         while (instance.getConnection() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
             alert.showAndWait();
             instance = SqlConnection.createInstance();
         }
+    }
+
+    public void checkConnectionWithDb() {
+        instance = SqlConnection.createInstance();
+        if (instance == null) showConnectionAlertAndWait();
     }
 
     public Connection getConnection() {
@@ -110,7 +113,6 @@ public abstract class Controller {
     protected void displayLabelWithGivenText(Label label, String text) {
         label.setText(text);
         label.setVisible(true);
-
     }
 
     protected void basicTheme(TextField field, Label label) {
@@ -120,10 +122,10 @@ public abstract class Controller {
         label.setVisible(false);
     }
 
-    protected void setImageToButtonAndPlaceItOnX(Button buttonName, String imageName, double x) {
+    protected void setImageToButtonAndPlaceItOnXY(Button buttonName, String imageName, double x, double y) {
         buttonName.setGraphic(iconPath(imageName));
         buttonName.setBackground(Background.EMPTY);
-        buttonName.setLayoutY(10);
+        buttonName.setLayoutY(y);
         buttonName.setLayoutX(x);
 
     }
