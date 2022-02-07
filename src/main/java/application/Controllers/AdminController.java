@@ -43,7 +43,7 @@ public class AdminController extends Controller {
     @FXML
     public void initialize() {
         createAnchorAndExitButton();
-        setImageToButtonAndPlaceItOnX(logoutButton, "logout.png", 950);
+        setImageToButtonAndPlaceItOnXY(logoutButton, "logout.png", 950, 10);
         try {
             displayUsers();
             displayProducts();
