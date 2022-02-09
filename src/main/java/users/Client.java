@@ -31,7 +31,7 @@ public class Client extends User {
             stm.execute(addItemToCart);
         } catch (SQLIntegrityConstraintViolationException exception) {
             // only 1 way to do that - by adding product that is already in cart
-            incrementQuantity("shoppingcart", CURRENT_USERNAME, productName, connection);
+            setQuantityOfProduct(CURRENT_USERNAME, productName, "+1", connection);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -39,9 +39,9 @@ public class Client extends User {
         }
     }
 
-    private static void incrementQuantity(String where, String CURRENT_USERNAME, String productName, Connection con) throws SQLException {
-        String incrementQuantity = "update  " + where +
-                " Set quantity = quantity + 1" +
+    public static void setQuantityOfProduct(String CURRENT_USERNAME, String productName, String quantityWithSign, Connection con) throws SQLException {
+        String incrementQuantity = "update shoppingcart" +
+                " Set quantity = quantity " + quantityWithSign + "" +
                 " where customerkey = ( select customerkey from customer where customerlogin = '" + CURRENT_USERNAME + "' )" +
                 " and productkey = (select productkey from product where productname = '" + productName + "')";
         Statement stm = con.createStatement();
@@ -49,11 +49,21 @@ public class Client extends User {
     }
 
     public static int getQuantityOfProductsInCart(String CURRENT_USERNAME, Connection connection) throws SQLException {
-        String incrementQuantity = "select sum(quantity) from shoppingcart sc" +
+        String productsQuantity = "select sum(quantity) from shoppingcart sc" +
                 " inner join customer cu on cu.customerkey = sc.customerkey" +
                 " where customerlogin = '" + CURRENT_USERNAME + "' ";
         Statement stm = connection.createStatement();
-        ResultSet set = stm.executeQuery(incrementQuantity);
+        ResultSet set = stm.executeQuery(productsQuantity);
+        set.next();
+        return set.getInt(1);
+    }
+
+    public static int getQuantityOfProductInCart(String CURRENT_USERNAME, String productName, Connection connection) throws SQLException {
+        String productQuantity = "select sum(quantity) from shoppingcart sc" +
+                " inner join customer cu on cu.customerkey = sc.customerkey" +
+                " where customerlogin = '" + CURRENT_USERNAME + "' and productkey = (select productkey from product where productname = '" + productName + "')";
+        Statement stm = connection.createStatement();
+        ResultSet set = stm.executeQuery(productQuantity);
         set.next();
         return set.getInt(1);
     }
@@ -69,6 +79,7 @@ public class Client extends User {
             e.printStackTrace();
         }
     }
+
     @Override
     public void changeData() {
 
