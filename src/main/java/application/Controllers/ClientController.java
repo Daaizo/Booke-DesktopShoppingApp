@@ -2,13 +2,14 @@ package application.Controllers;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 import users.Client;
 import users.Product;
 import users.ProductTable;
@@ -52,12 +53,7 @@ public class ClientController extends Controller {
             goBackButton.setVisible(false);
 
         });
-        categoryPickingPane.setVisible(true);
-        ebooksAnchorPane.setVisible(false);
-        gamesAnchorPane.setVisible(false);
-        goBackButton.setVisible(false);
-
-        //  setImageToButtonAndPlaceItOnXY(goBackButton, "back-button.png", -10, 10);
+        goBackButton.fire(); // fire action to hide all not necessary panes
         setImageToButtonAndPlaceItOnXY(shoppingCartButton, "cart.png", 30, 3);
         try {
             displayEbooks();
@@ -73,7 +69,6 @@ public class ClientController extends Controller {
         gamesAnchorPane.setVisible(true);
         categoryPickingPane.setVisible(false);
         goBackButton.setVisible(true);
-
     }
 
     @FXML
@@ -93,63 +88,15 @@ public class ClientController extends Controller {
 
     }
 
-    private Callback createButtonInTableView(String buttonIconName, String buttonText) {
-        return new Callback<TableColumn<ProductTable, String>, TableCell<ProductTable, String>>() {
-            @Override
-            public TableCell call(final TableColumn<ProductTable, String> param) {
-                return new TableCell<ProductTable, String>() {
-
-                    final Button button = new Button(buttonText);
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        button.setGraphic(iconPath(buttonIconName));
-                        button.setBackground(Background.EMPTY);
-                        button.setOnAction(actionEvent -> {
-                            ProductTable product = getTableView().getItems().get(getIndex());
-                            if (buttonIconName.compareTo("star.png") == 0) {
-                                System.out.print(" gwiazdka ");
-
-                            } else {
-                                System.out.print(" koszyk ");
-                                try {
-                                    checkConnectionWithDb();
-                                    Client.addItemToUsersCart(product.getProductName(), CURRENT_USER_LOGIN, getConnection());
-                                } catch (SQLException e) {
-                                    System.out.println(e.getMessage());
-                                } finally {
-                                    try {
-                                        setQuantityLabel();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                System.out.println(product.getProductName() + product.getProductPrice() + CURRENT_USER_LOGIN);
-                            }
-                        });
-                        button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-border-color : #fc766a ;")
-                        );
-                        button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: transparent"));
-                        setGraphic(button);
-                    }
-                };
-            }
-        };
-    }
-
     private void fillEbooksColumnsWithData(ObservableList<ProductTable> list) {
         ebooksNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         ebooksPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-        ebooksStarButtonColumn.setCellFactory(createButtonInTableView("star.png", "add to favourite"));
-        ebooksCartButtonColumn.setCellFactory(createButtonInTableView("add_cart.png", "add to cart"));
-        ebooksCartButtonColumn.setStyle("  -fx-padding: 15 5 5 5px;");
-        ebooksStarButtonColumn.setStyle("  -fx-padding: 15 5 5 5px;");
-
+        ebooksStarButtonColumn.setCellFactory(
+                buttonInsideCell -> new ButtonInsideTableColumn("star.png", "add to favourite", starButtonClicked()));
+        ebooksCartButtonColumn.setCellFactory(
+                buttonInsideCell -> cartButtonClicked());
         showOnlyRowsWithData(ebooksTableView, list);
-
     }
 
 
@@ -158,7 +105,6 @@ public class ClientController extends Controller {
         ResultSet products = Product.getProductsFromDatabase(getConnection());
         assert products != null;
         ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategory(products, "ebooks");
-
         fillEbooksColumnsWithData(listOfEbooks);
     }
 
@@ -166,12 +112,11 @@ public class ClientController extends Controller {
         gamesNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         gamesPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         gamesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-        gamesStarButtonColumn.setCellFactory(createButtonInTableView("star.png", "add to favourite"));
-        gamesCartButtonColumn.setCellFactory(createButtonInTableView("add_cart.png", "add to cart"));
-        gamesCartButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
-        gamesStarButtonColumn.setStyle("  -fx-padding: 18 5 5 5px;");
+        gamesStarButtonColumn.setCellFactory(
+                buttonInsideCell -> new ButtonInsideTableColumn("star.png", "add to favourite", starButtonClicked()));
+        gamesCartButtonColumn.setCellFactory(
+                buttonInsideCell -> cartButtonClicked());
         showOnlyRowsWithData(gamesTableView, list);
-
     }
 
     void displayGames() throws SQLException {
@@ -182,8 +127,75 @@ public class ClientController extends Controller {
         fillGamesColumnsWithData(listOfGames);
     }
 
+    private EventHandler<MouseEvent> starButtonClicked() {
+        return event -> System.out.println("start clicked // to be continued");
+    }
 
 
+    private ButtonInsideTableColumn cartButtonClicked() {
+        ButtonInsideTableColumn button = new ButtonInsideTableColumn("add_cart.png", "add to cart");
+        EventHandler<MouseEvent> eventHandler = event -> {
+            String productName = button.productName;
+            try {
+                checkConnectionWithDb();
+                System.out.println("cos nie dziala");
+                Client.addItemToUsersCart(productName, CURRENT_USER_LOGIN, getConnection());
+                System.out.println(productName);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            } finally {
+                try {
+                    setQuantityLabel();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        button.setEventHandler(eventHandler);
+        return button;
+    }
+
+
+    public class ButtonInsideTableColumn extends TableCell<ProductTable, String> {
+        private final Button button;
+        private final String iconName;
+        private EventHandler<MouseEvent> eventHandler;
+        private String productName;
+
+        public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText, EventHandler<MouseEvent> eventHandler) {
+            this.iconName = iconNameWithExtension;
+            this.button = new Button(buttonText);
+            this.eventHandler = eventHandler;
+        }
+
+        public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText) {
+            this.iconName = iconNameWithExtension;
+            this.button = new Button(buttonText);
+            button.fire();
+        }
+
+        public void setEventHandler(EventHandler<MouseEvent> eventHandler) {
+            this.eventHandler = eventHandler;
+        }
+
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            button.setOnAction(mouseEvent -> {
+                ProductTable product = getTableView().getItems().get(getIndex());
+                System.out.println("produkt +" + product.getProductName());
+                this.productName = product.getProductName();
+
+            });
+            button.setOnMouseClicked(eventHandler);
+            button.setGraphic(iconPath(iconName));
+            button.setBackground(Background.EMPTY);
+            button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-border-color : #fc766a ;"));
+            button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: transparent"));
+            setGraphic(button);
+        }
+    }
 
 
 
