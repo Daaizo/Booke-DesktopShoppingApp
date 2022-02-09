@@ -37,7 +37,8 @@
     -fx-font-family :Helvetica;
     -fx-text-fill : #fc766a;
     -fx-font-size : 20px;
-    -fx-alignment : bottom-left;
+    -fx-alignment : center;
+
 }
 
 
@@ -57,7 +58,8 @@
      -fx-background-color: #5B84B1FF;
      -fx-padding: 25 5 5 5px;
      -fx-font-size : 20px;
-    -fx-font-alignment: left;
+    -fx-font-alignment: top;
+    -fx-alignment : center;
  }
 
 
