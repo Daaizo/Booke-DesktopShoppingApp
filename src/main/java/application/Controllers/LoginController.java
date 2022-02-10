@@ -7,25 +7,28 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
 
 public class LoginController extends Controller {
 
+
     @FXML
-    private Button closeButton;
-    @FXML
-    private ImageView logo;
+    public Button registerButton;
+
     @FXML
     private TextField tfLogin, tfPassword;
 
     @FXML
     private Label passwordLabel, loginLabel;
 
+
     @FXML
     public void initialize() {
-        createAnchorAndExitButton();
+
+        AnchorPane mainAnchor = setAnchorSizeAndColors();
+        mainAnchor.getChildren().add(createExitButton());
     }
 
 
@@ -64,6 +67,7 @@ public class LoginController extends Controller {
 
         String pass = loginValues.get(username);
         if (passwordMatches(pass, password)) {
+            CURRENT_USER_LOGIN = username;
             if (isAdmin(username)) {
                 switchScene(event, adminScene);
             } else {
@@ -79,7 +83,7 @@ public class LoginController extends Controller {
         basicTheme(tfPassword, passwordLabel);
         basicTheme(tfLogin, loginLabel);
         if (areFieldsNotEmpty()) {
-            checkConnectionWithDataBaseAndDisplayError();
+            checkConnectionWithDb();
             String login = tfLogin.getText();
             if (isLoginInDatabase(login)) {
                 String password = tfPassword.getText();
@@ -99,11 +103,9 @@ public class LoginController extends Controller {
 
     }
 
-
-
     @FXML
     void registerButtonClicked(ActionEvent event) {
-            switchScene(event, registrationScene);
+        switchScene(event, registrationScene);
     }
 
 }

@@ -27,7 +27,6 @@ public class SqlConnection {
                 System.out.println(e.getMessage() + "problem with creating instance of connection");
             }
         } else {
-            System.out.println("data base connection already exists //trying to reconnect ");
             instance.connectToDatabase();
         }
         return  instance;

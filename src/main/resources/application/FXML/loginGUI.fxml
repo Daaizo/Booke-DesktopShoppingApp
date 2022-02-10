@@ -38,63 +38,52 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="667.0"
-            prefWidth="1051.0" xmlns="http://javafx.com/javafx/17"
+            prefWidth="1051.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.LoginController">
-   <children>
-      <HBox fillHeight="false" prefHeight="689.0" prefWidth="1051.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Pane prefHeight="691.0" prefWidth="548.0" style="-fx-background-color: #fc766a;">
-               <children>
-                  <ImageView fx:id="logo" fitHeight="210.0" fitWidth="216.0" layoutX="179.0" layoutY="187.0">
-                     <image>
-                        <Image url="@../Icons/shopping-bag.png"/>
-                     </image>
-                  </ImageView>
-                  <Label layoutX="212.0" layoutY="397.0" prefHeight="76.0" prefWidth="216.0"
-                         style="-fx-font-family: Rooney;" text="Bokke " textFill="#5b84b1">
-                     <font>
-                        <Font name="Papyrus" size="52.0"/>
-                     </font>
-                  </Label>
-                  <Label layoutX="101.0" layoutY="473.0" prefHeight="45.0" prefWidth="387.0"
-                         text="your online shop for games and books" textFill="#5b84b1">
-                     <font>
-                        <Font name="Arial Rounded MT Bold" size="19.0"/>
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
-            <Pane prefHeight="690.0" prefWidth="515.0" style="-fx-background-color: #5b84b1;">
-               <children>
-                  <TextField id="textInput" fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0"
-                             prefWidth="318.0" promptText="login"/>
-                  <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"
-                                 prefWidth="318.0" promptText="password"/>
-                  <Button id="loginButton" layoutX="114.0" layoutY="393.0" mnemonicParsing="false"
-                          onAction="#loginButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                          style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx"
-                          text="Login" textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
-                     <font>
-                        <Font name="System Bold" size="14.0"/>
-                     </font>
-                  </Button>
-                  <Button id="registerButton" fx:id="registerButton" layoutX="114.0" layoutY="476.0"
-                          mnemonicParsing="false" onAction="#registerButtonClicked"
-                          onMouseClicked="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                          style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx"
-                          text="Register" textFill="#5b84b1">
-                     <font>
-                        <Font name="System Bold" size="14.0"/>
-                     </font>
-                  </Button>
-                  <Label fx:id="loginLabel" layoutX="89.0" layoutY="257.0" prefHeight="17.0" prefWidth="98.0"
-                         text="Label" visible="false"/>
-                  <Label fx:id="passwordLabel" layoutX="89.0" layoutY="334.0" prefHeight="17.0" prefWidth="98.0"
-                         text="Label" visible="false"/>
-               </children>
-            </Pane>
-         </children>
-      </HBox>
-   </children>
+    <HBox fillHeight="false" prefHeight="689.0" prefWidth="1051.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Pane prefHeight="691.0" prefWidth="548.0" style="-fx-background-color: #fc766a;">
+            <ImageView fx:id="logo" fitHeight="210.0" fitWidth="216.0" layoutX="163.0" layoutY="155.0">
+                <Image url="@../Icons/shopping-bag.png"/>
+            </ImageView>
+            <Label layoutX="138.0" layoutY="329.0" prefHeight="175.0" prefWidth="327.0" text="Bokke "
+                   textFill="#5b84b1">
+                <font>
+                    <Font name="Bauhaus 93" size="96.0"/>
+                </font>
+            </Label>
+            <Label layoutX="78.0" layoutY="467.0" prefHeight="45.0" prefWidth="387.0"
+                   text="your online shop for games and ebooks" textFill="#5b84b1">
+                <font>
+                    <Font name="Bauhaus 93" size="22.0"/>
+                </font>
+            </Label>
+        </Pane>
+        <Pane prefHeight="690.0" prefWidth="515.0" style="-fx-background-color: #5b84b1;">
+            <TextField fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0" prefWidth="318.0"
+                       promptText="login"/>
+            <PasswordField id="inputField" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"
+                           prefWidth="318.0" promptText="password"/>
+            <Button fx:id="loginButton" layoutX="114.0" layoutY="393.0" mnemonicParsing="false"
+                    onAction="#loginButtonClicked" prefHeight="53.0" prefWidth="248.0"
+                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="loginSceneButtons"
+                    text="Login" textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Button>
+            <Button fx:id="registerButton" layoutX="114.0" layoutY="476.0" mnemonicParsing="false"
+                    onAction="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0"
+                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="loginSceneButtons"
+                    text="Register" textFill="#5b84b1">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Button>
+            <Label fx:id="loginLabel" layoutX="89.0" layoutY="257.0" prefHeight="17.0" prefWidth="98.0" text="Label"
+                   visible="false"/>
+            <Label fx:id="passwordLabel" layoutX="89.0" layoutY="334.0" prefHeight="17.0" prefWidth="98.0" text="Label"
+                   visible="false"/>
+        </Pane>
+    </HBox>
 </AnchorPane>

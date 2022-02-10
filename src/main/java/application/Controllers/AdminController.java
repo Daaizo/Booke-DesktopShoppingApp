@@ -2,7 +2,6 @@ package application.Controllers;
 
 import application.Main;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,7 +17,7 @@ import java.sql.SQLException;
 
 public class AdminController extends Controller {
     @FXML
-    private TableColumn<ClientTable, String> userFirstNameColumn, userIDColumn, userLoginColumn, userLastNameColumn;
+    private TableColumn<ClientTable, String> userFirstNameColumn, userIDColumn, userLoginColumn, userLastNameColumn, userPasswordColumn;
     @FXML
     private TableView<ClientTable> userTableView;
 
@@ -34,13 +33,8 @@ public class AdminController extends Controller {
 
 
     @FXML
-    void logoutButtonClicked(ActionEvent clicked) {
-        switchScene(clicked, loginScene);
-    }
-
-    @FXML
     public void initialize() {
-        createAnchorAndExitButton();
+        prepareScene();
         try {
             displayUsers();
             displayProducts();
@@ -54,6 +48,7 @@ public class AdminController extends Controller {
         userLoginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
         userLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
         userTableView.setItems(list);
     }
 

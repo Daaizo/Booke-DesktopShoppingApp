@@ -11,6 +11,11 @@ public class Product {
     private String productPrice;
     private String productSubcategory;
     private String productCategory;
+    private int productInCartQuantity;
+
+
+    private String productTotalValue;
+
 
     public Product(int id, String name, String price, String subcategory, String category) {
         this.productId = id;
@@ -26,6 +31,13 @@ public class Product {
         this.productSubcategory = subcategory;
     }
 
+    public Product(String name, String price, int quantity, String total) {
+        this.productName = name;
+        this.productPrice = price;
+        this.productInCartQuantity = quantity;
+        this.productTotalValue = total;
+    }
+
 
     public static ResultSet getProductsFromDatabase(Connection connection) {
         try {
@@ -35,6 +47,29 @@ public class Product {
                     inner join category c on c.categorykey = sc.categorykey
                     """;
             Statement stm = connection.createStatement();
+            return stm.executeQuery(query);
+        } catch (SQLException e) {
+            System.out.println("error with executing SQL query");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ResultSet getProductFromCart(Connection connection, String currentUsername) {
+        try {
+            String query = "select p.productname, p.catalogprice || ' $' \"PRICE\" ,sc.quantity, sum(p.catalogprice * sc.quantity) || ' $' \"TOTAL\" from shoppingcart  sc\n" +
+                    "inner join customer c on c.customerkey = sc.customerkey\n" +
+                    "inner join product p on p.productkey = sc.productkey\n" +
+                    "where sc.customerkey = \n" +
+                    "                        (\n" +
+                    "                        select customerkey from customer \n" +
+                    "                        where customerlogin = '" + currentUsername + "'\n" +
+                    "                        )\n" +
+                    "group by  p.productname, p.catalogprice ,sc.quantity";
+
+
+            Statement stm = connection.createStatement();
+
             return stm.executeQuery(query);
         } catch (SQLException e) {
             System.out.println("error with executing SQL query");
@@ -83,5 +118,22 @@ public class Product {
 
     public void setProductPrice(String productPrice) {
         this.productPrice = productPrice;
+    }
+
+
+    public int getProductInCartQuantity() {
+        return productInCartQuantity;
+    }
+
+    public void setProductInCartQuantity(int productInCartQuantity) {
+        this.productInCartQuantity = productInCartQuantity;
+    }
+
+    public String getProductTotalValue() {
+        return this.productTotalValue;
+    }
+
+    public void setProductTotalValue(String productTotalValue) {
+        this.productTotalValue = productTotalValue;
     }
 }

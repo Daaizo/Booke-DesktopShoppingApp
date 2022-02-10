@@ -14,6 +14,9 @@ public class ProductTable {
     private final SimpleStringProperty productCategory;
     private final SimpleStringProperty productPrice;
     private final SimpleStringProperty productSubcategory;
+    private final SimpleIntegerProperty productQuantity;
+    private final SimpleStringProperty productTotalValue;
+
 
     public ProductTable(Product product) {
         this.productId = new SimpleIntegerProperty(product.getProductId());
@@ -21,6 +24,8 @@ public class ProductTable {
         this.productPrice = new SimpleStringProperty(product.getProductPrice());
         this.productCategory = new SimpleStringProperty(product.getProductCategory());
         this.productSubcategory = new SimpleStringProperty(product.getProductSubcategory());
+        this.productQuantity = new SimpleIntegerProperty(product.getProductInCartQuantity());
+        this.productTotalValue = new SimpleStringProperty(product.getProductTotalValue());
     }
 
 
@@ -61,6 +66,22 @@ public class ProductTable {
         return listOfProducts;
     }
 
+    public static ObservableList<ProductTable> getProductsFromShoppingCart(ResultSet products) {
+        ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (products.next()) {
+                String name = products.getString(1);
+                String price = products.getString(2);
+                int quantity = products.getInt(3);
+                String totalValue = products.getString(4);
+                listOfProducts.add(new ProductTable(new Product(name, price, quantity, totalValue)));
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
+    }
 
     public String getProductSubcategory() {
         return productSubcategory.get();
@@ -106,4 +127,21 @@ public class ProductTable {
     }
 
 
+    public int getProductQuantity() {
+        return productQuantity.get();
+    }
+
+
+    public void setProductQuantity(int productQuantity) {
+        this.productQuantity.set(productQuantity);
+    }
+
+    public String getProductTotalValue() {
+        return productTotalValue.get();
+    }
+
+
+    public void setProductTotalValue(String productTotalValue) {
+        this.productTotalValue.set(productTotalValue);
+    }
 }

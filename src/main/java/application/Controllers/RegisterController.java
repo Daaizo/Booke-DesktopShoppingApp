@@ -12,8 +12,6 @@ import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Color;
 import users.Client;
 
-import java.sql.Connection;
-
 public class RegisterController extends Controller {
 
     @FXML
@@ -27,7 +25,7 @@ public class RegisterController extends Controller {
 
     @FXML
     public void initialize() {
-        createAnchorAndExitButton();
+        prepareScene();
     }
 
 
@@ -86,7 +84,6 @@ public class RegisterController extends Controller {
             displayLabelWithGivenText(nameLabel, "Name required");
             return true;
         } else {
-            //TODO nice effect
             basicTheme(tfName, nameLabel);
             return false;
         }
@@ -98,7 +95,6 @@ public class RegisterController extends Controller {
             displayLabelWithGivenText(lastnameLabel, "Last name required");
             return true;
         } else {
-            //TODO nice effect
             basicTheme(tfLastName, lastnameLabel);
             return false;
         }
@@ -123,7 +119,6 @@ public class RegisterController extends Controller {
     }
 
     private boolean areFieldsFilledCorrectlyAndLoginIsUnique() {
-
         return !isLoginEmpty() && !isNameEmpty() && !isLastNameEmpty() && !isPasswordEmpty() && passFieldMatches() && isLoginUnique() && isCheckboxChecked();
     }
 
@@ -132,17 +127,15 @@ public class RegisterController extends Controller {
         String name = tfName.getText().trim();
         String lastName = tfLastName.getText().trim();
         String password = tfPassword.getText().trim();
-        Client newUser = new Client(login, name, lastName, password);
-        return newUser;
+        return new Client(login, name, lastName, password);
     }
 
     @FXML
     void saveButtonClicked(ActionEvent event) {
         if (areFieldsFilledCorrectlyAndLoginIsUnique()) {
             Client newUser = newUser();
-            checkConnectionWithDataBaseAndDisplayError();
-            Connection connection = getConnection();
-            newUser.addUserToDatabase(connection);
+            checkConnectionWithDb();
+            newUser.addUserToDatabase(getConnection());
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "User created");
             alert.showAndWait();
             updateHashMapWithLoginValues(newUser.getLogin(), newUser.getPassword());
