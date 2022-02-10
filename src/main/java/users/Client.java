@@ -68,6 +68,18 @@ public class Client extends User {
         return set.getInt(1);
     }
 
+    public static double getTotalValueOfShoppingCart(String CURRENT_USERNAME, Connection connection) throws SQLException {
+        String totalValue = "select sum(sc.quantity*p.catalogprice) \"total value\"  \n" +
+                "                        \n" +
+                "                        from shoppingcart sc\n" +
+                "                        inner join product p on p.productkey = sc.productkey\n" +
+                "                        where sc.customerkey = ( select customerkey from customer where customerlogin = '" + CURRENT_USERNAME + "' )";
+        Statement stm = connection.createStatement();
+        ResultSet set = stm.executeQuery(totalValue);
+        set.next();
+        return set.getDouble(1);
+    }
+
     public void addUserToDatabase(Connection connection) {
         try {
             String userToDb = "insert into CUSTOMER (customerlogin,customername,customerlastname,customerpassword) values ('"
