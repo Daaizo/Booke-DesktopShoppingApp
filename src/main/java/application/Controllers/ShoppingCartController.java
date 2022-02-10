@@ -24,7 +24,7 @@ public class ShoppingCartController extends Controller {
     @FXML
     private TableView<ProductTable> cartTableView;
     @FXML
-    private Label emptyCart;
+    private Label emptyCart, totalValueLabel;
 
     @FXML
     public void initialize() {
@@ -33,9 +33,16 @@ public class ShoppingCartController extends Controller {
         goBackButton.setOnAction(event -> switchScene(event, clientScene));
         try {
             displayProducts();
+            setTotalValueLabel();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    void setTotalValueLabel() throws SQLException {
+        checkConnectionWithDb();
+        double totalValue = Client.getTotalValueOfShoppingCart(CURRENT_USER_LOGIN, getConnection());
+        totalValueLabel.setText("Total value of products in cart : " + totalValue);
     }
 
     void displayProducts() throws SQLException {
@@ -45,6 +52,7 @@ public class ShoppingCartController extends Controller {
         if (listOfProducts.isEmpty()) {
             displayLabelWithGivenText(emptyCart, "SHOPPING CART IS EMPTY");
             cartTableView.setVisible(false);
+            totalValueLabel.setVisible(false);
         } else {
             cartTableView.setVisible(true);
             fillShoppingCartColumnsWithData(listOfProducts);
@@ -69,6 +77,7 @@ public class ShoppingCartController extends Controller {
     private void reloadTableView(TableView<ProductTable> tableView) throws SQLException {
         tableView.getItems().clear();
         displayProducts();
+        setTotalValueLabel();
     }
 
     private void confirmationAlert(String productName, String productQuantity) throws SQLException {
