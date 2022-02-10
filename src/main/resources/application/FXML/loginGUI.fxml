@@ -38,7 +38,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="667.0"
-            prefWidth="1051.0" xmlns="http://javafx.com/javafx/17"
+            prefWidth="1051.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.LoginController">
     <HBox fillHeight="false" prefHeight="689.0" prefWidth="1051.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -60,22 +60,22 @@
             </Label>
         </Pane>
         <Pane prefHeight="690.0" prefWidth="515.0" style="-fx-background-color: #5b84b1;">
-            <TextField id="textInput" fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0" prefWidth="318.0"
+            <TextField fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0" prefWidth="318.0"
                        promptText="login"/>
-            <PasswordField id="passwordInuput" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"
+            <PasswordField id="inputField" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"
                            prefWidth="318.0" promptText="password"/>
-            <Button id="loginButton" layoutX="114.0" layoutY="393.0" mnemonicParsing="false"
+            <Button fx:id="loginButton" layoutX="114.0" layoutY="393.0" mnemonicParsing="false"
                     onAction="#loginButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx" text="Login"
-                    textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
+                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="loginSceneButtons"
+                    text="Login" textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
                 <font>
                     <Font name="System Bold" size="14.0"/>
                 </font>
             </Button>
-            <Button id="registerButton" fx:id="registerButton" layoutX="114.0" layoutY="476.0" mnemonicParsing="false"
+            <Button fx:id="registerButton" layoutX="114.0" layoutY="476.0" mnemonicParsing="false"
                     onAction="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="fx" text="Register"
-                    textFill="#5b84b1">
+                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="loginSceneButtons"
+                    text="Register" textFill="#5b84b1">
                 <font>
                     <Font name="System Bold" size="14.0"/>
                 </font>
