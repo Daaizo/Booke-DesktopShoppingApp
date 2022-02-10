@@ -1,4 +1,39 @@
 
+
+
+
+.loginSceneButtons{
+    -fx-background-color : #fc766a;
+    -fx-background-radius : 12px;
+}
+.loginSceneButtons:focused{
+    -fx-border-color :Black;
+    -fx-border-radius : 12px;
+    -fx-border-width: 2px;
+}
+.passwordAnchor .passwordLabels{
+    -fx-border-color : red;
+    -fx-font-size : 15px;
+}
+
+#informationLabel{
+    -fx-border-color : black;
+    -fx-border-radius : 50px;
+    -fx-border-width: 3px;
+
+}
+
+
+ .text-field:focused,
+ .check-box:determinate .box .mark: focused,
+ #inputField:focused{
+    -fx-effect : null;
+    -fx-border-color: #fc766a;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
+}
+
+
 .table-view {
     -fx-background-color: transparent;
 }
