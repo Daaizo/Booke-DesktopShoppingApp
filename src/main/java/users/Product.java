@@ -55,7 +55,7 @@ public class Product {
         return null;
     }
 
-    public static ResultSet getProductFromCart(Connection connection, String currentUsername) {
+    public static ResultSet getProductFromCartAndSetValueBasedOnQuantity(Connection connection, String currentUsername) {
         try {
             String query = "select p.productname, p.catalogprice || ' $' \"PRICE\" ,sc.quantity, sum(p.catalogprice * sc.quantity) || ' $' \"TOTAL\" from shoppingcart  sc\n" +
                     "inner join customer c on c.customerkey = sc.customerkey\n" +
@@ -78,6 +78,16 @@ public class Product {
         return null;
     }
 
+    public static ResultSet getPaymentMethods(Connection connection) {
+        String paymentMethods = "select * from paymentmethod";
+        try {
+            Statement statement = connection.createStatement();
+            return statement.executeQuery(paymentMethods);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String getProductSubcategory() {
         return productSubcategory;
