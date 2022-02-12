@@ -3,9 +3,11 @@ package application.Controllers;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import users.Client;
 import users.Product;
 import users.ProductTable;
@@ -24,7 +26,9 @@ public class ShoppingCartController extends Controller {
     @FXML
     private TableView<ProductTable> cartTableView;
     @FXML
-    private Label emptyCart, totalValueLabel;
+    private Label emptyCart, totalValueLabel, titleLabel;
+    @FXML
+    private ScrollPane paymentMethodsPane;
 
     @FXML
     public void initialize() {
@@ -34,6 +38,7 @@ public class ShoppingCartController extends Controller {
         try {
             displayProducts();
             setTotalValueLabel();
+            setPaymentMethods();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -47,12 +52,13 @@ public class ShoppingCartController extends Controller {
 
     void displayProducts() throws SQLException {
         checkConnectionWithDb();
-        ResultSet products = Product.getProductFromCart(getConnection(), CURRENT_USER_LOGIN);
+        ResultSet products = Product.getProductFromCartAndSetValueBasedOnQuantity(getConnection(), CURRENT_USER_LOGIN);
         ObservableList<ProductTable> listOfProducts = ProductTable.getProductsFromShoppingCart(products);
         if (listOfProducts.isEmpty()) {
             displayLabelWithGivenText(emptyCart, "SHOPPING CART IS EMPTY");
             cartTableView.setVisible(false);
             totalValueLabel.setVisible(false);
+            titleLabel.setVisible(false);
         } else {
             cartTableView.setVisible(true);
             fillShoppingCartColumnsWithData(listOfProducts);
@@ -154,5 +160,28 @@ public class ShoppingCartController extends Controller {
         return button;
     }
 
+    private void setPaymentMethods() throws SQLException {
+        ResultSet paymentMethods = Product.getPaymentMethods(getConnection());
+        ToggleGroup groupOfRadioButtons = new ToggleGroup();
+        int x = (int) paymentMethodsPane.getLayoutX();
+        int y = (int) paymentMethodsPane.getLayoutY();
+        GridPane grid = new GridPane();
+        grid.setHgap(1);
+        while (paymentMethods.next()) {
+            RadioButton button = new RadioButton(paymentMethods.getString(2));
+            y += 10;
+            button.setLayoutX(x);
+            button.setLayoutY(y);
+            button.setPadding(new Insets(10));
+            button.setToggleGroup(groupOfRadioButtons);
+            button.setOnAction(event -> {
+                RadioButton selectedButton = (RadioButton) groupOfRadioButtons.getSelectedToggle();
+                System.out.println(selectedButton.getText());
+            });
+            grid.add(button, x, y);
+        }
+        paymentMethodsPane.setContent(grid);
+    }
+//TODO udpate diagrams from db
 
 }

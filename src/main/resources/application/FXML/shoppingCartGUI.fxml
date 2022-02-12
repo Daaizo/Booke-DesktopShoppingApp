@@ -7,8 +7,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="600.0"
             prefWidth="1050.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.ShoppingCartController">
-    <TableView fx:id="cartTableView" layoutX="23.0" layoutY="162.0" prefHeight="293.0" prefWidth="992.0"
-               style="-fx-border-color: black;">
+    <TableView fx:id="cartTableView" layoutX="23.0" layoutY="162.0" prefHeight="293.0" prefWidth="992.0">
         <columns>
             <TableColumn fx:id="cartNameColumn" prefWidth="273.0" text="Name"/>
             <TableColumn fx:id="cartPriceColumn" minWidth="0.0" prefWidth="148.0" text="Price"/>
@@ -25,14 +24,11 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
         </columnResizePolicy>
     </TableView>
-    <Label fx:id="emptyCart" alignment="CENTER" layoutX="29.0" layoutY="231.0" prefHeight="600.0" prefWidth="1050.0"
-           textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <font>
-            <Font name="System Bold" size="58.0"/>
-        </font>
-    </Label>
-    <Label alignment="CENTER" layoutX="226.0" layoutY="62.0" prefHeight="100.0" prefWidth="572.0" text="SHOPPING CART">
+    <Label id="titleLabel" fx:id="emptyCart" alignment="CENTER" layoutX="29.0" layoutY="231.0" prefHeight="600.0"
+           prefWidth="1050.0" textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="0.0"
+           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    <Label id="titleLabel" fx:id="titleLabel" alignment="CENTER" layoutX="226.0" layoutY="62.0" prefHeight="100.0"
+           prefWidth="572.0" text="SHOPPING CART">
         <font>
             <Font name="Bauhaus 93" size="74.0"/>
         </font>
@@ -58,4 +54,7 @@
             <Font name="System Bold" size="18.0"/>
         </font>
     </Label>
+    <ScrollPane fx:id="paymentMethodsPane" layoutY="428.0" prefHeight="172.0" prefWidth="659.0"
+                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="391.0"
+                AnchorPane.topAnchor="428.0"/>
 </AnchorPane>
