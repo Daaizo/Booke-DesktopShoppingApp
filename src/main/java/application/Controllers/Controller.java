@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -46,10 +47,16 @@ public abstract class Controller {
     public void prepareScene() {
         AnchorPane mainAnchor = setAnchorSizeAndColors();
         this.goBackButton = createGoBackButton();
-        mainAnchor.getChildren().addAll(createExitButton(), createHorizontalLine(), createLogoutButton(), goBackButton);
-
+        mainAnchor.getChildren().addAll(createExitButton(), createHorizontalLine(), createLogoutButton(), setSmallLogoInCorner(), goBackButton);
     }
 
+    private ImageView setSmallLogoInCorner() {
+        ImageView logo = new ImageView();
+        logo.setImage(new Image(absolutePathToIcons + "transparentLogo.png"));
+        logo.setY(5);
+        logo.setX(5);
+        return logo;
+    }
 
     protected void showOnlyRowsWithData(TableView tableView, ObservableList list) {
 
@@ -92,7 +99,7 @@ public abstract class Controller {
         goBackButton.setBackground(Background.EMPTY);
         goBackButton.setGraphic(iconPath("back-button.png"));
         goBackButton.setLayoutX(5);
-        goBackButton.setLayoutY(10);
+        goBackButton.setLayoutY(65);
         goBackButton.setVisible(false);
         return goBackButton;
     }
