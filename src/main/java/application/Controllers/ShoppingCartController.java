@@ -1,5 +1,6 @@
 package application.Controllers;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,9 +16,14 @@ import users.ProductTable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 public class ShoppingCartController extends Controller {
+
+    private String paymentMethod = null;
+    private double totalOrderValue;
 
     @FXML
     private TableColumn<ProductTable, String> cartNameColumn, cartPriceColumn, cartValueColumn, plusButtonColumn, minusButtonColumn, deleteButtonColumn;
@@ -35,10 +41,12 @@ public class ShoppingCartController extends Controller {
         prepareScene();
         goBackButton.setVisible(true);
         goBackButton.setOnAction(event -> switchScene(event, clientScene));
+        cartTableView.setFixedCellSize(70);
+        cartTableView.setMaxHeight(320);
         try {
             displayProducts();
             setTotalValueLabel();
-            setPaymentMethods();
+            setPaymentMethods(2, 20);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -46,13 +54,14 @@ public class ShoppingCartController extends Controller {
 
     void setTotalValueLabel() throws SQLException {
         checkConnectionWithDb();
-        double totalValue = Client.getTotalValueOfShoppingCart(CURRENT_USER_LOGIN, getConnection());
-        totalValueLabel.setText("Total value of products in cart : " + totalValue);
+        this.totalOrderValue = Client.getTotalValueOfShoppingCart(CURRENT_USER_LOGIN, getConnection());
+        totalValueLabel.setText("Total value of products in cart : " + totalOrderValue);
     }
 
     void displayProducts() throws SQLException {
         checkConnectionWithDb();
         ResultSet products = Product.getProductFromCartAndSetValueBasedOnQuantity(getConnection(), CURRENT_USER_LOGIN);
+        assert products != null;
         ObservableList<ProductTable> listOfProducts = ProductTable.getProductsFromShoppingCart(products);
         if (listOfProducts.isEmpty()) {
             displayLabelWithGivenText(emptyCart, "SHOPPING CART IS EMPTY");
@@ -62,7 +71,9 @@ public class ShoppingCartController extends Controller {
         } else {
             cartTableView.setVisible(true);
             fillShoppingCartColumnsWithData(listOfProducts);
-            showOnlyRowsWithData(cartTableView, listOfProducts);
+            cartTableView.setItems(listOfProducts);
+            cartTableView.prefHeightProperty().bind(Bindings.size(cartTableView.getItems()).multiply(cartTableView.getFixedCellSize()).add(50));
+
         }
 
     }
@@ -75,7 +86,7 @@ public class ShoppingCartController extends Controller {
         plusButtonColumn.setCellFactory(buttonCreation -> plusButtonClicked());
         minusButtonColumn.setCellFactory(buttonCreation -> minusButtonClicked());
         deleteButtonColumn.setCellFactory(buttonCreation -> deleteButtonClicked());
-        showOnlyRowsWithData(cartTableView, list);
+        cartTableView.setItems(list);
 
 
     }
@@ -94,7 +105,7 @@ public class ShoppingCartController extends Controller {
         alert.setContentText("Do you want to delete " + productQuantity + " " + productName + " from cart");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "-quantity", getConnection());
             // there is a trigger in database which deletes products from cart when quantity is equal 0
         }
@@ -160,28 +171,69 @@ public class ShoppingCartController extends Controller {
         return button;
     }
 
-    private void setPaymentMethods() throws SQLException {
+    private void setPaymentMethods(double numberOfButtonsInLine, double buttonPadding) throws SQLException {
         ResultSet paymentMethods = Product.getPaymentMethods(getConnection());
         ToggleGroup groupOfRadioButtons = new ToggleGroup();
-        int x = (int) paymentMethodsPane.getLayoutX();
-        int y = (int) paymentMethodsPane.getLayoutY();
         GridPane grid = new GridPane();
-        grid.setHgap(1);
+        grid.setPadding(new Insets(buttonPadding));
+        grid.setHgap(buttonPadding);
+        grid.setVgap(buttonPadding);
+        int j = 0;
+        int i = 0;
         while (paymentMethods.next()) {
             RadioButton button = new RadioButton(paymentMethods.getString(2));
-            y += 10;
-            button.setLayoutX(x);
-            button.setLayoutY(y);
-            button.setPadding(new Insets(10));
             button.setToggleGroup(groupOfRadioButtons);
-            button.setOnAction(event -> {
-                RadioButton selectedButton = (RadioButton) groupOfRadioButtons.getSelectedToggle();
-                System.out.println(selectedButton.getText());
-            });
-            grid.add(button, x, y);
+            button.setOnAction(event -> this.paymentMethod = button.getText());
+            grid.add(button, i, j);
+
+            if (i < numberOfButtonsInLine - 1) {
+                i++;
+            } else {
+                i = 0;
+                j++;
+
+            }
         }
         paymentMethodsPane.setContent(grid);
     }
-//TODO udpate diagrams from db
 
+
+    @FXML
+    void placeOrderButtonClicked() {
+        if (paymentMethod == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("Payment method required");
+            alert.setContentText("You have to choose payment method before placing an order!");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Placing an order");
+            alert.setHeaderText("Total order value : " + totalOrderValue);
+            alert.setContentText("Are you sure about placing an order ?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                ButtonType now = new ButtonType("I want to pay now");
+                ButtonType later = new ButtonType("I want to pay later");
+                Alert payment = new Alert(Alert.AlertType.CONFIRMATION, "", now, later);
+                payment.setTitle("Payment");
+                payment.setHeaderText("Do you want to pay now ?");
+                payment.setGraphic(iconPath("cart.png"));
+
+                Optional<ButtonType> results = payment.showAndWait();
+                if (results.isPresent() && results.get() == now) {
+                    //adding order with order status in progress
+                } else if (results.isPresent() && results.get() == later) {
+                    //adding order with status waiting for payment
+                }
+            }
+        }
+    }
+
+    private void placeOrder() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = dateFormat.format(date);
+
+
+    }
 }
