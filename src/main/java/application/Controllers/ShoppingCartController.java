@@ -10,14 +10,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import users.Client;
+import users.Order;
 import users.Product;
 import users.ProductTable;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 public class ShoppingCartController extends Controller {
@@ -91,10 +90,15 @@ public class ShoppingCartController extends Controller {
 
     }
 
-    private void reloadTableView(TableView<ProductTable> tableView) throws SQLException {
+    private void reloadTableView(TableView<ProductTable> tableView) {
         tableView.getItems().clear();
-        displayProducts();
-        setTotalValueLabel();
+        try {
+            displayProducts();
+            setTotalValueLabel();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void confirmationAlert(String productName, String productQuantity) throws SQLException {
@@ -185,13 +189,11 @@ public class ShoppingCartController extends Controller {
             button.setToggleGroup(groupOfRadioButtons);
             button.setOnAction(event -> this.paymentMethod = button.getText());
             grid.add(button, i, j);
-
             if (i < numberOfButtonsInLine - 1) {
                 i++;
             } else {
                 i = 0;
                 j++;
-
             }
         }
         paymentMethodsPane.setContent(grid);
@@ -201,39 +203,59 @@ public class ShoppingCartController extends Controller {
     @FXML
     void placeOrderButtonClicked() {
         if (paymentMethod == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "You have to choose payment method before placing an order!");
             alert.setHeaderText("Payment method required");
-            alert.setContentText("You have to choose payment method before placing an order!");
             alert.showAndWait();
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure about placing an order ?");
             alert.setTitle("Placing an order");
             alert.setHeaderText("Total order value : " + totalOrderValue);
-            alert.setContentText("Are you sure about placing an order ?");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (alertButtonClicked(result, ButtonType.OK)) {
                 ButtonType now = new ButtonType("I want to pay now");
                 ButtonType later = new ButtonType("I want to pay later");
-                Alert payment = new Alert(Alert.AlertType.CONFIRMATION, "", now, later);
-                payment.setTitle("Payment");
-                payment.setHeaderText("Do you want to pay now ?");
-                payment.setGraphic(iconPath("cart.png"));
+                Optional<ButtonType> buttonClicked = createAndShowPaymentAlert(now, later);
+                if (alertButtonClicked(buttonClicked, now)) {
+                    placeOrder("In progress");
 
-                Optional<ButtonType> results = payment.showAndWait();
-                if (results.isPresent() && results.get() == now) {
-                    //adding order with order status in progress
-                } else if (results.isPresent() && results.get() == later) {
-                    //adding order with status waiting for payment
+                } else if (alertButtonClicked(buttonClicked, later)) {
+                    placeOrder("Waiting for payment");
                 }
+                clearShoppingCart();
+                reloadTableView(cartTableView);
             }
         }
     }
 
-    private void placeOrder() {
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String currentDate = dateFormat.format(date);
-
-
+    private boolean alertButtonClicked(Optional<ButtonType> alertButton, ButtonType buttonType) {
+        return alertButton.isPresent() && alertButton.get() == buttonType;
     }
+
+    private Optional<ButtonType> createAndShowPaymentAlert(ButtonType firstButtonType, ButtonType secondButtonType) {
+        Alert payment = new Alert(Alert.AlertType.CONFIRMATION, "", firstButtonType, secondButtonType);
+        payment.setTitle("Payment");
+        payment.setHeaderText("Do you want to pay now ?");
+        return payment.showAndWait();
+    }
+
+    private void placeOrder(String orderStatusName) {
+
+        Order order = new Order(paymentMethod, orderStatusName.toLowerCase(), CURRENT_USER_LOGIN);
+        try {
+            order.createOrder(getConnection());
+            order.setOrderId(getConnection());
+            order.setOrderProducts(getConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void clearShoppingCart() {
+        try {
+            Client.deleteWholeCart(CURRENT_USER_LOGIN, getConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
