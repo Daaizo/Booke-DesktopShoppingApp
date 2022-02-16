@@ -2,12 +2,14 @@ package application.Controllers;
 
 import application.Main;
 import dataBase.SqlConnection;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,8 +22,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -36,12 +40,16 @@ public abstract class Controller {
     public final String clientScene = "/application/FXML/clientGUI.fxml";
     public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
     public final String absolutePathToIcons = "C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\";
+    protected final String currency = " $";
+
     private SqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
-    private AnchorPane anchor;
+    protected AnchorPane anchor;
     @FXML
     protected Button goBackButton;
+    @FXML
+    protected StackPane notification;
 
 
     public void prepareScene() {
@@ -58,9 +66,10 @@ public abstract class Controller {
         return logo;
     }
 
-    protected void showOnlyRowsWithData(TableView tableView, ObservableList list) {
+    protected void showOnlyRowsWithData(TableView<?> tableView, ObservableList list) {
 
         tableView.setItems(list);
+        tableView.setMaxHeight(510);
         tableView.setFixedCellSize(70);
         tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
     }
@@ -201,5 +210,32 @@ public abstract class Controller {
 
     }
 
+    protected void createNotification(String text) {
 
+        StackPane pane = new StackPane();
+        pane.setPrefWidth(300);
+        pane.setPrefHeight(49);
+        Label label = new Label(text);
+        ImageView image = new ImageView();
+        image.setImage(new Image(absolutePathToIcons + "check.png"));
+        pane.setId("notification");
+        label.setId("notificationLabel");
+        pane.getChildren().addAll(image, label);
+        label.wrapTextProperty();
+        StackPane.setAlignment(label, Pos.CENTER);
+        StackPane.setAlignment(image, Pos.CENTER_LEFT);
+        pane.setLayoutX(740);
+        pane.setLayoutY(84);
+        pane.setVisible(false);
+        this.notification = pane;
+        anchor.getChildren().add(this.notification);
+    }
+
+    protected void showNotification(double timeDuration) {
+        this.notification.setVisible(false);
+        this.notification.setVisible(true);
+        PauseTransition visiblePause = new PauseTransition(Duration.seconds(timeDuration));
+        visiblePause.setOnFinished(event -> this.notification.setVisible(false));
+        visiblePause.play();
+    }
 }
