@@ -2,7 +2,7 @@ package application.Controllers;
 
 import application.Main;
 import dataBase.SqlConnection;
-import javafx.animation.PauseTransition;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -50,6 +50,8 @@ public abstract class Controller {
     protected Button goBackButton;
     @FXML
     protected StackPane notification;
+    @FXML
+    protected Label notificationLabel;
 
 
     public void prepareScene() {
@@ -228,14 +230,19 @@ public abstract class Controller {
         pane.setLayoutY(84);
         pane.setVisible(false);
         this.notification = pane;
+        this.notificationLabel = label;
         anchor.getChildren().add(this.notification);
     }
 
     protected void showNotification(double timeDuration) {
         this.notification.setVisible(false);
         this.notification.setVisible(true);
-        PauseTransition visiblePause = new PauseTransition(Duration.seconds(timeDuration));
-        visiblePause.setOnFinished(event -> this.notification.setVisible(false));
-        visiblePause.play();
+        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), this.notification);
+        fade.setFromValue(1000);
+        fade.setToValue(0);
+        fade.setCycleCount(1);
+        fade.setAutoReverse(true);
+        fade.play();
+
     }
 }
