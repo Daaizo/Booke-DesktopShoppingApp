@@ -5,7 +5,6 @@ import dataBase.SqlConnection;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,9 +27,11 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class Controller {
     public static String CURRENT_USER_LOGIN;
@@ -39,8 +40,10 @@ public abstract class Controller {
     public final String adminScene = "/application/FXML/adminGUI.fxml";
     public final String clientScene = "/application/FXML/clientGUI.fxml";
     public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
-    public final String absolutePathToIcons = "C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\";
-    protected final String currency = " $";
+    public final String absolutePathToIcons = "/application/Icons/";
+    public final URL iconsUrl = getClass().getResource("/application/Icons/");
+    public final URL cssUrl = getClass().getResource("/application/style.css");
+    protected final String CURRENCY = " $";
 
     private SqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
@@ -57,20 +60,18 @@ public abstract class Controller {
     public void prepareScene() {
         AnchorPane mainAnchor = setAnchorSizeAndColors();
         this.goBackButton = createGoBackButton();
+        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         mainAnchor.getChildren().addAll(createExitButton(), createHorizontalLine(), createLogoutButton(), setSmallLogoInCorner(), goBackButton);
     }
 
     private ImageView setSmallLogoInCorner() {
-        ImageView logo = new ImageView();
-        logo.setImage(new Image(absolutePathToIcons + "transparentLogo.png"));
+        ImageView logo = setImageFromIconsFolder("transparentLogo.png");
         logo.setY(5);
         logo.setX(5);
         return logo;
     }
 
-    protected void showOnlyRowsWithData(TableView<?> tableView, ObservableList list) {
-
-        tableView.setItems(list);
+    protected void showOnlyRowsWithData(TableView<?> tableView) {
         tableView.setMaxHeight(510);
         tableView.setFixedCellSize(70);
         tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
@@ -85,10 +86,10 @@ public abstract class Controller {
         return anchorPane;
     }
 
-    Button createExitButton() {
+    protected Button createExitButton() {
         Button closeButton = new Button();
         closeButton.setBackground(Background.EMPTY);
-        closeButton.setGraphic(iconPath("close.png"));
+        closeButton.setGraphic(setImageFromIconsFolder("close.png"));
         closeButton.setOnAction(actionEvent -> Platform.exit());
         closeButton.setLayoutX(1000);
         closeButton.setLayoutY(10);
@@ -98,7 +99,7 @@ public abstract class Controller {
     private Button createLogoutButton() {
         Button logoutButton = new Button();
         logoutButton.setBackground(Background.EMPTY);
-        logoutButton.setGraphic(iconPath("logout.png"));
+        logoutButton.setGraphic(setImageFromIconsFolder("logout.png"));
         logoutButton.setOnAction(actionEvent -> switchScene(actionEvent, loginScene));
         logoutButton.setLayoutX(950);
         logoutButton.setLayoutY(10);
@@ -108,7 +109,7 @@ public abstract class Controller {
     private Button createGoBackButton() {
         Button goBackButton = new Button();
         goBackButton.setBackground(Background.EMPTY);
-        goBackButton.setGraphic(iconPath("back-button.png"));
+        goBackButton.setGraphic(setImageFromIconsFolder("back-button.png"));
         goBackButton.setLayoutX(5);
         goBackButton.setLayoutY(65);
         goBackButton.setVisible(false);
@@ -121,9 +122,10 @@ public abstract class Controller {
         return anchor;
     }
 
-    public ImageView iconPath(String iconName) {
-        return new ImageView(absolutePathToIcons + iconName);
+    public ImageView setImageFromIconsFolder(String iconName) {
+        return new ImageView(iconsUrl + iconName);
     }
+
 
     @FXML
     void Dragging(MouseEvent event) {
@@ -205,7 +207,7 @@ public abstract class Controller {
     }
 
     protected void setImageToButtonAndPlaceItOnXY(Button buttonName, String imageName, double x, double y) {
-        buttonName.setGraphic(iconPath(imageName));
+        buttonName.setGraphic(setImageFromIconsFolder(imageName));
         buttonName.setBackground(Background.EMPTY);
         buttonName.setLayoutY(y);
         buttonName.setLayoutX(x);
@@ -215,11 +217,10 @@ public abstract class Controller {
     protected void createNotification(String text) {
 
         StackPane pane = new StackPane();
-        pane.setPrefWidth(300);
+        pane.setPrefWidth(250);
         pane.setPrefHeight(49);
         Label label = new Label(text);
-        ImageView image = new ImageView();
-        image.setImage(new Image(absolutePathToIcons + "check.png"));
+        ImageView image = setImageFromIconsFolder("check.png");
         pane.setId("notification");
         label.setId("notificationLabel");
         pane.getChildren().addAll(image, label);
@@ -232,6 +233,18 @@ public abstract class Controller {
         this.notification = pane;
         this.notificationLabel = label;
         anchor.getChildren().add(this.notification);
+    }
+
+    protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, String headerText, String title, String contextText) {
+
+        Alert alert = new Alert(type, contextText);
+        alert.setHeaderText(headerText);
+        alert.setTitle(title);
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialogPane.getStyleClass().add("alert");
+        return alert.showAndWait();
     }
 
     protected void showNotification(double timeDuration) {
