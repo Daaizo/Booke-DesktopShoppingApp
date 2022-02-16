@@ -15,6 +15,17 @@
      -fx-font-size :20px;
      -fx-font-weight: bolder  ;
 }
+#notification #notificationLabel{
+        -fx-font-size : 17px;
+        -fx-font-weight: bolder  ;
+        -fx-font-family :Helvetica;
+}
+#notification{
+     -fx-border-color : Black;
+     -fx-background-color : White;
+     -fx-border-radius : 10px;
+     -fx-background-radius : 10px;
+}
 
 .OrangeButtons{
     -fx-background-color : #fc766a;
