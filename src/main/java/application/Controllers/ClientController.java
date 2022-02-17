@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import users.Client;
 import users.Product;
 import users.ProductTable;
@@ -18,12 +19,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClientController extends Controller {
+
     @FXML
     private AnchorPane ebooksAnchorPane, gamesAnchorPane;
     @FXML
     private Button ebooksButton, gamesButton, shoppingCartButton;
     @FXML
     private Label cartQuantityLabel;
+    @FXML
+    private StackPane cartNotification, starNotification;
     @FXML
     private Pane categoryPickingPane;
     @FXML
@@ -34,25 +38,21 @@ public class ClientController extends Controller {
     private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn, gamesCartButtonColumn, gamesStarButtonColumn;
     @FXML
     private TableView<ProductTable> gamesTableView, ebooksTableView;
+
     @FXML
     void shoppingCartButtonClicked(ActionEvent event) {
         switchScene(event, shoppingCartScene);
     }
-    private double cartXposition;
 
+    private double cartXPosition;
     @FXML
     public void initialize() {
-
         prepareScene();
-        goBackButton.setOnAction(event -> {
-            categoryPickingPane.setVisible(true);
-            ebooksAnchorPane.setVisible(false);
-            gamesAnchorPane.setVisible(false);
-            goBackButton.setVisible(false);
-        });
-        goBackButton.fire(); // fire action to hide all not necessary panes
-        this.cartXposition = 45;
-        setImageToButtonAndPlaceItOnXY(shoppingCartButton, "cart.png", cartXposition, 3);
+        goBackButtonSetAction();
+        this.cartXPosition = 50;
+        starNotification = createNotification(new Label("     Star button clicked"));
+        cartNotification = createNotification(new Label("     Item added to cart"));
+        setImageToButtonAndPlaceItOnXY(shoppingCartButton, "cart.png", cartXPosition, 3);
         try {
             displayEbooks();
             displayGames();
@@ -60,6 +60,16 @@ public class ClientController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void goBackButtonSetAction() {
+        goBackButton.setOnAction(event -> {
+            categoryPickingPane.setVisible(true);
+            ebooksAnchorPane.setVisible(false);
+            gamesAnchorPane.setVisible(false);
+            goBackButton.setVisible(false);
+        });
+        goBackButton.fire(); // fire action to hide all not necessary panes
     }
 
     @FXML
@@ -79,7 +89,7 @@ public class ClientController extends Controller {
 
     private void setQuantityLabel() throws SQLException {
         checkConnectionWithDb();
-        cartQuantityLabel.setLayoutX(cartXposition + 25);
+        cartQuantityLabel.setLayoutX(cartXPosition + 25);
         int quantity = Client.getQuantityOfProductsInCart(CURRENT_USER_LOGIN, getConnection());
         if (quantity > 9)
             displayLabelWithGivenText(cartQuantityLabel, "9+");
@@ -93,7 +103,9 @@ public class ClientController extends Controller {
         ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
         ebooksStarButtonColumn.setCellFactory(buttonInsideCell -> new ButtonInsideTableColumn("star.png", "add to favourite", starButtonClicked()));
         ebooksCartButtonColumn.setCellFactory(buttonInsideCell -> cartButtonClicked());
-        showOnlyRowsWithData(ebooksTableView, list);
+        ebooksTableView.setItems(list);
+        showOnlyRowsWithData(ebooksTableView);
+
     }
 
 
@@ -111,7 +123,8 @@ public class ClientController extends Controller {
         gamesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
         gamesStarButtonColumn.setCellFactory(buttonInsideCell -> new ButtonInsideTableColumn("star.png", "add to favourite", starButtonClicked()));
         gamesCartButtonColumn.setCellFactory(buttonInsideCell -> cartButtonClicked());
-        showOnlyRowsWithData(gamesTableView, list);
+        gamesTableView.setItems(list);
+        showOnlyRowsWithData(gamesTableView);
     }
 
     void displayGames() throws SQLException {
@@ -123,13 +136,20 @@ public class ClientController extends Controller {
     }
 
     private EventHandler<MouseEvent> starButtonClicked() {
-        return event -> System.out.println("start clicked // to be continued");
+        return
+                event -> {
+                    cartNotification.setVisible(false);
+                    showNotification(starNotification, 1200);
+                };
     }
 
     private ButtonInsideTableColumn cartButtonClicked() {
         ButtonInsideTableColumn button = new ButtonInsideTableColumn("add_cart.png", "add to cart");
         EventHandler<MouseEvent> eventHandler = event -> {
             String productName = button.productName;
+            starNotification.setVisible(false);
+            showNotification(cartNotification, 1200);
+
             try {
                 checkConnectionWithDb();
                 Client.addItemToUsersCart(productName, CURRENT_USER_LOGIN, getConnection());
@@ -189,7 +209,7 @@ public class ClientController extends Controller {
 
             });
             button.setOnMouseClicked(eventHandler);
-            button.setGraphic(iconPath(iconName));
+            button.setGraphic(setImageFromIconsFolder(iconName));
             button.setBackground(Background.EMPTY);
             button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-border-color : #fc766a ;"));
             button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: transparent"));
