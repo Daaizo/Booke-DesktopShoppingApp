@@ -1,7 +1,6 @@
 package application.Controllers;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -20,10 +19,13 @@ import java.sql.SQLException;
 
 public class ClientController extends Controller {
 
+    private int cartLabelXPosition;
+    private int cartLabelYPosition;
+
     @FXML
     private AnchorPane ebooksAnchorPane, gamesAnchorPane;
     @FXML
-    private Button ebooksButton, gamesButton, shoppingCartButton;
+    private Button ebooksButton, gamesButton, goBackButton;
     @FXML
     private Label cartQuantityLabel;
     @FXML
@@ -40,19 +42,15 @@ public class ClientController extends Controller {
     private TableView<ProductTable> gamesTableView, ebooksTableView;
 
     @FXML
-    void shoppingCartButtonClicked(ActionEvent event) {
-        switchScene(event, shoppingCartScene);
-    }
-
-    private double cartXPosition;
-    @FXML
     public void initialize() {
         prepareScene();
-        goBackButtonSetAction();
-        this.cartXPosition = 50;
+        this.cartLabelXPosition = 50;
+        this.cartLabelYPosition = 3;
         starNotification = createNotification(new Label("     Star button clicked"));
         cartNotification = createNotification(new Label("     Item added to cart"));
-        setImageToButtonAndPlaceItOnXY(shoppingCartButton, "cart.png", cartXPosition, 3);
+        createAccountButton();
+        createGoBackButton();
+        createCartButton();
         try {
             displayEbooks();
             displayGames();
@@ -62,14 +60,28 @@ public class ClientController extends Controller {
         }
     }
 
-    private void goBackButtonSetAction() {
+    @FXML
+    void createAccountButton() {
+        Button userAccountInformationButton = createButton("user.png", cartLabelXPosition + 50, cartLabelYPosition);
+        userAccountInformationButton.setOnAction(event -> switchScene(event, clientAccountScene));
+    }
+
+    void createCartButton() {
+        Button shoppingCartButton = createButton("cart.png", cartLabelXPosition, cartLabelYPosition);
+        shoppingCartButton.setOnAction(event -> switchScene(event, shoppingCartScene));
+
+    }
+
+    void createGoBackButton() {
+        goBackButton = createButton("back-button.png", 5, 65);
+        goBackButton.setVisible(false);
         goBackButton.setOnAction(event -> {
             categoryPickingPane.setVisible(true);
             ebooksAnchorPane.setVisible(false);
             gamesAnchorPane.setVisible(false);
             goBackButton.setVisible(false);
         });
-        goBackButton.fire(); // fire action to hide all not necessary panes
+        goBackButton.fire();
     }
 
     @FXML
@@ -89,7 +101,7 @@ public class ClientController extends Controller {
 
     private void setQuantityLabel() throws SQLException {
         checkConnectionWithDb();
-        cartQuantityLabel.setLayoutX(cartXPosition + 25);
+        cartQuantityLabel.setLayoutX(cartLabelXPosition + 20);
         int quantity = Client.getQuantityOfProductsInCart(CURRENT_USER_LOGIN, getConnection());
         if (quantity > 9)
             displayLabelWithGivenText(cartQuantityLabel, "9+");
