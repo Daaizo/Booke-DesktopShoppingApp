@@ -43,7 +43,7 @@
     <HBox fillHeight="false" prefHeight="689.0" prefWidth="1051.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Pane prefHeight="691.0" prefWidth="548.0" style="-fx-background-color: #fc766a;">
-            <ImageView fx:id="logo" fitHeight="210.0" fitWidth="216.0" layoutX="163.0" layoutY="155.0">
+            <ImageView fitHeight="210.0" fitWidth="216.0" layoutX="163.0" layoutY="155.0">
                 <Image url="@../Icons/shopping-bag.png"/>
             </ImageView>
             <Label layoutX="138.0" layoutY="329.0" prefHeight="175.0" prefWidth="327.0" text="Bokke "
@@ -65,16 +65,14 @@
             <PasswordField id="inputField" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"
                            prefWidth="318.0" promptText="password"/>
             <Button fx:id="loginButton" layoutX="114.0" layoutY="393.0" mnemonicParsing="false"
-                    onAction="#loginButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="loginSceneButtons"
+                    onAction="#loginButtonClicked" prefHeight="53.0" prefWidth="248.0" styleClass="OrangeButtons"
                     text="Login" textFill="#5b84b1" textOverrun="CENTER_WORD_ELLIPSIS">
                 <font>
                     <Font name="System Bold" size="14.0"/>
                 </font>
             </Button>
             <Button fx:id="registerButton" layoutX="114.0" layoutY="476.0" mnemonicParsing="false"
-                    onAction="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0"
-                    style="-fx-background-color: #fc766a; -fx-background-radius: 12px;" styleClass="loginSceneButtons"
+                    onAction="#registerButtonClicked" prefHeight="53.0" prefWidth="248.0" styleClass="OrangeButtons"
                     text="Register" textFill="#5b84b1">
                 <font>
                     <Font name="System Bold" size="14.0"/>

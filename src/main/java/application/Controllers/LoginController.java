@@ -15,7 +15,7 @@ public class LoginController extends Controller {
 
 
     @FXML
-    public Button registerButton;
+    public Button registerButton, loginButton;
 
     @FXML
     private TextField tfLogin, tfPassword;
@@ -26,15 +26,14 @@ public class LoginController extends Controller {
 
     @FXML
     public void initialize() {
-
         AnchorPane mainAnchor = setAnchorSizeAndColors();
-        mainAnchor.getChildren().add(createExitButton());
+        createExitButton();
     }
 
 
     private void loginError() {
-        Alert unsuccessfulLogin = new Alert(Alert.AlertType.INFORMATION, "login or password is incorrect");
-        unsuccessfulLogin.showAndWait();
+        createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "", "login or password is incorrect");
+
     }
 
     private boolean passwordMatches(String password, String login) {
@@ -93,11 +92,11 @@ public class LoginController extends Controller {
             }
 
         } else if (isLoginEmpty()) {
-            colorField(tfLogin, Color.RED);
+            colorField(tfLogin, loginLabel, Color.RED);
             displayLabelWithGivenText(loginLabel, "Filed is empty");
 
         } else if (isPasswordEmpty()) {
-            colorField(tfPassword, Color.RED);
+            colorField(tfPassword, passwordLabel, Color.RED);
             displayLabelWithGivenText(passwordLabel, "Filed is empty");
         }
 
