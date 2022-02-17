@@ -1,4 +1,16 @@
 
+.topButtons:hover{
+-fx-background-color :#7498be;
+}
+.topButtons{
+-fx-background-color :transparent;
+}
+#exitButton:hover{
+-fx-background-color :#ff4d4d;
+-fx-border-width: 2px;
+-fx-border-color: #ff4d4d;
+}
+
 #titleLabel{
     -fx-font-weight	: bolder  ;
     -fx-font-family :'Bauhaus 93';
@@ -21,12 +33,17 @@
         -fx-font-family :Helvetica;
 }
 #notification{
-     -fx-border-color : Black;
-     -fx-background-color : White;
+     -fx-border-color : white;
+     -fx-background-color : transparent ;
+      -fx-padding: 10px;
      -fx-border-radius : 10px;
      -fx-background-radius : 10px;
 }
 
+.alert{
+    -fx-background-color: red;
+
+}
 .OrangeButtons{
     -fx-background-color : #fc766a;
     -fx-background-radius : 12px;
