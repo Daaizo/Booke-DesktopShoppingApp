@@ -44,12 +44,16 @@ public class ShoppingCartController extends Controller {
         tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
     }
 
-    @FXML
-    public void initialize() {
-
-        prepareScene();
+    private void createGoBackButton() {
+        Button goBackButton = createButton("back-button.png", 5, 65);
         goBackButton.setVisible(true);
         goBackButton.setOnAction(event -> switchScene(event, clientScene));
+    }
+
+    @FXML
+    public void initialize() {
+        prepareScene();
+        createGoBackButton();
 
         try {
             displayProducts();
