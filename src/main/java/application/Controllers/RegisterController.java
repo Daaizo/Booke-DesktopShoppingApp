@@ -147,8 +147,8 @@ public class RegisterController extends Controller {
             Client newUser = newUser();
             checkConnectionWithDb();
             newUser.addUserToDatabase(getConnection());
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "User created");
-            alert.showAndWait();
+
+            createAndShowAlert(Alert.AlertType.INFORMATION, "", "", "User created");
             updateHashMapWithLoginValues(newUser.getLogin(), newUser.getPassword());
             switchScene(event, loginScene);
         }
@@ -202,7 +202,6 @@ public class RegisterController extends Controller {
             checkPasswordRequirementAndSetProperImage(passNumberImage, "(.*[0-9].*)"); // number
             checkPasswordRequirementAndSetProperImage(passLowercaseLetterImage, "(.*[a-z].*)"); //lowercase
         }
-
         return false;
     }
 
