@@ -18,9 +18,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -35,33 +33,30 @@ import java.util.Optional;
 
 public abstract class Controller {
     public static String CURRENT_USER_LOGIN;
+    public static final String CURRENCY = " $";
+
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
     public final String clientScene = "/application/FXML/clientGUI.fxml";
     public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
     public final String absolutePathToIcons = "/application/Icons/";
+    public final String clientAccountScene = "/application/FXML/clientAccountGUI.fxml";
+
     public final URL iconsUrl = getClass().getResource("/application/Icons/");
     public final URL cssUrl = getClass().getResource("/application/style.css");
-    protected final String CURRENCY = " $";
-
     private SqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
     protected AnchorPane anchor;
-    @FXML
-    protected Button goBackButton;
-    @FXML
-    protected StackPane notification;
-    @FXML
-    protected Label notificationLabel;
 
 
     public void prepareScene() {
         AnchorPane mainAnchor = setAnchorSizeAndColors();
-        this.goBackButton = createGoBackButton();
         mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
-        mainAnchor.getChildren().addAll(createExitButton(), createHorizontalLine(), createLogoutButton(), setSmallLogoInCorner(), goBackButton);
+        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
+        createExitButton();
+        createLogoutButton();
     }
 
     private ImageView setSmallLogoInCorner() {
@@ -86,35 +81,29 @@ public abstract class Controller {
         return anchorPane;
     }
 
-    protected Button createExitButton() {
-        Button closeButton = new Button();
-        closeButton.setBackground(Background.EMPTY);
-        closeButton.setGraphic(setImageFromIconsFolder("close.png"));
+    protected Button createButton(String imageName, int x, int y) {
+        Button button = new Button();
+        button.getStyleClass().add("topButtons");
+        button.setLayoutX(x);
+        button.setLayoutY(y);
+        button.setMaxSize(49, 49);
+        button.setPrefSize(49, 49);
+        button.setGraphic(setImageFromIconsFolder(imageName));
+        anchor.getChildren().add(button);
+        return button;
+    }
+
+    protected void createExitButton() {
+        Button closeButton = createButton("close.png", 999, 2);
+        closeButton.setId("exitButton");
         closeButton.setOnAction(actionEvent -> Platform.exit());
-        closeButton.setLayoutX(1000);
-        closeButton.setLayoutY(10);
-        return closeButton;
     }
 
-    private Button createLogoutButton() {
-        Button logoutButton = new Button();
-        logoutButton.setBackground(Background.EMPTY);
-        logoutButton.setGraphic(setImageFromIconsFolder("logout.png"));
+    private void createLogoutButton() {
+        Button logoutButton = createButton("logout.png", 948, 2);
         logoutButton.setOnAction(actionEvent -> switchScene(actionEvent, loginScene));
-        logoutButton.setLayoutX(950);
-        logoutButton.setLayoutY(10);
-        return logoutButton;
     }
 
-    private Button createGoBackButton() {
-        Button goBackButton = new Button();
-        goBackButton.setBackground(Background.EMPTY);
-        goBackButton.setGraphic(setImageFromIconsFolder("back-button.png"));
-        goBackButton.setLayoutX(5);
-        goBackButton.setLayoutY(65);
-        goBackButton.setVisible(false);
-        return goBackButton;
-    }
 
     AnchorPane setAnchorSizeAndColors() {
         anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px;-fx-background-color : #5B84B1FF ");
@@ -128,7 +117,7 @@ public abstract class Controller {
 
 
     @FXML
-    void Dragging(MouseEvent event) {
+    void Dragging() {
         Stage stage = (Stage) anchor.getScene().getWindow();
         anchor.setOnMousePressed(pressEvent -> anchor.setOnMouseDragged(dragEvent -> {
             stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
@@ -206,37 +195,27 @@ public abstract class Controller {
         field.setEffect(glow);
     }
 
-    protected void setImageToButtonAndPlaceItOnXY(Button buttonName, String imageName, double x, double y) {
-        buttonName.setGraphic(setImageFromIconsFolder(imageName));
-        buttonName.setBackground(Background.EMPTY);
-        buttonName.setLayoutY(y);
-        buttonName.setLayoutX(x);
 
-    }
-
-    protected void createNotification(String text) {
-
+    protected StackPane createNotification(Label label) {
         StackPane pane = new StackPane();
         pane.setPrefWidth(250);
         pane.setPrefHeight(49);
-        Label label = new Label(text);
         ImageView image = setImageFromIconsFolder("check.png");
         pane.setId("notification");
         label.setId("notificationLabel");
         pane.getChildren().addAll(image, label);
-        label.wrapTextProperty();
+        label.setWrapText(true);
         StackPane.setAlignment(label, Pos.CENTER);
         StackPane.setAlignment(image, Pos.CENTER_LEFT);
         pane.setLayoutX(740);
         pane.setLayoutY(84);
         pane.setVisible(false);
-        this.notification = pane;
-        this.notificationLabel = label;
-        anchor.getChildren().add(this.notification);
+        anchor.getChildren().add(pane);
+        return pane;
+
     }
 
     protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, String headerText, String title, String contextText) {
-
         Alert alert = new Alert(type, contextText);
         alert.setHeaderText(headerText);
         alert.setTitle(title);
@@ -247,10 +226,22 @@ public abstract class Controller {
         return alert.showAndWait();
     }
 
-    protected void showNotification(double timeDuration) {
-        this.notification.setVisible(false);
-        this.notification.setVisible(true);
-        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), this.notification);
+    protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, ButtonType buttonType1, ButtonType buttonType2,
+                                                      String headerText, String title) {
+        Alert alert = new Alert(type, "", buttonType1, buttonType2);
+        alert.setHeaderText(headerText);
+        alert.setTitle(title);
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialogPane.getStyleClass().add("alert");
+        return alert.showAndWait();
+    }
+
+    protected void showNotification(StackPane notification, double timeDuration) {
+        notification.setVisible(false);
+        notification.setVisible(true);
+        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), notification);
         fade.setFromValue(1000);
         fade.setToValue(0);
         fade.setCycleCount(1);
