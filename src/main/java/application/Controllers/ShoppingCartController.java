@@ -17,6 +17,7 @@ import users.ProductTable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ShoppingCartController extends Controller {
@@ -35,15 +36,21 @@ public class ShoppingCartController extends Controller {
     @FXML
     private ScrollPane paymentMethodsPane;
 
+
+    @Override
+    protected void showOnlyRowsWithData(TableView<?> tableView) {
+        tableView.setMaxHeight(320);
+        tableView.setFixedCellSize(70);
+        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
+    }
+
     @FXML
     public void initialize() {
 
         prepareScene();
-        createNotification("Order successfully placed");
         goBackButton.setVisible(true);
         goBackButton.setOnAction(event -> switchScene(event, clientScene));
-        cartTableView.setFixedCellSize(70);
-        cartTableView.setMaxHeight(320);
+
         try {
             displayProducts();
             setTotalValueLabel();
@@ -56,7 +63,7 @@ public class ShoppingCartController extends Controller {
     void setTotalValueLabel() throws SQLException {
         checkConnectionWithDb();
         this.totalOrderValue = Client.getTotalValueOfShoppingCart(CURRENT_USER_LOGIN, getConnection());
-        totalValueLabel.setText("Total value of products in cart : " + totalOrderValue + currency);
+        totalValueLabel.setText("Total value of products in cart : " + totalOrderValue + CURRENCY);
     }
 
     void displayProducts() throws SQLException {
@@ -73,7 +80,7 @@ public class ShoppingCartController extends Controller {
             cartTableView.setVisible(true);
             fillShoppingCartColumnsWithData(listOfProducts);
             cartTableView.setItems(listOfProducts);
-            cartTableView.prefHeightProperty().bind(Bindings.size(cartTableView.getItems()).multiply(cartTableView.getFixedCellSize()).add(50));
+            showOnlyRowsWithData(cartTableView);
 
         }
 
@@ -104,23 +111,20 @@ public class ShoppingCartController extends Controller {
     }
 
     private void confirmationAlert(String productName, String productQuantity) throws SQLException {
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText("DELETING PRODUCT FROM CART ");
+        Optional<ButtonType> buttonClicked;
         if (productQuantity.compareTo("1") == 0) {
-            alert.setContentText("Do you want to delete '" + productName + "' from cart");
+            buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM CART",
+                    "Confirmation",
+                    "Do you want to delete " + productName + " from cart");
         } else {
-            alert.setContentText("Do you want to delete " + productQuantity + " pieces of '" + productName + "' from cart");
+            buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM CART",
+                    "Confirmation",
+                    "Do you want to delete " + productQuantity + " pieces of '" + productName + "' from cart");
         }
-
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (alertButtonClicked(result, ButtonType.OK)) {
+        if (alertButtonClicked(buttonClicked, ButtonType.OK)) {
             Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "-quantity", getConnection());
             // there is a trigger in database which deletes products from cart when quantity is equal 0
         }
-
     }
 
     private ClientController.ButtonInsideTableColumn plusButtonClicked() {
@@ -154,10 +158,7 @@ public class ShoppingCartController extends Controller {
                     confirmationAlert(productName, "1");
                 } else {
                     Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "-1", getConnection());
-
                 }
-
-
                 reloadTableView(cartTableView);
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -195,7 +196,7 @@ public class ShoppingCartController extends Controller {
         grid.setVgap(buttonPadding);
         int j = 0;
         int i = 0;
-        while (paymentMethods.next()) {
+        while (Objects.requireNonNull(paymentMethods).next()) {
             RadioButton button = new RadioButton(paymentMethods.getString(2));
             button.setToggleGroup(groupOfRadioButtons);
             button.setOnAction(event -> this.paymentMethod = button.getText());
@@ -214,25 +215,28 @@ public class ShoppingCartController extends Controller {
     @FXML
     void placeOrderButtonClicked() {
         if (paymentMethod == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "You have to choose payment method before placing an order!");
-            alert.setHeaderText("Payment method required");
-            alert.showAndWait();
+            createAndShowAlert(Alert.AlertType.WARNING,
+                    "Payment method required",
+                    "You have to choose payment method before placing an order!", "");
+
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure about placing an order ?");
-            alert.setTitle("Placing an order");
-            alert.setHeaderText("Total order value : " + totalOrderValue + currency);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (alertButtonClicked(result, ButtonType.OK)) {
+            Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION,
+                    "Are you sure about placing an order ?",
+                    "Placing an order",
+                    "Total order value : " + totalOrderValue + CURRENCY);
+            if (alertButtonClicked(buttonClicked, ButtonType.OK)) {
+
                 ButtonType now = new ButtonType("I want to pay now");
                 ButtonType later = new ButtonType("I want to pay later");
-                Optional<ButtonType> buttonClicked = createAndShowPaymentAlert(now, later);
-                if (alertButtonClicked(buttonClicked, now)) {
+                Optional<ButtonType> buttonTypeClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION,
+                        now, later, "Do you want to pay now ?", "Payment");
+                if (alertButtonClicked(buttonTypeClicked, now)) {
                     placeOrder("In progress");
 
-                } else if (alertButtonClicked(buttonClicked, later)) {
+                } else if (alertButtonClicked(buttonTypeClicked, later)) {
                     placeOrder("Waiting for payment");
                 }
-                showNotification(2);
+                showNotification(createNotification(new Label("  Order placed")), 3000);
                 clearShoppingCart();
                 reloadTableView(cartTableView);
             }
@@ -243,12 +247,6 @@ public class ShoppingCartController extends Controller {
         return alertButton.isPresent() && alertButton.get() == buttonType;
     }
 
-    private Optional<ButtonType> createAndShowPaymentAlert(ButtonType firstButtonType, ButtonType secondButtonType) {
-        Alert payment = new Alert(Alert.AlertType.CONFIRMATION, "", firstButtonType, secondButtonType);
-        payment.setTitle("Payment");
-        payment.setHeaderText("Do you want to pay now ?");
-        return payment.showAndWait();
-    }
 
     private void placeOrder(String orderStatusName) {
 

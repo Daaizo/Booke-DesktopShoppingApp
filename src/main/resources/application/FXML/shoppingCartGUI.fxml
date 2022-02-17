@@ -50,7 +50,7 @@
             </LinearGradient>
         </textFill>
     </Label>
-    <Label fx:id="totalValueLabel" layoutX="639.0" layoutY="526.0" prefHeight="39.0" prefWidth="376.0"
+    <Label fx:id="totalValueLabel" layoutX="557.0" layoutY="526.0" prefHeight="39.0" prefWidth="458.0"
            styleClass="shoppingCartLabels">
         <font>
             <Font name="System Bold" size="18.0"/>
