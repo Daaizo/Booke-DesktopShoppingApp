@@ -19,8 +19,9 @@ public class Order {
     private int orderNumber;
 
 
-    public Order(int id, String date, double totalValue, String paymentMethod, String status) {
+    public Order(int id, String date, String deliveryDate, double totalValue, String paymentMethod, String status) {
         this.orderNumber = id;
+        this.orderDeliveryDate = deliveryDate;
         this.orderDate = date;
         this.orderTotalValue = totalValue;
         this.paymentMethodName = paymentMethod;
@@ -40,6 +41,10 @@ public class Order {
     public Order(String paymentMethod, String orderStatus, String customerLogin) {
         this.orderStatusName = orderStatus;
         this.paymentMethodName = paymentMethod;
+        this.customerLogin = customerLogin;
+    }
+
+    public Order(String customerLogin) {
         this.customerLogin = customerLogin;
     }
 
@@ -77,7 +82,7 @@ public class Order {
         preparedStatement.execute();
     }
 
-    public ResultSet getOrdersFromCustomer(Connection connection, String customerLogin) throws SQLException {
+    public ResultSet getOrdersFromCustomer(Connection connection) throws SQLException {
         String getOrders = """
                 select oh.orderheaderkey "Order number",oh.orderdate "Order Time",oh.deliverydate "Delivery date",
                     sum(p.catalogprice * od.quantity) "Total value", pm.paymentmethodname "Payment method", os.orderstatusname "Order status"
