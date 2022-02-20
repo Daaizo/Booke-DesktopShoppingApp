@@ -9,8 +9,19 @@
  -fx-background-color: transparent;
  -fx-padding: 10px;
 }
+.accountButtons{
+ -fx-background-color: -backgroundColorB;
+   -fx-border-color : -backgroundColorB;
+   -fx-background-radius:10px;
+   -fx-border-radius:10px;
+  -fx-font-size :20px;
+     -fx-font-weight: bolder  ;
+}
 
+.accountButtons:hover{
+-fx-background-color :#7498be;
 
+}
 .topButtons:hover{
 -fx-background-color :#7498be;
 }
@@ -118,6 +129,12 @@
 }
 
 
+.table-row-cell:selected .text {
+       -fx-fill: white ;
+       -fx-font-weight: bolder  ;
+       -fx-font-family :Helvetica;
+
+}
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
 -fx-font-size : 20px;
 -fx-alignment :bottom-left;
