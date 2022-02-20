@@ -44,8 +44,8 @@ public class ClientController extends Controller {
     @FXML
     public void initialize() {
         prepareScene();
-        this.cartLabelXPosition = 50;
-        this.cartLabelYPosition = 3;
+        this.cartLabelXPosition = 60;
+        this.cartLabelYPosition = 2;
         starNotification = createNotification(new Label("     Star button clicked"));
         cartNotification = createNotification(new Label("     Item added to cart"));
         createAccountButton();
@@ -62,7 +62,7 @@ public class ClientController extends Controller {
 
     @FXML
     void createAccountButton() {
-        Button userAccountInformationButton = createButton("user.png", cartLabelXPosition + 50, cartLabelYPosition);
+        Button userAccountInformationButton = createButton("user.png", cartLabelXPosition + 60, cartLabelYPosition);
         userAccountInformationButton.setOnAction(event -> switchScene(event, clientAccountScene));
     }
 
@@ -72,16 +72,15 @@ public class ClientController extends Controller {
 
     }
 
-    void createGoBackButton() {
-        goBackButton = createButton("back-button.png", 5, 65);
-        goBackButton.setVisible(false);
-        goBackButton.setOnAction(event -> {
+    private void createGoBackButton() {
+        goBackButton = super.createGoBackButton(event -> {
             categoryPickingPane.setVisible(true);
             ebooksAnchorPane.setVisible(false);
             gamesAnchorPane.setVisible(false);
             goBackButton.setVisible(false);
         });
         goBackButton.fire();
+        goBackButton.setVisible(false);
     }
 
     @FXML
