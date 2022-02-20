@@ -1,14 +1,27 @@
 
+*{
+-exitButtonColor : #ff6666;
+-backgroundColorA: #5B84B1FF; 	// bluish
+-backgroundColorB: #fc766a; 		// orange
+}
+
+#clientButtons{
+ -fx-background-color: transparent;
+ -fx-padding: 10px;
+}
+
+
 .topButtons:hover{
 -fx-background-color :#7498be;
 }
 .topButtons{
 -fx-background-color :transparent;
 }
+
 #exitButton:hover{
--fx-background-color :#ff4d4d;
--fx-border-width: 2px;
--fx-border-color: #ff4d4d;
+
+-fx-background-color :-exitButtonColor;
+-fx-border-color: -exitButtonColor;
 }
 
 #titleLabel{
@@ -19,8 +32,8 @@
     -fx-font-size :60px;
 }
 #paymentMethodsScrollPane{
-    -fx-background : #5B84B1FF;
-    -fx-border-color : #5B84B1FF;
+    -fx-background : -backgroundColorA;
+    -fx-border-color : -backgroundColorA;
     -fx-font-size : 15px;
 }
 .shoppingCartLabels{
@@ -40,12 +53,26 @@
      -fx-background-radius : 10px;
 }
 
-.alert{
-    -fx-background-color: red;
 
+.alert{
+    -fx-background-color: -backgroundColorA;
+    -fx-border-color: -backgroundColorB;
+    -fx-font-size : 22px;
+    -fx-font-weight: bolder  ;
+    -fx-font-alignment : center;
+     -fx-font-family :Helvetica;
 }
+.alert .button{
+    -fx-font-size : 15 px;
+    -fx-alignment:center;
+}
+.alert:header .header-panel {
+  -fx-background-color: -backgroundColorB;
+}
+
+
 .OrangeButtons{
-    -fx-background-color : #fc766a;
+    -fx-background-color : -backgroundColorB;
     -fx-background-radius : 12px;
     -fx-border-radius : 12px;
     -fx-font-size : 17px;
@@ -71,28 +98,27 @@
  .check-box:determinate .box .mark: focused,
  #inputField:focused{
     -fx-effect : null;
-    -fx-border-color: #fc766a;
+    -fx-border-color: -backgroundColorB;
     -fx-border-width: 3px;
     -fx-border-radius: 3px;
 }
 
 
-.table-view {
-    -fx-background-color: transparent;
+//table view
 
-}
 
-.table-view .column-header-background .filler {
+.table-view,
+.table-view .column-header-background .filler,
+.tab-pane:top .tab-header-area .tab-header-background,
+.table-view .corner,
+.table-view:row-selection:unconstrained-resize .placeholder
+{
       -fx-background-color: transparent;
 
 }
 
-.tab-pane:top .tab-header-area .tab-header-background{
--fx-background-color: transparent;
-}
 
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
-
 -fx-font-size : 20px;
 -fx-alignment :bottom-left;
 }
@@ -114,19 +140,14 @@
 .table-view:row-selection:constrained-resize:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
     -fx-font-weight	: bolder  ;
     -fx-font-family :Helvetica;
-    -fx-text-fill : #fc766a;
+    -fx-text-fill : -backgroundColorB;
     -fx-font-size : 20px;
     -fx-alignment : center;
 
 }
 
-
-.table-view .corner {
-    -fx-background-color: transparent;
-}
-
 .table-column{
-    -fx-background-color: #5B84B1FF;
+    -fx-background-color: -backgroundColorA;
 
 }
 
@@ -134,19 +155,15 @@
      -fx-border-color: black;
      -fx-border-style: solid hidden hidden hidden;
      -fx-border-width : 2px;
-     -fx-background-color: #5B84B1FF;
+     -fx-background-color: -backgroundColorA;
      -fx-padding: 25 5 5 5px;
      -fx-font-size : 20px;
     -fx-font-alignment: top;
     -fx-alignment : center;
  }
 
-
-.table-view:row-selection:unconstrained-resize .placeholder{
-     -fx-background-color: transparent;
-}
 .table-view .show-hide-columns-button{
-    -fx-background-color: #5B84B1FF;
+    -fx-background-color: -backgroundColorA;
 }
 
 
@@ -176,7 +193,7 @@
      -fx-background-color: transparent;
  }
  .table-view .virtual-flow .scroll-bar:vertical .thumb{
-      -fx-background-color:  #fc766a;
+      -fx-background-color:  -backgroundColorB;
   }
 
   .table-view .virtual-flow .scroll-bar .increment-button,
@@ -184,5 +201,4 @@
       -fx-opacity: 1;
       -fx-background-color : transparent;
       -fx-padding: 2;
-
   }
