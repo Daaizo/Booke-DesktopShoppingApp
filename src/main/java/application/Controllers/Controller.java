@@ -2,12 +2,13 @@ package application.Controllers;
 
 import application.Main;
 import dataBase.SqlConnection;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,45 +16,58 @@ import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class Controller {
     public static String CURRENT_USER_LOGIN;
+    public static final String CURRENCY = " $";
+
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
     public final String clientScene = "/application/FXML/clientGUI.fxml";
     public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
-    public final String absolutePathToIcons = "C:\\Users\\Daaizo\\IdeaProjects\\simple_app\\src\\main\\resources\\application\\Icons\\";
+    public final String absolutePathToIcons = "/application/Icons/";
+    public final String clientAccountScene = "/application/FXML/clientAccountGUI.fxml";
+
+    public final URL iconsUrl = getClass().getResource("/application/Icons/");
+    public final URL cssUrl = getClass().getResource("/application/style.css");
     private SqlConnection instance;
     public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
     @FXML
-    private AnchorPane anchor;
-    @FXML
-    protected Button goBackButton;
+    protected AnchorPane anchor;
 
 
     public void prepareScene() {
         AnchorPane mainAnchor = setAnchorSizeAndColors();
-        this.goBackButton = createGoBackButton();
-        mainAnchor.getChildren().addAll(createExitButton(), createHorizontalLine(), createLogoutButton(), goBackButton);
-
+        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
+        createExitButton();
+        createLogoutButton();
     }
 
+    private ImageView setSmallLogoInCorner() {
+        ImageView logo = setImageFromIconsFolder("transparentLogo.png");
+        logo.setY(5);
+        logo.setX(5);
+        return logo;
+    }
 
-    protected void showOnlyRowsWithData(TableView tableView, ObservableList list) {
-
-        tableView.setItems(list);
+    protected void showOnlyRowsWithData(TableView<?> tableView) {
+        tableView.setMaxHeight(510);
         tableView.setFixedCellSize(70);
         tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
     }
@@ -67,35 +81,29 @@ public abstract class Controller {
         return anchorPane;
     }
 
-    Button createExitButton() {
-        Button closeButton = new Button();
-        closeButton.setBackground(Background.EMPTY);
-        closeButton.setGraphic(iconPath("close.png"));
+    protected Button createButton(String imageName, int x, int y) {
+        Button button = new Button();
+        button.getStyleClass().add("topButtons");
+        button.setLayoutX(x);
+        button.setLayoutY(y);
+        button.setMaxSize(49, 49);
+        button.setPrefSize(49, 49);
+        button.setGraphic(setImageFromIconsFolder(imageName));
+        anchor.getChildren().add(button);
+        return button;
+    }
+
+    protected void createExitButton() {
+        Button closeButton = createButton("close.png", 999, 2);
+        closeButton.setId("exitButton");
         closeButton.setOnAction(actionEvent -> Platform.exit());
-        closeButton.setLayoutX(1000);
-        closeButton.setLayoutY(10);
-        return closeButton;
     }
 
-    private Button createLogoutButton() {
-        Button logoutButton = new Button();
-        logoutButton.setBackground(Background.EMPTY);
-        logoutButton.setGraphic(iconPath("logout.png"));
+    private void createLogoutButton() {
+        Button logoutButton = createButton("logout.png", 948, 2);
         logoutButton.setOnAction(actionEvent -> switchScene(actionEvent, loginScene));
-        logoutButton.setLayoutX(950);
-        logoutButton.setLayoutY(10);
-        return logoutButton;
     }
 
-    private Button createGoBackButton() {
-        Button goBackButton = new Button();
-        goBackButton.setBackground(Background.EMPTY);
-        goBackButton.setGraphic(iconPath("back-button.png"));
-        goBackButton.setLayoutX(5);
-        goBackButton.setLayoutY(10);
-        goBackButton.setVisible(false);
-        return goBackButton;
-    }
 
     AnchorPane setAnchorSizeAndColors() {
         anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px;-fx-background-color : #5B84B1FF ");
@@ -103,12 +111,13 @@ public abstract class Controller {
         return anchor;
     }
 
-    public ImageView iconPath(String iconName) {
-        return new ImageView(absolutePathToIcons + iconName);
+    public ImageView setImageFromIconsFolder(String iconName) {
+        return new ImageView(iconsUrl + iconName);
     }
 
+
     @FXML
-    void Dragging(MouseEvent event) {
+    void Dragging() {
         Stage stage = (Stage) anchor.getScene().getWindow();
         anchor.setOnMousePressed(pressEvent -> anchor.setOnMouseDragged(dragEvent -> {
             stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
@@ -186,13 +195,58 @@ public abstract class Controller {
         field.setEffect(glow);
     }
 
-    protected void setImageToButtonAndPlaceItOnXY(Button buttonName, String imageName, double x, double y) {
-        buttonName.setGraphic(iconPath(imageName));
-        buttonName.setBackground(Background.EMPTY);
-        buttonName.setLayoutY(y);
-        buttonName.setLayoutX(x);
+
+    protected StackPane createNotification(Label label) {
+        StackPane pane = new StackPane();
+        pane.setPrefWidth(250);
+        pane.setPrefHeight(49);
+        ImageView image = setImageFromIconsFolder("check.png");
+        pane.setId("notification");
+        label.setId("notificationLabel");
+        pane.getChildren().addAll(image, label);
+        label.setWrapText(true);
+        StackPane.setAlignment(label, Pos.CENTER);
+        StackPane.setAlignment(image, Pos.CENTER_LEFT);
+        pane.setLayoutX(740);
+        pane.setLayoutY(84);
+        pane.setVisible(false);
+        anchor.getChildren().add(pane);
+        return pane;
 
     }
 
+    protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, String headerText, String title, String contextText) {
+        Alert alert = new Alert(type, contextText);
+        alert.setHeaderText(headerText);
+        alert.setTitle(title);
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialogPane.getStyleClass().add("alert");
+        return alert.showAndWait();
+    }
 
+    protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, ButtonType buttonType1, ButtonType buttonType2,
+                                                      String headerText, String title) {
+        Alert alert = new Alert(type, "", buttonType1, buttonType2);
+        alert.setHeaderText(headerText);
+        alert.setTitle(title);
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialogPane.getStyleClass().add("alert");
+        return alert.showAndWait();
+    }
+
+    protected void showNotification(StackPane notification, double timeDuration) {
+        notification.setVisible(false);
+        notification.setVisible(true);
+        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), notification);
+        fade.setFromValue(1000);
+        fade.setToValue(0);
+        fade.setCycleCount(1);
+        fade.setAutoReverse(true);
+        fade.play();
+
+    }
 }

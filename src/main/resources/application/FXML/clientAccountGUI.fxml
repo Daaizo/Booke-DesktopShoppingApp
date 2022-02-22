@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="anchor" fx:id="anchor" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#Dragging" prefHeight="684.0" prefWidth="1050.0"
+            stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.ClientAccountController">
+    <AnchorPane layoutX="292.0" layoutY="48.0" prefHeight="66.0" prefWidth="744.0">
+        <Button layoutY="22.0" mnemonicParsing="false" onAction="#ordersButtonClicked"
+                prefHeight="46.0" prefWidth="140.0" styleClass="accountButtons" text="All orders"
+                AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="604.0"
+                AnchorPane.topAnchor="22.0"/>
+        <Button layoutX="169.0" layoutY="22.0" mnemonicParsing="false"
+                onAction="#favouritesButtonClicked" prefHeight="46.0" prefWidth="162.0" styleClass="accountButtons"
+                text="Favourites"/>
+        <Button layoutX="354.0" layoutY="22.0" mnemonicParsing="false" prefHeight="46.0"
+                prefWidth="162.0" styleClass="accountButtons" text="Account"/>
+        <Button layoutX="552.0" layoutY="22.0" mnemonicParsing="false" prefHeight="46.0"
+                prefWidth="162.0" styleClass="accountButtons" text="Settings"/>
+    </AnchorPane>
+    <AnchorPane layoutX="334.0" layoutY="136.0" prefHeight="548.0" prefWidth="1050.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="136.0">
+        <Pane fx:id="ordersPane" layoutX="24.0" layoutY="32.0" prefHeight="548.0" prefWidth="1050.0" visible="false"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <TableView fx:id="ordersTableView" layoutX="9.0" layoutY="4.0" prefHeight="530.0" prefWidth="1029.0">
+                <columns>
+                    <TableColumn fx:id="ordersButtonColumn" prefWidth="103.0" resizable="false"/>
+                    <TableColumn fx:id="ordersIdColumn" editable="false" minWidth="16.0" prefWidth="50.0"
+                                 resizable="false" sortable="false" text="ID"/>
+                    <TableColumn fx:id="ordersDateColumn" editable="false" prefWidth="264.0" resizable="false"
+                                 sortable="false" text="order date"/>
+                    <TableColumn fx:id="ordersDeliveryDateColumn" editable="false" prefWidth="238.0" resizable="false"
+                                 sortable="false" text="delivery date"/>
+                    <TableColumn fx:id="ordersTotalValueColumn" editable="false" prefWidth="120.0" resizable="false"
+                                 sortable="false" text="total value"/>
+                    <TableColumn fx:id="ordersStatusColumn" editable="false" minWidth="0.0" prefWidth="253.0"
+                                 resizable="false" sortable="false" text="order status"/>
+                    <TableColumn fx:id="ordersPaymentColumn" editable="false" prefWidth="75.0" sortable="false"
+                                 text="ordersPaymentColumn" visible="false"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </Pane>
+        <Pane fx:id="favouritesPane" prefHeight="548.0" prefWidth="1050.0" visible="false" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Label layoutX="213.0" layoutY="217.0" prefHeight="17.0" prefWidth="315.0" text="favourtites"/>
+        </Pane>
+        <Pane fx:id="detailsPane" layoutX="10.0" layoutY="10.0" prefHeight="548.0" prefWidth="1050.0"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <Button fx:id="cancelOrder" layoutX="38.0" layoutY="436.0" mnemonicParsing="false" prefHeight="52.0"
+                    prefWidth="248.0" text="Cancel order"/>
+            <Label fx:id="paymentMethod" layoutX="646.0" layoutY="23.0" prefHeight="65.0" prefWidth="359.0"
+                   styleClass="orderDetailsLabel" text="Pament method :"/>
+            <Label fx:id="totalValue" layoutX="279.0" layoutY="19.0" prefHeight="74.0" prefWidth="261.0"
+                   styleClass="orderDetailsLabel" text="Total order value :"/>
+            <Label fx:id="orderID" layoutX="21.0" layoutY="23.0" prefHeight="65.0" prefWidth="226.0"
+                   styleClass="orderDetailsLabel" text="Order id : "/>
+            <TableView fx:id="orderDetailsTableView" layoutX="21.0" layoutY="113.0" prefHeight="260.0"
+                       prefWidth="891.0">
+                <columns>
+                    <TableColumn fx:id="orderDetailsProductColumn" prefWidth="383.0" resizable="false"
+                                 text="Product "/>
+                    <TableColumn fx:id="orderDetailsValueColumn" prefWidth="151.0" resizable="false" text="Value"/>
+                    <TableColumn fx:id="orderDetailsQuantityColumn" prefWidth="130.0" resizable="false"
+                                 text="Quantity"/>
+                    <TableColumn fx:id="orderDetailsTotalValueColumn" prefWidth="245.0" resizable="false"
+                                 text="Total value"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </Pane>
+    </AnchorPane>
+</AnchorPane>

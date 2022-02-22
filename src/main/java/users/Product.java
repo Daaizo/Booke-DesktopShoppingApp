@@ -1,9 +1,8 @@
 package users;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import application.Controllers.Controller;
+
+import java.sql.*;
 
 public class Product {
     private int productId;
@@ -42,12 +41,13 @@ public class Product {
     public static ResultSet getProductsFromDatabase(Connection connection) {
         try {
             String query = """
-                    select p.productkey "Id", p.productname "Name", p.catalogprice || ' $' "Price", sc.subcategoryname "Subcategory", c.categoryname "Category" from product p\s
+                    select p.productkey "Id", p.productname "Name", p.catalogprice || ? "Price", sc.subcategoryname "Subcategory", c.categoryname "Category" from product p\s
                     inner join subcategory sc on sc.subcategorykey = p.subcategorykey
                     inner join category c on c.categorykey = sc.categorykey
                     """;
-            Statement stm = connection.createStatement();
-            return stm.executeQuery(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, Controller.CURRENCY);
+            return preparedStatement.executeQuery();
         } catch (SQLException e) {
             System.out.println("error with executing SQL query");
             e.printStackTrace();
@@ -55,9 +55,9 @@ public class Product {
         return null;
     }
 
-    public static ResultSet getProductFromCart(Connection connection, String currentUsername) {
+    public static ResultSet getProductFromCartAndSetValueBasedOnQuantity(Connection connection, String currentUsername) {
         try {
-            String query = "select p.productname, p.catalogprice || ' $' \"PRICE\" ,sc.quantity, sum(p.catalogprice * sc.quantity) || ' $' \"TOTAL\" from shoppingcart  sc\n" +
+            String query = "select p.productname, p.catalogprice || ? \"PRICE\" ,sc.quantity, sum(p.catalogprice * sc.quantity) ||  ? \"TOTAL\" from shoppingcart  sc\n" +
                     "inner join customer c on c.customerkey = sc.customerkey\n" +
                     "inner join product p on p.productkey = sc.productkey\n" +
                     "where sc.customerkey = \n" +
@@ -68,9 +68,11 @@ public class Product {
                     "group by  p.productname, p.catalogprice ,sc.quantity";
 
 
-            Statement stm = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, Controller.CURRENCY);
+            preparedStatement.setString(2, Controller.CURRENCY);
 
-            return stm.executeQuery(query);
+            return preparedStatement.executeQuery();
         } catch (SQLException e) {
             System.out.println("error with executing SQL query");
             e.printStackTrace();
@@ -78,6 +80,16 @@ public class Product {
         return null;
     }
 
+    public static ResultSet getPaymentMethods(Connection connection) {
+        String paymentMethods = "select * from paymentmethod";
+        try {
+            Statement statement = connection.createStatement();
+            return statement.executeQuery(paymentMethods);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String getProductSubcategory() {
         return productSubcategory;

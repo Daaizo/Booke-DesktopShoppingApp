@@ -20,6 +20,12 @@ public class Client extends User {
         this.password = p;
     }
 
+    public static void deleteWholeCart(String CURRENT_USERNAME, Connection connection) throws SQLException {
+        String delete = "delete from shoppingcart where customerkey = (select customerkey from customer where customerlogin = ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(delete);
+        preparedStatement.setString(1, CURRENT_USERNAME);
+        preparedStatement.execute();
+    }
 
     public static void addItemToUsersCart(String productName, String CURRENT_USERNAME, Connection connection) throws SQLException {
         // since product name is always unique this is fine

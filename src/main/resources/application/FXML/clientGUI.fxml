@@ -127,6 +127,4 @@
          <Font size="15.0"/>
       </font>
    </Label>
-   <Button fx:id="shoppingCartButton" mnemonicParsing="false" onAction="#shoppingCartButtonClicked" prefHeight="37.0"
-           prefWidth="64.0"/>
 </AnchorPane>
