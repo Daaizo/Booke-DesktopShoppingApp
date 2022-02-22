@@ -10,16 +10,16 @@ public class Order {
     private String orderStatusName;
     private String customerLogin;
     private String orderDate;
-
+    private String orderTotalValue;
     private String orderDeliveryDate;
+    private String productName;
     private String orderProduct;
-    private double productPrice;
-    private double orderTotalValue;
+    private String productPrice;
     private int productQuantity;
     private int orderNumber;
 
 
-    public Order(int id, String date, String deliveryDate, double totalValue, String paymentMethod, String status) {
+    public Order(int id, String date, String deliveryDate, String totalValue, String paymentMethod, String status) {
         this.orderNumber = id;
         this.orderDeliveryDate = deliveryDate;
         this.orderDate = date;
@@ -28,14 +28,11 @@ public class Order {
         this.orderStatusName = status;
     }
 
-    public Order(int id, int quantity, double price, String date, double totalValue, String paymentMethod, String status) {
-        this.orderNumber = id;
+    public Order(String productName, int quantity, String price, String totalValue) {
+        this.productName = productName;
         this.productQuantity = quantity;
         this.productPrice = price;
-        this.orderDate = date;
         this.orderTotalValue = totalValue;
-        this.paymentMethodName = paymentMethod;
-        this.orderStatusName = status;
     }
 
     public Order(String paymentMethod, String orderStatus, String customerLogin) {
@@ -163,19 +160,19 @@ public class Order {
         this.orderProduct = orderProduct;
     }
 
-    public double getProductPrice() {
+    public String getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(double productPrice) {
+    public void setProductPrice(String productPrice) {
         this.productPrice = productPrice;
     }
 
-    public double getOrderTotalValue() {
+    public String getOrderTotalValue() {
         return orderTotalValue;
     }
 
-    public void setOrderTotalValue(double orderTotalValue) {
+    public void setOrderTotalValue(String orderTotalValue) {
         this.orderTotalValue = orderTotalValue;
     }
 
@@ -194,4 +191,14 @@ public class Order {
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public Order setProductName(String productName) {
+        this.productName = productName;
+        return this;
+    }
 }
+

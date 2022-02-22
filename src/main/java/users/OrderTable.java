@@ -1,6 +1,6 @@
 package users;
 
-import javafx.beans.property.SimpleDoubleProperty;
+import application.Controllers.Controller;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -15,10 +15,10 @@ public class OrderTable {
     private final SimpleStringProperty orderDate;
     private final SimpleStringProperty orderDeliveryDate;
     private final SimpleStringProperty orderProduct;
-
-    private final SimpleDoubleProperty productPrice;
+    private final SimpleStringProperty orderTotalValue;
+    private final SimpleStringProperty productPrice;
+    private final SimpleStringProperty productName;
     private final SimpleIntegerProperty productQuantity;
-    private final SimpleDoubleProperty orderTotalValue;
     private final SimpleIntegerProperty orderNumber;
 
     public OrderTable(Order order) {
@@ -28,9 +28,10 @@ public class OrderTable {
         this.orderStatusName = new SimpleStringProperty(order.getOrderStatusName());
         this.orderDeliveryDate = new SimpleStringProperty(order.getOrderDeliveryDate());
         this.orderProduct = new SimpleStringProperty(order.getOrderProduct());
-        this.productPrice = new SimpleDoubleProperty(order.getProductPrice());
+        this.productPrice = new SimpleStringProperty(order.getProductPrice());
         this.productQuantity = new SimpleIntegerProperty(order.getProductQuantity());
-        this.orderTotalValue = new SimpleDoubleProperty(order.getOrderTotalValue());
+        this.orderTotalValue = new SimpleStringProperty(order.getOrderTotalValue());
+        this.productName = new SimpleStringProperty(order.getProductName());
     }
 
     public static ObservableList<OrderTable> getOrders(ResultSet order) {
@@ -45,7 +46,7 @@ public class OrderTable {
                 } else {
                     deliveryDate = order.getString(3);
                 }
-                double totalValue = order.getDouble(4);
+                String totalValue = order.getDouble(4) + Controller.CURRENCY;
                 String paymentMethod = order.getString(5);
                 String orderStatus = order.getString(6);
                 listOfProducts.add(new OrderTable(new Order(id, date, deliveryDate, totalValue, paymentMethod, orderStatus)));
@@ -61,13 +62,11 @@ public class OrderTable {
         ObservableList<OrderTable> listOfProducts = FXCollections.observableArrayList();
         try {
             while (order.next()) {
-                int id = order.getInt(1);
-                String date = order.getString(2);
-                String deliveryDate = order.getString(3);
-                double totalValue = order.getDouble(4);
-                String paymentMethod = order.getString(5);
-                String orderStatus = order.getString(6);
-                listOfProducts.add(new OrderTable(new Order(id, date, deliveryDate, totalValue, paymentMethod, orderStatus)));
+                String productName = order.getString(1);
+                String price = order.getString(2) + Controller.CURRENCY;
+                int quantity = order.getInt(3);
+                String totalValue = order.getString(4) + Controller.CURRENCY;
+                listOfProducts.add(new OrderTable(new Order(productName, quantity, price, totalValue)));
             }
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());
@@ -116,12 +115,12 @@ public class OrderTable {
         this.orderProduct.set(orderProduct);
     }
 
-    public double getProductPrice() {
+    public String getProductPrice() {
         return productPrice.get();
     }
 
 
-    public void setProductPrice(double productPrice) {
+    public void setProductPrice(String productPrice) {
         this.productPrice.set(productPrice);
     }
 
@@ -134,12 +133,12 @@ public class OrderTable {
         this.productQuantity.set(productQuantity);
     }
 
-    public double getOrderTotalValue() {
+    public String getOrderTotalValue() {
         return orderTotalValue.get();
     }
 
 
-    public void setOrderTotalValue(double orderTotalValue) {
+    public void setOrderTotalValue(String orderTotalValue) {
         this.orderTotalValue.set(orderTotalValue);
     }
 
@@ -151,4 +150,10 @@ public class OrderTable {
     public void setOrderNumber(int orderNumber) {
         this.orderNumber.set(orderNumber);
     }
+
+    public String getProductName() {
+        return productName.get();
+    }
+
+
 }
