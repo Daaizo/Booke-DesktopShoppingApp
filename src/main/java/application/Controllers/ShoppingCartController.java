@@ -7,8 +7,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import users.Client;
 import users.Order;
 import users.Product;
@@ -35,7 +37,37 @@ public class ShoppingCartController extends Controller {
     private Label emptyCart, totalValueLabel, titleLabel;
     @FXML
     private ScrollPane paymentMethodsPane;
+    @FXML
+    private Button clearCartButton;
 
+
+    @FXML
+    public void initialize() {
+        prepareScene();
+        createGoBackButton(event -> switchScene(event, clientScene));
+        createClearCartButton();
+        try {
+            displayProducts();
+            setTotalValueLabel();
+            setPaymentMethods();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createClearCartButton() {
+        clearCartButton = createButton("delete.png", 800, 80);
+        clearCartButton.setText("  Delete whole cart");
+        clearCartButton.setId("clearCartButton");
+        clearCartButton.setMinWidth(200);
+        clearCartButton.setOnAction(event -> {
+            Optional<ButtonType> buttonCLicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "Delete", "Do you want to delete whole cart ?");
+            if (alertButtonClicked(buttonCLicked, ButtonType.OK)) {
+                clearShoppingCart();
+                reloadTableView(cartTableView);
+            }
+        });
+    }
 
     @Override
     protected void showOnlyRowsWithData(TableView<?> tableView) {
@@ -44,30 +76,11 @@ public class ShoppingCartController extends Controller {
         tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
     }
 
-    private void createGoBackButton() {
-        Button goBackButton = createButton("back-button.png", 5, 65);
-        goBackButton.setVisible(true);
-        goBackButton.setOnAction(event -> switchScene(event, clientScene));
-    }
-
-    @FXML
-    public void initialize() {
-        prepareScene();
-        createGoBackButton();
-
-        try {
-            displayProducts();
-            setTotalValueLabel();
-            setPaymentMethods(2, 20);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     void setTotalValueLabel() throws SQLException {
         checkConnectionWithDb();
         this.totalOrderValue = Client.getTotalValueOfShoppingCart(CURRENT_USER_LOGIN, getConnection());
-        totalValueLabel.setText("Total value of products in cart : " + totalOrderValue + CURRENCY);
+        totalValueLabel.setText(totalOrderValue + CURRENCY);
+        totalValueLabel.setId("displayLabel");
     }
 
     void displayProducts() throws SQLException {
@@ -80,8 +93,10 @@ public class ShoppingCartController extends Controller {
             cartTableView.setVisible(false);
             totalValueLabel.setVisible(false);
             titleLabel.setVisible(false);
+            clearCartButton.setVisible(false);
         } else {
             cartTableView.setVisible(true);
+            clearCartButton.setVisible(true);
             fillShoppingCartColumnsWithData(listOfProducts);
             cartTableView.setItems(listOfProducts);
             showOnlyRowsWithData(cartTableView);
@@ -119,7 +134,7 @@ public class ShoppingCartController extends Controller {
         if (productQuantity.compareTo("1") == 0) {
             buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM CART",
                     "Confirmation",
-                    "Do you want to delete " + productName + " from cart");
+                    "Do you want to delete '" + productName + "' from cart");
         } else {
             buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM CART",
                     "Confirmation",
@@ -131,10 +146,10 @@ public class ShoppingCartController extends Controller {
         }
     }
 
-    private ClientController.ButtonInsideTableColumn plusButtonClicked() {
-        ClientController.ButtonInsideTableColumn button = new ClientController().new ButtonInsideTableColumn("plus.png", "");
+    private ClientController.ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
+        ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("plus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
-            String productName = button.getProductName();
+            String productName = button.getRowId().getProductName();
             try {
                 checkConnectionWithDb();
                 Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "+1", getConnection());
@@ -144,6 +159,8 @@ public class ShoppingCartController extends Controller {
             }
         };
         button.setEventHandler(buttonClicked);
+        button.setCssClassId("clientTableviewButtons");
+        button.setStyle("-fx-alignment : center-right;");
         return button;
     }
 
@@ -152,10 +169,10 @@ public class ShoppingCartController extends Controller {
     }
 
 
-    private ClientController.ButtonInsideTableColumn minusButtonClicked() {
-        ClientController.ButtonInsideTableColumn button = new ClientController().new ButtonInsideTableColumn("minus.png", "");
+    private ClientController.ButtonInsideTableColumn<ProductTable, String> minusButtonClicked() {
+        ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("minus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
-            String productName = button.getProductName();
+            String productName = button.getRowId().getProductName();
             try {
                 checkConnectionWithDb();
                 if (isQuantityEqualOne(productName, getConnection())) {
@@ -170,14 +187,15 @@ public class ShoppingCartController extends Controller {
 
         };
         button.setEventHandler(buttonClicked);
-        button.setFxStyle("-fx-alignment : center_left;");
+        button.setCssClassId("clientTableviewButtons");
+        button.setStyle("-fx-alignment : center-right;");
         return button;
     }
 
-    private ClientController.ButtonInsideTableColumn deleteButtonClicked() {
-        ClientController.ButtonInsideTableColumn button = new ClientController().new ButtonInsideTableColumn("delete.png", "delete from cart");
+    private ClientController.ButtonInsideTableColumn<ProductTable, String> deleteButtonClicked() {
+        ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("delete.png", "delete from cart");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
-            String productName = button.getProductName();
+            String productName = button.getRowId().getProductName();
             try {
                 confirmationAlert(productName, Client.getQuantityOfProductInCart(CURRENT_USER_LOGIN, productName, getConnection()) + "");
                 reloadTableView(cartTableView);
@@ -185,13 +203,16 @@ public class ShoppingCartController extends Controller {
                 System.out.println(e.getMessage());
             }
 
-        };
 
+        };
+        button.setCssClassId("clientTableviewButtons");
         button.setEventHandler(buttonClicked);
         return button;
     }
 
-    private void setPaymentMethods(double numberOfButtonsInLine, double buttonPadding) throws SQLException {
+    private void setPaymentMethods() throws SQLException {
+        int numberOfButtonsInLine = 2;
+        double buttonPadding = 20;
         ResultSet paymentMethods = Product.getPaymentMethods(getConnection());
         ToggleGroup groupOfRadioButtons = new ToggleGroup();
         GridPane grid = new GridPane();
@@ -215,13 +236,23 @@ public class ShoppingCartController extends Controller {
         paymentMethodsPane.setContent(grid);
     }
 
+    protected Optional<ButtonType> createAndShowAlert(ButtonType buttonType1, ButtonType buttonType2) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", buttonType1, buttonType2);
+        alert.setHeaderText("Do you want to pay now ?");
+        alert.setTitle("Payment");
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialogPane.getStyleClass().add("alert");
+        return alert.showAndWait();
+    }
 
     @FXML
     void placeOrderButtonClicked() {
         if (paymentMethod == null) {
             createAndShowAlert(Alert.AlertType.WARNING,
-                    "Payment method required",
-                    "You have to choose payment method before placing an order!", "");
+                    "Payment",
+                    "Payment method required", "You have to choose payment method before placing an order!");
 
         } else {
             Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION,
@@ -232,15 +263,15 @@ public class ShoppingCartController extends Controller {
 
                 ButtonType now = new ButtonType("I want to pay now");
                 ButtonType later = new ButtonType("I want to pay later");
-                Optional<ButtonType> buttonTypeClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION,
-                        now, later, "Do you want to pay now ?", "Payment");
+                Optional<ButtonType> buttonTypeClicked = createAndShowAlert(
+                        now, later);
                 if (alertButtonClicked(buttonTypeClicked, now)) {
                     placeOrder("In progress");
 
                 } else if (alertButtonClicked(buttonTypeClicked, later)) {
                     placeOrder("Waiting for payment");
                 }
-                showNotification(createNotification(new Label("  Order placed")), 3000);
+                showNotification(createNotification(new Label("Order placed")), 3500);
                 clearShoppingCart();
                 reloadTableView(cartTableView);
             }
@@ -259,8 +290,6 @@ public class ShoppingCartController extends Controller {
             order.createOrder(getConnection());
             order.setOrderId(getConnection());
             order.setOrderProducts(getConnection());
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
