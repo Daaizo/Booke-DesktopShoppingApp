@@ -5,22 +5,58 @@
 -backgroundColorB: #fc766a; 		// orange
 }
 
+#orderDetailsButton{
+  -fx-background-color : #0066ff;
+  -fx-background-radius:12px;
+
+  -fx-alignment:center;
+}
+#clearCartButton{
+    -fx-border-color : red;
+    -fx-border-width : 3px;
+    -fx-border-radius : 10px;
+    -fx-alignment:center;
+     -fx-font-size :15px;
+     -fx-font-weight: bolder  ;
+     -fx-text-alignment : center ;
+}
+#clearCartButton:hover{
+    -fx-background-color : red;
+    -fx-background-radius :10px;
+
+}
+.orderDetailsLabel{
+    -fx-font-size :20px;
+    -fx-font-weight: bolder  ;
+    -fx-text-alignment : center ;
+}
+#displayLabel{
+    -fx-text-fill: white;
+}
+#orderDetailsButton:hover{
+    -fx-background-color : #3385ff;
+}
+
+.clientTableviewButtons:hover{
+-fx-border-color : #fc766a ;
+}
+
 #clientButtons{
  -fx-background-color: transparent;
  -fx-padding: 10px;
 }
+
 .accountButtons{
  -fx-background-color: -backgroundColorB;
    -fx-border-color : -backgroundColorB;
    -fx-background-radius:10px;
    -fx-border-radius:10px;
-  -fx-font-size :20px;
-     -fx-font-weight: bolder  ;
+    -fx-font-size :20px;
+    -fx-font-weight: bolder  ;
 }
 
 .accountButtons:hover{
--fx-background-color :#7498be;
-
+-fx-background-color: #fc8d83;
 }
 .topButtons:hover{
 -fx-background-color :#7498be;
@@ -84,7 +120,8 @@
 
 .OrangeButtons{
     -fx-background-color : -backgroundColorB;
-    -fx-background-radius : 12px;
+    -fx-background-radius : 13px;
+    -fx-border-width : 2px;
     -fx-border-radius : 12px;
     -fx-font-size : 17px;
     -fx-text-fill : #5b84b1;
@@ -97,7 +134,7 @@
 .OrangeButtons:hover{
     -fx-border-color :Black;
     -fx-border-radius : 12px;
-    -fx-border-width: 2px;
+    -fx-border-width:2px;
 
 }
 .passwordAnchor .passwordLabels{
@@ -130,9 +167,7 @@
 
 
 .table-row-cell:selected .text {
-       -fx-fill: white ;
-       -fx-font-weight: bolder  ;
-       -fx-font-family :Helvetica;
+
 
 }
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
@@ -173,7 +208,7 @@
      -fx-border-style: solid hidden hidden hidden;
      -fx-border-width : 2px;
      -fx-background-color: -backgroundColorA;
-     -fx-padding: 25 5 5 5px;
+     -fx-padding: 0px;
      -fx-font-size : 20px;
     -fx-font-alignment: top;
     -fx-alignment : center;
