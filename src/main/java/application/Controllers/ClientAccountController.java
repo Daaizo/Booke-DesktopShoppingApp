@@ -3,21 +3,23 @@ package application.Controllers;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import users.Order;
 import users.OrderTable;
 import users.Product;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 public class ClientAccountController extends Controller {
@@ -34,31 +36,70 @@ public class ClientAccountController extends Controller {
     @FXML
     private TableView<OrderTable> ordersTableView, orderDetailsTableView;
     @FXML
-    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel;
+    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel;
     @FXML
     private Button ordersButton, accountButton, favouritesButton, settingsButton, payOrderButton, changePaymentMethodButton, cancelOrderButton;
+    @FXML
+    private StackPane informationPane;
 
     @FXML
     public void initialize() {
         prepareScene();
         displayOrders();
-        createGoBackButton(event -> switchScene(event, clientScene));
+        createGoBackButton();
+        createLightingEffect();
         ordersButton.fire();
+        createInformationImageAndAttachItToLabel();
     }
 
     @FXML
     void ordersButtonClicked() {
         makePaneVisible(ordersPane);
-        buttonLightingEffect(ordersButton);
+        setButtonLightingEffect(ordersButton);
     }
 
     @FXML
     void favouritesButtonClicked() {
         makePaneVisible(favouritesPane);
-        buttonLightingEffect(favouritesButton);
+        setButtonLightingEffect(favouritesButton);
     }
 
-    private void buttonLightingEffect(Button button) {
+    private void createLightingEffect() {
+        Light.Distant light = new Light.Distant();
+        light.setColor(Color.LIGHTPINK);
+        lighting.setLight(light);
+    }
+
+    private void createGoBackButton() {
+        Button button = super.createGoBackButton(event -> switchScene(event, clientScene));
+        button.setLayoutX(60);
+        button.setLayoutY(2);
+    }
+
+    private void createInformationImageAndAttachItToLabel() {
+        ImageView informationImage = setImageFromIconsFolder("information.png");
+        informationImage.setLayoutX(725);
+        informationImage.setLayoutY(91);
+        orderStatusLabel.setGraphic(informationImage);
+        orderStatusLabel.setContentDisplay(ContentDisplay.RIGHT);
+        orderStatusLabel.setOnMouseEntered(mouseEvent -> informationLabel.setVisible(true));
+        orderStatusLabel.setOnMouseExited(mouseEvent -> informationLabel.setVisible(false));
+    }
+
+    private void displayInformationAboutOrderStatus() {
+        HashMap<String, String> orderStatus = new HashMap<>();
+        orderStatus.put("Canceled", "Your order has been cancelled and your payment will be refunded");
+        orderStatus.put("In progress", "Your order has been paid and is awaiting approval");
+        orderStatus.put("Finished", "Order has been sent to the email assigned to your account");
+        orderStatus.put("Waiting for payment", "The order has not been paid");
+
+        informationLabel.setWrapText(true);
+        informationLabel.setText(orderStatus.get(orderStatusLabel.getText()));
+        StackPane.setAlignment(informationLabel, Pos.CENTER);
+
+    }
+
+    private void setButtonLightingEffect(Button button) {
         ordersButton.setEffect(null);
         favouritesButton.setEffect(null);
         settingsButton.setEffect(null);
@@ -127,6 +168,7 @@ public class ClientAccountController extends Controller {
             displayOrderDetails(button.getRowId().getOrderNumber());
             fillOrderDetailLabels(button);
             makeProperButtonsVisible(orderStatusLabel.getText());
+            displayInformationAboutOrderStatus();
         };
         button.setEventHandler(buttonClicked);
         button.setCssId("orderDetailsButton");
@@ -158,7 +200,6 @@ public class ClientAccountController extends Controller {
         orderIdLabel.setDisable(disable);
         totalValueLabel.setDisable(disable);
         paymentMethodLabel.setDisable(disable);
-        orderStatusLabel.setDisable(disable);
     }
 
     private void displayOrders() {
@@ -186,6 +227,7 @@ public class ClientAccountController extends Controller {
             order.setOrderStatus(getConnection(), status);
             reloadTableView(ordersTableView);
             orderStatusLabel.setText(status);
+            displayInformationAboutOrderStatus();
             makeProperButtonsVisible(status);
         } catch (SQLException e) {
             e.printStackTrace();

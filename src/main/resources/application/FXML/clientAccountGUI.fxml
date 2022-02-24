@@ -6,21 +6,23 @@
             minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#Dragging" prefHeight="684.0" prefWidth="1050.0"
             stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.ClientAccountController">
-    <AnchorPane layoutY="147.0" prefHeight="470.0" prefWidth="226.0">
-        <Button fx:id="ordersButton" layoutX="13.0" layoutY="50.0" mnemonicParsing="false"
-                onAction="#ordersButtonClicked" prefHeight="60.0" prefWidth="200.0" styleClass="accountButtons"
-                text="All orders"/>
-        <Button fx:id="favouritesButton" layoutX="13.0" layoutY="250.0" mnemonicParsing="false"
-                onAction="#favouritesButtonClicked" prefHeight="60.0" prefWidth="200.0" styleClass="accountButtons"
-                text="Favourites"/>
-        <Button fx:id="accountButton" layoutX="13.0" layoutY="150.0" mnemonicParsing="false" prefHeight="60.0"
-                prefWidth="200.0" styleClass="accountButtons" text="Account"/>
-        <Button fx:id="settingsButton" layoutX="13.0" layoutY="350.0" mnemonicParsing="false" prefHeight="60.0"
-                prefWidth="200.0" styleClass="accountButtons" text="Settings"/>
+    <AnchorPane layoutY="81.0" prefHeight="619.0" prefWidth="250.0">
+        <Button fx:id="ordersButton" layoutX="11.0" layoutY="52.0" maxHeight="210.0" maxWidth="210.0" minHeight="74.0"
+                minWidth="210.0" mnemonicParsing="false" onAction="#ordersButtonClicked" prefHeight="74.0"
+                prefWidth="210.0" styleClass="accountButtons" text="All orders"/>
+        <Button fx:id="favouritesButton" layoutX="11.0" layoutY="280.0" maxHeight="210.0" maxWidth="210.0"
+                minHeight="74.0" minWidth="210.0" mnemonicParsing="false" onAction="#favouritesButtonClicked"
+                prefHeight="74.0" prefWidth="210.0" styleClass="accountButtons" text="Favourites"/>
+        <Button fx:id="accountButton" layoutX="11.0" layoutY="174.0" maxHeight="210.0" maxWidth="210.0" minHeight="74.0"
+                minWidth="210.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="210.0" styleClass="accountButtons"
+                text="Account"/>
+        <Button fx:id="settingsButton" layoutX="11.0" layoutY="387.0" maxHeight="210.0" maxWidth="210.0"
+                minHeight="74.0" minWidth="210.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="210.0"
+                styleClass="accountButtons" text="Settings"/>
     </AnchorPane>
     <AnchorPane layoutX="224.0" layoutY="96.0" prefHeight="588.0" prefWidth="826.0" AnchorPane.bottomAnchor="0.0"
                 AnchorPane.leftAnchor="224.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="96.0">
-        <Pane fx:id="ordersPane" layoutX="24.0" layoutY="32.0" prefHeight="548.0" prefWidth="1050.0"
+        <Pane fx:id="ordersPane" layoutX="24.0" layoutY="32.0" prefHeight="548.0" prefWidth="1050.0" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
             <TableView fx:id="ordersTableView" layoutX="9.0" layoutY="4.0" prefHeight="580.0" prefWidth="808.0">
@@ -48,17 +50,16 @@
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Label layoutX="213.0" layoutY="217.0" prefHeight="17.0" prefWidth="315.0" text="favourtites"/>
         </Pane>
-        <Pane fx:id="detailsPane" prefHeight="548.0" prefWidth="826.0" visible="false" AnchorPane.bottomAnchor="0.0"
+        <Pane fx:id="detailsPane" prefHeight="548.0" prefWidth="826.0" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <TableView fx:id="orderDetailsTableView" layoutX="23.0" layoutY="147.0" prefHeight="243.0"
                        prefWidth="790.0">
                 <columns>
-                    <TableColumn fx:id="orderDetailsProductColumn" prefWidth="270.0" resizable="false"
-                                 text="Product "/>
+                    <TableColumn fx:id="orderDetailsProductColumn" prefWidth="270.0" resizable="false" text="Product "/>
                     <TableColumn fx:id="orderDetailsValueColumn" minWidth="0.0" prefWidth="164.0" resizable="false"
                                  text="Cost"/>
-                    <TableColumn fx:id="orderDetailsQuantityColumn" minWidth="0.0" prefWidth="152.0"
-                                 resizable="false" text="Quantity"/>
+                    <TableColumn fx:id="orderDetailsQuantityColumn" minWidth="0.0" prefWidth="152.0" resizable="false"
+                                 text="Quantity"/>
                     <TableColumn fx:id="orderDetailsTotalValueColumn" prefWidth="203.0" resizable="false"
                                  text="Total value"/>
                 </columns>
@@ -82,15 +83,19 @@
             <Label id="displayLabel" fx:id="totalValueLabel" layoutX="197.0" layoutY="77.0" prefHeight="74.0"
                    prefWidth="88.0" styleClass="orderDetailsLabel"/>
             <Label id="displayLabel" fx:id="orderStatusLabel" layoutX="555.0" layoutY="82.0" prefHeight="65.0"
-                   prefWidth="200.0" styleClass="orderDetailsLabel"/>
+                   prefWidth="269.0" styleClass="orderDetailsLabel"/>
             <Label id="displayLabel" fx:id="paymentMethodLabel" layoutX="588.0" layoutY="32.0" prefHeight="65.0"
                    prefWidth="226.0" styleClass="orderDetailsLabel"/>
             <Button fx:id="cancelOrderButton" layoutX="466.0" layoutY="505.0" mnemonicParsing="false"
-                    onAction="#cancelOrderButtonClicked" prefHeight="52.0" prefWidth="315.0"
-                    styleClass="OrangeButtons" text="Cancel order"/>
+                    onAction="#cancelOrderButtonClicked" prefHeight="52.0" prefWidth="315.0" styleClass="OrangeButtons"
+                    text="Cancel order"/>
             <Button fx:id="payOrderButton" layoutX="46.0" layoutY="426.0" mnemonicParsing="false"
                     onAction="#payOrderButtonClicked" prefHeight="52.0" prefWidth="303.0" styleClass="OrangeButtons"
                     text="Pay"/>
+            <StackPane fx:id="informationPane" layoutX="389.0" layoutY="45.0" prefHeight="44.0" prefWidth="382.0">
+                <Label id="informationLabel" fx:id="informationLabel" prefHeight="43.0" prefWidth="477.0"
+                       visible="false"/>
+            </StackPane>
         </Pane>
     </AnchorPane>
 </AnchorPane>
