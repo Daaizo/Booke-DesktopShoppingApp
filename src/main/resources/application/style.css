@@ -13,7 +13,7 @@
 }
 #clearCartButton{
     -fx-border-color : red;
-    -fx-border-width : 3px;
+    -fx-border-width : 2px;
     -fx-border-radius : 10px;
     -fx-alignment:center;
      -fx-font-size :15px;
@@ -24,6 +24,14 @@
     -fx-background-color : red;
     -fx-background-radius :10px;
 
+}
+#informationLabel{
+    -fx-background-color: white;
+    -fx-border-color : black;
+    -fx-font-size : 15px;
+    -fx-padding :10px;
+    -fx-text-alignment:center;
+    -fx-alignment : center;
 }
 .orderDetailsLabel{
     -fx-font-size :20px;
@@ -47,10 +55,8 @@
 }
 
 .accountButtons{
- -fx-background-color: -backgroundColorB;
-   -fx-border-color : -backgroundColorB;
-   -fx-background-radius:10px;
-   -fx-border-radius:10px;
+    -fx-background-color: -backgroundColorB;
+    -fx-background-radius:18px;
     -fx-font-size :20px;
     -fx-font-weight: bolder  ;
 }
@@ -166,10 +172,6 @@
 }
 
 
-.table-row-cell:selected .text {
-
-
-}
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
 -fx-font-size : 20px;
 -fx-alignment :bottom-left;
@@ -210,7 +212,7 @@
      -fx-background-color: -backgroundColorA;
      -fx-padding: 0px;
      -fx-font-size : 20px;
-    -fx-font-alignment: top;
+    -fx-font-alignment: center;
     -fx-alignment : center;
  }
 
