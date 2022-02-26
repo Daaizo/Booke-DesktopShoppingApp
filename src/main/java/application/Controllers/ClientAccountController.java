@@ -13,9 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import users.Order;
-import users.OrderTable;
-import users.Product;
+import users.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +23,8 @@ import java.util.*;
 public class ClientAccountController extends Controller {
 
     private final Lighting lighting = new Lighting();
+    private final Client currentUser = new Client(CURRENT_USER_LOGIN);
+
     @FXML
     private Pane ordersPane, favouritesPane, detailsPane;
     @FXML
@@ -36,31 +36,39 @@ public class ClientAccountController extends Controller {
     @FXML
     private TableView<OrderTable> ordersTableView, orderDetailsTableView;
     @FXML
-    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel;
+    TableColumn<ProductTable, String> favouritesNameColumn, favouritesPriceColumn, favouritesSubcategoryColumn, favouritesButtonColumn;
+
+
+    @FXML
+    private TableView<ProductTable> favouritesTableView;
+    @FXML
+    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel;
     @FXML
     private Button ordersButton, accountButton, favouritesButton, settingsButton, payOrderButton, changePaymentMethodButton, cancelOrderButton;
-    @FXML
-    private StackPane informationPane;
+
 
     @FXML
     public void initialize() {
         prepareScene();
-        displayOrders();
         createGoBackButton();
         createLightingEffect();
-        ordersButton.fire();
         createInformationImageAndAttachItToLabel();
+        createEmptyTableViewLabel();
+        ordersButton.fire();
+
     }
 
     @FXML
     void ordersButtonClicked() {
         makePaneVisible(ordersPane);
+        displayOrders();
         setButtonLightingEffect(ordersButton);
     }
 
     @FXML
     void favouritesButtonClicked() {
         makePaneVisible(favouritesPane);
+        displayFavourites();
         setButtonLightingEffect(favouritesButton);
     }
 
@@ -74,6 +82,12 @@ public class ClientAccountController extends Controller {
         Button button = super.createGoBackButton(event -> switchScene(event, clientScene));
         button.setLayoutX(60);
         button.setLayoutY(2);
+    }
+
+    private void createEmptyTableViewLabel() {
+        emptyTableViewLabel.setId("titleLabel");
+        emptyTableViewLabel.setVisible(false);
+        emptyTableViewLabel.setAlignment(Pos.CENTER);
     }
 
     private void createInformationImageAndAttachItToLabel() {
@@ -92,11 +106,9 @@ public class ClientAccountController extends Controller {
         orderStatus.put("In progress", "Your order has been paid and is awaiting approval");
         orderStatus.put("Finished", "Order has been sent to the email assigned to your account");
         orderStatus.put("Waiting for payment", "The order has not been paid");
-
         informationLabel.setWrapText(true);
         informationLabel.setText(orderStatus.get(orderStatusLabel.getText()));
         StackPane.setAlignment(informationLabel, Pos.CENTER);
-
     }
 
     private void setButtonLightingEffect(Button button) {
@@ -114,6 +126,7 @@ public class ClientAccountController extends Controller {
         ordersPane.setVisible(false);
         detailsPane.setVisible(false);
         favouritesPane.setVisible(false);
+        emptyTableViewLabel.setVisible(false);
         if (pane == ordersPane) {
             ordersPane.setVisible(true);
         } else if (pane == detailsPane) {
@@ -138,7 +151,6 @@ public class ClientAccountController extends Controller {
         }
     }
     private void fillOrdersColumnsWithData(ObservableList<OrderTable> list) {
-
         ordersIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderNumber"));
         ordersButtonColumn.setCellFactory(orderTableStringTableColumn -> orderIdButton());
         ordersDateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
@@ -208,9 +220,64 @@ public class ClientAccountController extends Controller {
         try {
             ResultSet orders = order.getOrdersFromCustomer(getConnection());
             ObservableList<OrderTable> listOfOrders = OrderTable.getOrders(orders);
-            fillOrdersColumnsWithData(listOfOrders);
+            if (listOfOrders.isEmpty()) {
+                displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
+                ordersTableView.setVisible(false);
+            } else {
+                ordersTableView.setVisible(true);
+                emptyTableViewLabel.setVisible(false);
+                fillOrdersColumnsWithData(listOfOrders);
+
+            }
+
             ordersTableView.setMaxHeight(530);
             orders.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fillFavouritesColumns(ObservableList<ProductTable> listOfOrders) {
+        favouritesNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        favouritesPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
+        favouritesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+        favouritesButtonColumn.setCellFactory(cell -> createDeleteFromFavouritesButton());
+        favouritesTableView.setItems(listOfOrders);
+    }
+
+    private ClientController.ButtonInsideTableColumn<ProductTable, String> createDeleteFromFavouritesButton() {
+        ClientController.ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ClientController().new ButtonInsideTableColumn<>("delete.png", "delete from favourites");
+        deleteFromFavouritesButton.setEventHandler(mouseEvent -> {
+            String productName = deleteFromFavouritesButton.getRowId().getProductName();
+            try {
+                currentUser.deleteItemFromUsersFavourite(productName, getConnection());
+                showNotification(createNotification(new Label("Item removed from favourites")), 2500);
+                displayFavourites();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        deleteFromFavouritesButton.setCssClassId("clientTableviewButtons");
+        return deleteFromFavouritesButton;
+    }
+
+    private void displayFavourites() {
+        checkConnectionWithDb();
+        try {
+            ResultSet favourites = currentUser.getFavouriteProducts(getConnection());
+            ObservableList<ProductTable> listOfFavourites = ProductTable.getProductFromFavourites(favourites);
+            if (listOfFavourites.isEmpty()) {
+                displayLabelWithGivenText(emptyTableViewLabel, "List of favourites is empty");
+                favouritesTableView.setVisible(false);
+            } else {
+                fillFavouritesColumns(listOfFavourites);
+                emptyTableViewLabel.setVisible(false);
+                favouritesTableView.setVisible(true);
+                showOnlyRowsWithData(favouritesTableView);
+            }
+
+            favourites.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
