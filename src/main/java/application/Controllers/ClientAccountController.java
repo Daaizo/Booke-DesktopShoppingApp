@@ -1,6 +1,7 @@
 package application.Controllers;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -8,11 +9,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import users.*;
 
 import java.sql.ResultSet;
@@ -26,7 +29,7 @@ public class ClientAccountController extends Controller {
     private final Client currentUser = new Client(CURRENT_USER_LOGIN);
 
     @FXML
-    private Pane ordersPane, favouritesPane, detailsPane;
+    private Pane ordersPane, favouritesPane, detailsPane, accountSettingsPane;
     @FXML
     private TableColumn<OrderTable, String> ordersDateColumn, ordersDeliveryDateColumn, ordersPaymentColumn, ordersStatusColumn, ordersIdColumn, ordersButtonColumn, orderDetailsProductColumn, orderDetailsTotalValueColumn, orderDetailsValueColumn;
     @FXML
@@ -37,16 +40,16 @@ public class ClientAccountController extends Controller {
     private TableView<OrderTable> ordersTableView, orderDetailsTableView;
     @FXML
     TableColumn<ProductTable, String> favouritesNameColumn, favouritesPriceColumn, favouritesSubcategoryColumn, favouritesButtonColumn;
-
-
+    @FXML
+    private TextField tfLogin, tfName, tfLastName;
     @FXML
     private TableView<ProductTable> favouritesTableView;
     @FXML
     private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel;
     @FXML
-    private Button ordersButton, accountButton, favouritesButton, settingsButton, payOrderButton, changePaymentMethodButton, cancelOrderButton;
+    private Button ordersButton, accountSettingsButton, favouritesButton, payOrderButton, changePaymentMethodButton, cancelOrderButton, deleteAccountButton, changePasswordButton;
 
-
+    //TODO database DIAGRAMS update needed !
     @FXML
     public void initialize() {
         prepareScene();
@@ -70,6 +73,58 @@ public class ClientAccountController extends Controller {
         makePaneVisible(favouritesPane);
         displayFavourites();
         setButtonLightingEffect(favouritesButton);
+    }
+
+    @FXML
+    void accountSettingsButtonClicked() {
+        makePaneVisible(accountSettingsPane);
+        setButtonLightingEffect(accountSettingsButton);
+        try {
+            currentUser.setClientData(currentUser.getClientData(getConnection()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        setLabels();
+
+    }
+
+    private void setLabels() {
+        tfLogin.setText(currentUser.getLogin());
+        tfLastName.setText(currentUser.getLastName());
+        tfName.setText(currentUser.getName());
+        //TODO set confirmChangesButtonClicked on tab,enter, and somewhere else clicked
+    }
+
+    @FXML
+    void confirmChangesButtonClicked() {
+        //TODO check if any of field is changes and if is update it
+    }
+
+    @FXML
+    void changePasswordButtonClicked() {
+        //TODO copy all of requirements from registration scene and check it
+    }
+
+    private void confirmPassword() {
+        //TODO alert with text field which requires password account
+    }
+
+    @FXML
+    void deleteAccountButtonClicked(ActionEvent event) {
+        Optional<ButtonType> buttonAlert = createAndShowAlert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete your account?", "DELETE ACCOUNT"
+                , "Account deletion is permanent and cannot be undone.\nAll your orders will be closed and deleted.");
+        if (buttonAlert.isPresent() && buttonAlert.get() == ButtonType.OK) {
+            try {
+                checkConnectionWithDb();
+                currentUser.deleteClient(getConnection());
+                createAndShowAlert(Alert.AlertType.WARNING, "", "", "The account has been successfully deleted.");
+                switchScene(event, loginScene);
+
+                //TODO delete this STUPID HASHMAPWITHLOGIN VALUES PLSSS
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void createLightingEffect() {
@@ -114,18 +169,17 @@ public class ClientAccountController extends Controller {
     private void setButtonLightingEffect(Button button) {
         ordersButton.setEffect(null);
         favouritesButton.setEffect(null);
-        settingsButton.setEffect(null);
-        accountButton.setEffect(null);
+        accountSettingsButton.setEffect(null);
         if (button == ordersButton) ordersButton.setEffect(lighting);
         else if (button == favouritesButton) favouritesButton.setEffect(lighting);
-        else if (button == settingsButton) settingsButton.setEffect(lighting);
-        else if (button == accountButton) accountButton.setEffect(lighting);
+        else if (button == accountSettingsButton) accountSettingsButton.setEffect(lighting);
     }
 
     private void makePaneVisible(Pane pane) {
         ordersPane.setVisible(false);
         detailsPane.setVisible(false);
         favouritesPane.setVisible(false);
+        accountSettingsPane.setVisible(false);
         emptyTableViewLabel.setVisible(false);
         if (pane == ordersPane) {
             ordersPane.setVisible(true);
@@ -133,6 +187,8 @@ public class ClientAccountController extends Controller {
             detailsPane.setVisible(true);
         } else if (pane == favouritesPane) {
             favouritesPane.setVisible(true);
+        } else if (pane == accountSettingsPane) {
+            accountSettingsPane.setVisible(true);
         }
     }
 
@@ -320,22 +376,27 @@ public class ClientAccountController extends Controller {
 
     @FXML
     void cancelOrderButtonClicked() {
-        Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.WARNING, "", "Canceling", "Are you sure about canceling the order ?");
+        Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "Canceling", "Are you sure about canceling the order ?");
         if (buttonClicked.isPresent() && buttonClicked.get() == ButtonType.OK) {
             changeOrderStatusAndDisplayProperButtons("Canceled");
             setDisableToAllLabels(true);
         }
+        anchor.requestFocus();
     }
 
     @FXML
     void changePaymentMethodButtonClicked() {
         try {
             Optional<String> buttonInsideAlertText = setAvailablePaymentMethodsToAlert(paymentMethodLabel.getText());
-            buttonInsideAlertText.ifPresent(this::changePaymentMethod);
-            showNotification(createNotification(new Label("payment method changed")), 4000);
+            if (buttonInsideAlertText.isPresent() && !buttonInsideAlertText.get().equals(ButtonType.CANCEL.getText())) {
+                buttonInsideAlertText.ifPresent(this::changePaymentMethod);
+                showNotification(createNotification(new Label("payment method changed")), 4000);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        anchor.requestFocus();
+
     }
 
     private Optional<String> setAvailablePaymentMethodsToAlert(String paymentMethod) throws SQLException {
@@ -347,9 +408,12 @@ public class ClientAccountController extends Controller {
                 choices.add(paymentMethods.getString(2));
             }
         }
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(choices.indexOf("Bank wire transfer")), choices);
         dialog.setHeaderText("Payment method change");
-        dialog.setContentText("Available payment methods : ");
+        dialog.setContentText("Available payment methods :  ");
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("alert");
         return dialog.showAndWait();
     }
 
