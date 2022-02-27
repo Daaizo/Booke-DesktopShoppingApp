@@ -24,6 +24,55 @@ public class Client extends User {
         this.login = login;
     }
 
+    public ResultSet getClientData(Connection connection) throws SQLException {
+        String data = """
+                select customerlogin, customername, customerlastname,customerpassword from customer where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(data);
+        preparedStatement.setString(1, login);
+        return preparedStatement.executeQuery();
+    }
+
+    public void setClientData(ResultSet data) {
+        try {
+            data.next();
+            this.login = data.getString(1);
+            this.name = data.getString(2);
+            this.lastName = data.getString(3);
+            this.password = data.getString(4);
+            data.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void updateClientData(Connection connection, String thingToSet, String valueToSet) throws SQLException {
+        String setData = """
+                update customer
+                    set ? = ?
+                    where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(setData);
+        preparedStatement.setString(1, thingToSet);
+        preparedStatement.setString(2, valueToSet);
+        preparedStatement.setString(3, login);
+        preparedStatement.executeQuery();
+        preparedStatement.close();
+    }
+
+    public void deleteClient(Connection connection) throws SQLException {
+        String deleteUser = """
+                delete from customer
+                     where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(deleteUser);
+        preparedStatement.setString(1, login);
+        preparedStatement.execute();
+        preparedStatement.close();
+    }
+
     public void deleteWholeCart(Connection connection) throws SQLException {
         String delete = "delete from shoppingcart where customerkey = (select customerkey from customer where customerlogin = ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(delete);
