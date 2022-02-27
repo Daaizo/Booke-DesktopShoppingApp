@@ -16,8 +16,8 @@
         </Label>
         <TextField fx:id="tfLogin" layoutX="185.0" layoutY="21.0" prefColumnCount="10" prefHeight="30.0"
                    prefWidth="30.0" AnchorPane.leftAnchor="185.0" AnchorPane.rightAnchor="62.0"/>
-        <TextField fx:id="tfName" layoutX="185.0" layoutY="71.0" prefColumnCount="10" prefHeight="30.0"
-                   prefWidth="30.0" AnchorPane.leftAnchor="185.0" AnchorPane.rightAnchor="62.0"/>
+        <TextField fx:id="tfName" layoutX="185.0" layoutY="71.0" prefColumnCount="10" prefHeight="30.0" prefWidth="30.0"
+                   AnchorPane.leftAnchor="185.0" AnchorPane.rightAnchor="62.0"/>
         <TextField fx:id="tfLastName" layoutX="185.0" layoutY="120.0" prefColumnCount="10" prefHeight="30.0"
                    prefWidth="30.0" AnchorPane.leftAnchor="185.0" AnchorPane.rightAnchor="62.0"/>
         <PasswordField fx:id="tfPassword" layoutX="185.0" layoutY="172.0" prefColumnCount="10" prefHeight="30.0"
@@ -27,9 +27,8 @@
                 <Font size="13.0"/>
             </font>
         </Label>
-        <PasswordField fx:id="tfPasswordRepeat" layoutX="185.0" layoutY="228.0" prefColumnCount="10"
-                       prefHeight="30.0" prefWidth="30.0" AnchorPane.leftAnchor="185.0"
-                       AnchorPane.rightAnchor="63.0"/>
+        <PasswordField fx:id="tfPasswordRepeat" layoutX="185.0" layoutY="228.0" prefColumnCount="10" prefHeight="30.0"
+                       prefWidth="30.0" AnchorPane.leftAnchor="185.0" AnchorPane.rightAnchor="63.0"/>
         <Label layoutX="14.0" layoutY="21.0" prefHeight="16.0" prefWidth="121.0" text="Login"
                AnchorPane.leftAnchor="14.0">
             <font>
@@ -74,6 +73,10 @@
                 <Font size="13.0"/>
             </font>
         </Label>
+        <Button fx:id="showPasswordButton" layoutX="929.0" layoutY="171.0" mnemonicParsing="false" prefHeight="33.0"
+                prefWidth="37.0"/>
+        <Button fx:id="showRepeatPasswordButton" layoutX="929.0" layoutY="229.0" mnemonicParsing="false"
+                prefHeight="30.0" prefWidth="37.0"/>
     </AnchorPane>
     <AnchorPane layoutX="6.0" layoutY="418.0" prefHeight="148.0" prefWidth="1036.0" styleClass="passwordAnchor">
         <Label layoutX="14.0" layoutY="16.0" prefHeight="30.0" prefWidth="308.0" text="Password requirements:">
@@ -82,9 +85,8 @@
             </font>
         </Label>
 
-        <CheckBox fx:id="checkbox" contentDisplay="BOTTOM" layoutX="183.0" layoutY="113.0"
-                  mnemonicParsing="false" prefHeight="21.0" prefWidth="132.0" text="I agree to the  "
-                  textAlignment="JUSTIFY">
+        <CheckBox fx:id="checkbox" contentDisplay="BOTTOM" layoutX="183.0" layoutY="113.0" mnemonicParsing="false"
+                  prefHeight="21.0" prefWidth="132.0" text="I agree to the  " textAlignment="JUSTIFY">
             <font>
                 <Font size="15.0"/>
             </font>
@@ -132,14 +134,14 @@
         </Label>
     </AnchorPane>
     <Label id="titleLabel" alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" layoutX="226.0" layoutY="78.0"
-           prefHeight="148.0" prefWidth="1050.0" stylesheets="@../style.css" text="Create account"
-           textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="547.0" AnchorPane.leftAnchor="0.0"
+           prefHeight="135.0" prefWidth="1050.0" stylesheets="@../style.css" text="Create account"
+           textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="560.0" AnchorPane.leftAnchor="0.0"
            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
     </Label>
     <AnchorPane layoutX="7.0" layoutY="566.0" prefHeight="112.0" prefWidth="1036.0">
-        <Button layoutX="292.0" layoutY="22.0" mnemonicParsing="false" onAction="#saveButtonClicked" opacity="0.87"
-                prefHeight="55.0" prefWidth="467.0" styleClass="OrangeButtons" text="Register now"
-                textFill="#5b84b1" AnchorPane.rightAnchor="291.0">
+        <Button layoutX="37.0" layoutY="20.0" mnemonicParsing="false" onAction="#registerButtonClicked" opacity="0.87"
+                prefHeight="55.0" prefWidth="963.0" styleClass="OrangeButtons" text="Register now" textFill="#5b84b1"
+                AnchorPane.rightAnchor="36.0">
             <font>
                 <Font size="18.0"/>
             </font>
@@ -149,8 +151,8 @@
                 <Font size="18.0"/>
             </font>
         </Label>
-        <Button alignment="BASELINE_LEFT" layoutX="915.0" layoutY="90.0"
-                mnemonicParsing="false" onAction="#goBackButtonClicked" prefHeight="27.0" prefWidth="121.0"
+        <Button alignment="BASELINE_LEFT" layoutX="915.0" layoutY="90.0" mnemonicParsing="false"
+                onAction="#goBackButtonClicked" prefHeight="27.0" prefWidth="121.0"
                 style="-fx-background-color: transparent;" text="Login here" textFill="#fc766a" underline="true">
             <font>
                 <Font size="18.0"/>
