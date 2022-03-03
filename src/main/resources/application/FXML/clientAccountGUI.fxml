@@ -6,32 +6,34 @@
             minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#Dragging" prefHeight="684.0" prefWidth="1050.0"
             stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.ClientAccountController">
-    <AnchorPane layoutY="81.0" prefHeight="619.0" prefWidth="250.0">
-        <Button fx:id="ordersButton" layoutX="11.0" layoutY="52.0" maxHeight="210.0" maxWidth="210.0" minHeight="74.0"
-                minWidth="210.0" mnemonicParsing="false" onAction="#ordersButtonClicked" prefHeight="74.0"
-                prefWidth="210.0" styleClass="accountButtons" text="All orders"/>
-        <Button fx:id="favouritesButton" layoutX="11.0" layoutY="182.0" maxHeight="210.0" maxWidth="210.0"
-                minHeight="74.0" minWidth="210.0" mnemonicParsing="false" onAction="#favouritesButtonClicked"
-                prefHeight="74.0" prefWidth="210.0" styleClass="accountButtons" text="Favourites"/>
-        <Button fx:id="accountSettingsButton" layoutX="11.0" layoutY="310.0" maxHeight="210.0" maxWidth="210.0"
-                minHeight="74.0" minWidth="210.0" mnemonicParsing="false" onAction="#accountSettingsButtonClicked"
-                prefHeight="65.0" prefWidth="210.0" styleClass="accountButtons" text="Account"/>
+    <AnchorPane layoutY="1.0" prefHeight="699.0" prefWidth="1050.0">
+        <Button fx:id="ordersButton" layoutX="122.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                minWidth="-Infinity" mnemonicParsing="false" onAction="#ordersButtonClicked" prefHeight="51.0"
+                prefWidth="260.0" style="-fx-background-radius: 0;" styleClass="accountButtons" text="All orders"/>
+        <Button fx:id="favouritesButton" layoutX="382.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#favouritesButtonClicked"
+                prefHeight="51.0" prefWidth="260.0" style="-fx-background-radius: 0;" styleClass="accountButtons"
+                text="Favourites"/>
+        <Button fx:id="accountSettingsButton" layoutX="642.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                onAction="#accountSettingsButtonClicked" prefHeight="51.0" prefWidth="260.0"
+                style="-fx-background-radius: 0;" styleClass="accountButtons" text="Account"/>
     </AnchorPane>
-    <AnchorPane layoutX="224.0" layoutY="96.0" prefHeight="588.0" prefWidth="826.0" AnchorPane.bottomAnchor="0.0"
-                AnchorPane.leftAnchor="224.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="96.0">
+    <AnchorPane layoutX="224.0" layoutY="56.0" prefHeight="628.0" prefWidth="1050.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="56.0">
         <Pane fx:id="ordersPane" layoutX="24.0" layoutY="32.0" prefHeight="548.0" prefWidth="1050.0" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
-            <TableView fx:id="ordersTableView" layoutX="9.0" layoutY="4.0" prefHeight="580.0" prefWidth="808.0">
+            <TableView fx:id="ordersTableView" layoutX="114.0" layoutY="88.0" prefHeight="501.0" prefWidth="861.0">
                 <columns>
                     <TableColumn fx:id="ordersButtonColumn" prefWidth="112.0" resizable="false"/>
                     <TableColumn fx:id="ordersIdColumn" editable="false" minWidth="16.0" prefWidth="81.0"
                                  resizable="false" sortable="false" text="ID"/>
-                    <TableColumn fx:id="ordersDateColumn" editable="false" prefWidth="230.0" resizable="false"
+                    <TableColumn fx:id="ordersDateColumn" editable="false" prefWidth="238.0" resizable="false"
                                  sortable="false" text="order date"/>
-                    <TableColumn fx:id="ordersDeliveryDateColumn" editable="false" prefWidth="230.0" resizable="false"
+                    <TableColumn fx:id="ordersDeliveryDateColumn" editable="false" prefWidth="274.0" resizable="false"
                                  sortable="false" text="delivery date"/>
-                    <TableColumn fx:id="ordersTotalValueColumn" editable="false" prefWidth="155.0" resizable="false"
+                    <TableColumn fx:id="ordersTotalValueColumn" editable="false" prefWidth="170.0" resizable="false"
                                  sortable="false" text="total value"/>
                     <TableColumn fx:id="ordersStatusColumn" editable="false" prefWidth="75.0" resizable="false"
                                  sortable="false" text="orderStatusColumn" visible="false"/>
@@ -45,7 +47,7 @@
         </Pane>
         <Pane fx:id="favouritesPane" prefHeight="548.0" prefWidth="1050.0" visible="false" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <TableView fx:id="favouritesTableView" layoutX="9.0" layoutY="22.0" prefHeight="551.0" prefWidth="808.0">
+            <TableView fx:id="favouritesTableView" layoutX="114.0" layoutY="88.0" prefHeight="523.0" prefWidth="808.0">
                 <columns>
                     <TableColumn fx:id="favouritesNameColumn" editable="false" prefWidth="262.0" resizable="false"
                                  sortable="false" text="Name"/>
@@ -61,8 +63,9 @@
                 </columnResizePolicy>
             </TableView>
         </Pane>
-        <Pane fx:id="detailsPane" prefHeight="548.0" prefWidth="826.0" visible="false" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Pane fx:id="detailsPane" layoutX="97.0" layoutY="65.0" prefHeight="622.0" prefWidth="935.0" visible="false"
+              AnchorPane.bottomAnchor="-59.0" AnchorPane.leftAnchor="97.0" AnchorPane.rightAnchor="18.0"
+              AnchorPane.topAnchor="65.0">
             <TableView fx:id="orderDetailsTableView" layoutX="23.0" layoutY="147.0" prefHeight="243.0"
                        prefWidth="790.0">
                 <columns>
@@ -108,30 +111,38 @@
                        visible="false"/>
             </StackPane>
         </Pane>
-        <Label fx:id="emptyTableViewLabel" prefHeight="580.0" prefWidth="818.0" text="Label" visible="false"/>
-        <Pane fx:id="accountSettingsPane" layoutX="-1.0" prefHeight="588.0" prefWidth="826.0"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <Pane fx:id="accountSettingsPane" layoutX="78.0" layoutY="32.0" prefHeight="596.0" prefWidth="972.0"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="32.0">
             <children>
-                <Label layoutX="63.0" layoutY="79.0" prefHeight="30.0" prefWidth="162.0" styleClass="orderDetailsLabel"
+                <Label layoutX="188.0" layoutY="78.0" prefHeight="30.0" prefWidth="162.0" styleClass="orderDetailsLabel"
                        text="Account login :"/>
-                <Label layoutX="63.0" layoutY="190.0" prefHeight="11.0" prefWidth="181.0" styleClass="orderDetailsLabel"
-                       text="Last name :"/>
-                <Label layoutX="63.0" layoutY="132.0" prefHeight="11.0" prefWidth="181.0" styleClass="orderDetailsLabel"
-                       text="Name : "/>
-                <TextField fx:id="tfLogin" layoutX="244.0" layoutY="82.0" prefHeight="23.0" prefWidth="226.0"/>
-                <TextField fx:id="tfName" layoutX="244.0" layoutY="135.0" prefHeight="23.0" prefWidth="226.0"/>
-                <TextField fx:id="tfLastName" layoutX="244.0" layoutY="193.0" prefHeight="23.0" prefWidth="226.0"/>
-                <Button id="clearCartButton" fx:id="deleteAccountButton" layoutX="573.0" layoutY="520.0"
+                <Label layoutX="188.0" layoutY="189.0" prefHeight="11.0" prefWidth="181.0"
+                       styleClass="orderDetailsLabel" text="Last name :"/>
+                <Label layoutX="188.0" layoutY="131.0" prefHeight="11.0" prefWidth="181.0"
+                       styleClass="orderDetailsLabel" text="Name : "/>
+                <TextField fx:id="tfLogin" layoutX="369.0" layoutY="81.0" prefHeight="23.0" prefWidth="226.0"/>
+                <TextField fx:id="tfName" layoutX="369.0" layoutY="134.0" prefHeight="23.0" prefWidth="226.0"/>
+                <TextField fx:id="tfLastName" layoutX="369.0" layoutY="192.0" prefHeight="23.0" prefWidth="226.0"/>
+                <Button id="clearCartButton" fx:id="deleteAccountButton" layoutX="713.0" layoutY="526.0"
                         mnemonicParsing="false" onAction="#deleteAccountButtonClicked" prefHeight="36.0"
                         prefWidth="226.0" text="Delete account"/>
-                <Button fx:id="changePasswordButton" layoutX="443.0" layoutY="280.0" mnemonicParsing="false"
+                <Button fx:id="changePasswordButton" layoutX="573.0" layoutY="280.0" mnemonicParsing="false"
                         onAction="#changePasswordButtonClicked" prefHeight="44.0" prefWidth="303.0"
                         styleClass="OrangeButtons" text="Change password"/>
-                <Button fx:id="confirmChangesButton" layoutX="80.0" layoutY="280.0" mnemonicParsing="false"
+                <Button fx:id="confirmChangesButton" layoutX="37.0" layoutY="280.0" mnemonicParsing="false"
                         onAction="#confirmChangesButtonClicked" prefHeight="44.0" prefWidth="303.0"
                         styleClass="OrangeButtons" text="Confirm changes"/>
+                <Label fx:id="nameLabel" layoutX="369.0" layoutY="161.0" prefHeight="17.0" prefWidth="121.0"
+                       text="Name required" visible="false"/>
+                <Label fx:id="loginLabel" layoutX="369.0" layoutY="108.0" prefHeight="17.0" prefWidth="121.0"
+                       text="Login required" visible="false"/>
+                <Label fx:id="lastNameLabel" layoutX="369.0" layoutY="219.0" prefHeight="17.0" prefWidth="162.0"
+                       text="Last name required" visible="false"/>
             </children>
         </Pane>
+        <Label fx:id="emptyTableViewLabel" prefHeight="628.0" prefWidth="1050.0" text="Label" visible="false"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0"/>
     </AnchorPane>
 </AnchorPane>

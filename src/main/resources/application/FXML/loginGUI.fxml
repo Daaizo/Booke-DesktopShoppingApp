@@ -59,7 +59,7 @@
                 </font>
             </Label>
         </Pane>
-        <Pane prefHeight="690.0" prefWidth="515.0" style="-fx-background-color: #5b84b1;">
+        <Pane prefHeight="659.0" prefWidth="497.0" style="-fx-background-color: #5b84b1;">
             <TextField fx:id="tfLogin" layoutX="83.0" layoutY="212.0" prefHeight="45.0" prefWidth="318.0"
                        promptText="login"/>
             <PasswordField id="inputField" fx:id="tfPassword" layoutX="83.0" layoutY="286.0" prefHeight="45.0"

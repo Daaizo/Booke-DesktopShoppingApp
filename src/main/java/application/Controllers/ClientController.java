@@ -3,6 +3,7 @@ package application.Controllers;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -267,6 +268,8 @@ public class ClientController extends Controller {
                         setText("");
                         button.fire();
                         setOnMouseClicked(deleteFromFavouriteClicked(getRowId()));
+                        setOnMouseEntered(event -> setCursor(Cursor.HAND));
+                        setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
                         getStyleClass().add("clientTableviewButtons");
                     }
                 }

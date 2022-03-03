@@ -1,5 +1,6 @@
 package application.Controllers;
 
+import application.Main;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,7 +46,7 @@ public class ClientAccountController extends Controller {
     @FXML
     private TableView<ProductTable> favouritesTableView;
     @FXML
-    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel;
+    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel, nameLabel, loginLabel, lastNameLabel;
     @FXML
     private Button ordersButton, accountSettingsButton, favouritesButton, payOrderButton, changePaymentMethodButton, cancelOrderButton, deleteAccountButton, changePasswordButton;
 
@@ -53,7 +54,7 @@ public class ClientAccountController extends Controller {
     @FXML
     public void initialize() {
         prepareScene();
-        createGoBackButton();
+        createGoBackButton(event -> switchScene(event, clientScene));
         createLightingEffect();
         createInformationImageAndAttachItToLabel();
         createEmptyTableViewLabel();
@@ -80,7 +81,9 @@ public class ClientAccountController extends Controller {
         makePaneVisible(accountSettingsPane);
         setButtonLightingEffect(accountSettingsButton);
         try {
-            currentUser.setClientData(currentUser.getClientData(getConnection()));
+            ResultSet data = currentUser.getClientData(getConnection());
+            currentUser.setClientData(data);
+            data.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -97,7 +100,60 @@ public class ClientAccountController extends Controller {
 
     @FXML
     void confirmChangesButtonClicked() {
-        //TODO check if any of field is changes and if is update it
+        if (isAnyDataChanged() && !areFieldsEmpty()) {
+            try {
+                updateChangesInDatabase();
+                showNotification(createNotification(new Label("Data successfully changed")), 3000);
+                accountSettingsButtonClicked();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        anchor.requestFocus();
+    }
+
+    private boolean areFieldsEmpty() {
+        return isTextFieldEmpty(tfLogin, loginLabel) && isTextFieldEmpty(tfLastName, lastNameLabel) && isTextFieldEmpty(tfName, nameLabel);
+    }
+
+    private boolean isTextFieldEmpty(TextField tf, Label label) {
+        if (tf.getText().trim().isEmpty()) {
+            colorField(tf, label, Color.RED);
+            label.setVisible(true);
+            return true;
+        } else {
+            basicTheme(tf, label);
+            return false;
+        }
+    }
+
+    private void updateChangesInDatabase() throws SQLException {
+
+        String login = tfLogin.getText();
+        String name = tfName.getText();
+        String lastName = tfLastName.getText();
+        if (!login.equals(currentUser.getLogin()) && isLoginUnique(login)) {
+            currentUser.updateClientLogin(getConnection(), login);
+        }
+        if (!name.equals(currentUser.getName())) {
+            currentUser.updateClientName(getConnection(), name);
+        }
+        if (!lastName.equals(currentUser.getLastName())) {
+            currentUser.updateClientLastName(getConnection(), lastName);
+        }
+
+    }
+
+    private boolean isAnyDataChanged() {
+        return !(tfLogin.getText().equals(currentUser.getLogin()) && tfName.getText().equals(currentUser.getName()) && tfLastName.getText().equals(currentUser.getLastName()));
+    }
+
+    private boolean isLoginUnique(String login) {
+        if (loginValues.containsKey(login)) {
+            createAndShowAlert(Alert.AlertType.WARNING, "A user with this login already exists.", "Login", "Please choose a new login and try again.");
+            return false;
+        } else return true;
+
     }
 
     @FXML
@@ -105,12 +161,17 @@ public class ClientAccountController extends Controller {
         //TODO copy all of requirements from registration scene and check it
     }
 
-    private void confirmPassword() {
-        //TODO alert with text field which requires password account
+    private Optional<String> createAndShowConfirmPasswordAlert() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Password");
+        dialog.setHeaderText("Confirm that it is you ");
+        dialog.setContentText("Type your password here : ");
+        setLogoAndCssToCustomDialog(dialog);
+        dialog.getDialogPane().setMinWidth(650);
+        return dialog.showAndWait();
     }
 
-    @FXML
-    void deleteAccountButtonClicked(ActionEvent event) {
+    private void deleteConfirmation(ActionEvent event) {
         Optional<ButtonType> buttonAlert = createAndShowAlert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete your account?", "DELETE ACCOUNT"
                 , "Account deletion is permanent and cannot be undone.\nAll your orders will be closed and deleted.");
         if (buttonAlert.isPresent() && buttonAlert.get() == ButtonType.OK) {
@@ -118,25 +179,37 @@ public class ClientAccountController extends Controller {
                 checkConnectionWithDb();
                 currentUser.deleteClient(getConnection());
                 createAndShowAlert(Alert.AlertType.WARNING, "", "", "The account has been successfully deleted.");
+                Main.getUsersToHashMap(getConnection());
                 switchScene(event, loginScene);
 
-                //TODO delete this STUPID HASHMAPWITHLOGIN VALUES PLSSS
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    @FXML
+    void deleteAccountButtonClicked(ActionEvent event) {
+        Optional<String> result = createAndShowConfirmPasswordAlert();
+        result.ifPresent(s -> {
+            if (result.get().equals(currentUser.getPassword())) {
+                deleteConfirmation(event);
+            } else {
+                ButtonType tryAgain = new ButtonType("Try again");
+                ButtonType cancel = new ButtonType("Cancel");
+                Optional<ButtonType> res = createAndShowAlert(tryAgain, cancel, "Incorrect password, please try again", "Wrong password");
+                res.ifPresent(buttonType -> {
+                    if (res.get() == tryAgain) deleteAccountButtonClicked(event);
+                });
+            }
+        });
+
+    }
+
     private void createLightingEffect() {
         Light.Distant light = new Light.Distant();
         light.setColor(Color.LIGHTPINK);
         lighting.setLight(light);
-    }
-
-    private void createGoBackButton() {
-        Button button = super.createGoBackButton(event -> switchScene(event, clientScene));
-        button.setLayoutX(60);
-        button.setLayoutY(2);
     }
 
     private void createEmptyTableViewLabel() {
@@ -305,15 +378,19 @@ public class ClientAccountController extends Controller {
         ClientController.ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ClientController().new ButtonInsideTableColumn<>("delete.png", "delete from favourites");
         deleteFromFavouritesButton.setEventHandler(mouseEvent -> {
             String productName = deleteFromFavouritesButton.getRowId().getProductName();
-            try {
-                currentUser.deleteItemFromUsersFavourite(productName, getConnection());
-                showNotification(createNotification(new Label("Item removed from favourites")), 2500);
-                displayFavourites();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            Optional<ButtonType> result = deleteProductAlert(productName, "1", "favourites");
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    currentUser.deleteItemFromUsersFavourite(productName, getConnection());
+                    showNotification(createNotification(new Label("Item removed from favourites")), 2500);
+                    displayFavourites();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
         deleteFromFavouritesButton.setCssClassId("clientTableviewButtons");
+
         return deleteFromFavouritesButton;
     }
 
@@ -408,13 +485,18 @@ public class ClientAccountController extends Controller {
                 choices.add(paymentMethods.getString(2));
             }
         }
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(choices.indexOf("Bank wire transfer")), choices);
+        choices.sort(null); // now on 0 position is the longest name, and it will nicely fit in window
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
         dialog.setHeaderText("Payment method change");
         dialog.setContentText("Available payment methods :  ");
+        setLogoAndCssToCustomDialog(dialog);
+        return dialog.showAndWait();
+    }
+
+    private void setLogoAndCssToCustomDialog(Dialog<?> dialog) {
         ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         dialog.getDialogPane().getStyleClass().add("alert");
-        return dialog.showAndWait();
     }
 
 

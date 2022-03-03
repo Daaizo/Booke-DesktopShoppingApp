@@ -9,10 +9,12 @@ import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import users.Client;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class RegisterController extends Controller {
@@ -32,13 +34,17 @@ public class RegisterController extends Controller {
 
     @FXML
     public void initialize() {
-        prepareScene();
+        AnchorPane mainAnchor = setAnchorSizeAndColors();
+        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
+        createExitButton();
+        createGoBackButton(event -> switchScene(event, loginScene));
         setAllPasswordRequirementImages(false);
         setPasswordVisibilityButtons();
 
     }
 
-    private void setPasswordVisibilityButtons() {
+    protected void setPasswordVisibilityButtons() {
         String hiddenPassIconName = "hiddenPassword.png";
         String showPassIconName = "showPassword.png";
         showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
@@ -101,6 +107,7 @@ public class RegisterController extends Controller {
             return true;
         }
     }
+
 
     private boolean isLoginEmpty() {
         if (tfLogin.getText().isEmpty()) {
@@ -173,7 +180,7 @@ public class RegisterController extends Controller {
             checkConnectionWithDb();
             newUser.addUserToDatabase(getConnection());
 
-            createAndShowAlert(Alert.AlertType.INFORMATION, "", "", "User created");
+            createAndShowAlert(Alert.AlertType.INFORMATION, "Your account has been successfully created", "Success", "");
             updateHashMapWithLoginValues(newUser.getLogin(), newUser.getPassword());
             switchScene(event, loginScene);
         } else {

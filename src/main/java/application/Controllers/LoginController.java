@@ -32,7 +32,7 @@ public class LoginController extends Controller {
 
 
     private void loginError() {
-        createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "", "login or password is incorrect");
+        createAndShowAlert(Alert.AlertType.WARNING, "Login or password is incorrect !", "", "Please try again");
 
     }
 
@@ -62,7 +62,7 @@ public class LoginController extends Controller {
     }
 
 
-    private void checkPassword(String username, String password, ActionEvent event) {
+    public void checkPassword(String username, String password, ActionEvent event) {
 
         String pass = loginValues.get(username);
         if (passwordMatches(pass, password)) {
@@ -99,7 +99,7 @@ public class LoginController extends Controller {
             colorField(tfPassword, passwordLabel, Color.RED);
             displayLabelWithGivenText(passwordLabel, "Filed is empty");
         }
-
+        anchor.requestFocus();
     }
 
     @FXML

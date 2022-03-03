@@ -1,16 +1,13 @@
 package application.Controllers;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import users.Client;
 import users.Order;
 import users.Product;
@@ -26,7 +23,7 @@ public class ShoppingCartController extends Controller {
 
     private String paymentMethod = null;
     private double totalOrderValue;
-
+    private final Client currentUser = new Client(CURRENT_USER_LOGIN);
     @FXML
     private TableColumn<ProductTable, String> cartNameColumn, cartPriceColumn, cartValueColumn, plusButtonColumn, minusButtonColumn, deleteButtonColumn;
     @FXML
@@ -46,6 +43,7 @@ public class ShoppingCartController extends Controller {
         prepareScene();
         createGoBackButton(event -> switchScene(event, clientScene));
         createClearCartButton();
+
         try {
             displayProducts();
             setTotalValueLabel();
@@ -71,14 +69,14 @@ public class ShoppingCartController extends Controller {
 
     @Override
     protected void showOnlyRowsWithData(TableView<?> tableView) {
+        super.showOnlyRowsWithData(tableView);
         tableView.setMaxHeight(320);
-        tableView.setFixedCellSize(70);
-        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
+
     }
 
     void setTotalValueLabel() throws SQLException {
         checkConnectionWithDb();
-        this.totalOrderValue = Client.getTotalValueOfShoppingCart(CURRENT_USER_LOGIN, getConnection());
+        this.totalOrderValue = currentUser.getTotalValueOfShoppingCart(getConnection());
         totalValueLabel.setText(totalOrderValue + CURRENCY);
         totalValueLabel.setId("displayLabel");
     }
@@ -130,21 +128,13 @@ public class ShoppingCartController extends Controller {
     }
 
     private void confirmationAlert(String productName, String productQuantity) throws SQLException {
-        Optional<ButtonType> buttonClicked;
-        if (productQuantity.compareTo("1") == 0) {
-            buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM CART",
-                    "Confirmation",
-                    "Do you want to delete '" + productName + "' from cart");
-        } else {
-            buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM CART",
-                    "Confirmation",
-                    "Do you want to delete " + productQuantity + " pieces of '" + productName + "' from cart");
-        }
+        Optional<ButtonType> buttonClicked = deleteProductAlert(productName, productQuantity, "cart");
         if (alertButtonClicked(buttonClicked, ButtonType.OK)) {
-            Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "-quantity", getConnection());
+            currentUser.setQuantityOfProductInCart(productName, "-quantity", getConnection());
             // there is a trigger in database which deletes products from cart when quantity is equal 0
         }
     }
+
 
     private ClientController.ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
         ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("plus.png", "");
@@ -152,7 +142,7 @@ public class ShoppingCartController extends Controller {
             String productName = button.getRowId().getProductName();
             try {
                 checkConnectionWithDb();
-                Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "+1", getConnection());
+                currentUser.setQuantityOfProductInCart(productName, "+1", getConnection());
                 reloadTableView(cartTableView);
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -165,7 +155,7 @@ public class ShoppingCartController extends Controller {
     }
 
     private boolean isQuantityEqualOne(String productName, Connection connection) throws SQLException {
-        return Client.getQuantityOfProductInCart(CURRENT_USER_LOGIN, productName, connection) == 1;
+        return currentUser.getQuantityOfProductInCart(productName, connection) == 1;
     }
 
 
@@ -178,7 +168,7 @@ public class ShoppingCartController extends Controller {
                 if (isQuantityEqualOne(productName, getConnection())) {
                     confirmationAlert(productName, "1");
                 } else {
-                    Client.setQuantityOfProduct(CURRENT_USER_LOGIN, productName, "-1", getConnection());
+                    currentUser.setQuantityOfProductInCart(productName, "-1", getConnection());
                 }
                 reloadTableView(cartTableView);
             } catch (SQLException e) {
@@ -197,7 +187,7 @@ public class ShoppingCartController extends Controller {
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
-                confirmationAlert(productName, Client.getQuantityOfProductInCart(CURRENT_USER_LOGIN, productName, getConnection()) + "");
+                confirmationAlert(productName, currentUser.getQuantityOfProductInCart(productName, getConnection()) + "");
                 reloadTableView(cartTableView);
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -236,23 +226,14 @@ public class ShoppingCartController extends Controller {
         paymentMethodsPane.setContent(grid);
     }
 
-    protected Optional<ButtonType> createAndShowAlert(ButtonType buttonType1, ButtonType buttonType2) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", buttonType1, buttonType2);
-        alert.setHeaderText("Do you want to pay now ?");
-        alert.setTitle("Payment");
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
-        dialogPane.getStyleClass().add("alert");
-        return alert.showAndWait();
-    }
+
 
     @FXML
     void placeOrderButtonClicked() {
         if (paymentMethod == null) {
             createAndShowAlert(Alert.AlertType.WARNING,
-                    "Payment",
-                    "Payment method required", "You have to choose payment method before placing an order!");
+                    "Payment method required",
+                    "Payment", "You have to choose payment method before placing an order!");
 
         } else {
             Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION,
@@ -264,18 +245,19 @@ public class ShoppingCartController extends Controller {
                 ButtonType now = new ButtonType("I want to pay now");
                 ButtonType later = new ButtonType("I want to pay later");
                 Optional<ButtonType> buttonTypeClicked = createAndShowAlert(
-                        now, later);
+                        now, later, "Do you want to pay now ?", "Payment");
                 if (alertButtonClicked(buttonTypeClicked, now)) {
                     placeOrder("In progress");
 
                 } else if (alertButtonClicked(buttonTypeClicked, later)) {
                     placeOrder("Waiting for payment");
                 }
-                showNotification(createNotification(new Label("Order placed")), 3500);
+                showNotification(createNotification(new Label("Order successfully placed")), 3500);
                 clearShoppingCart();
                 reloadTableView(cartTableView);
             }
         }
+        anchor.requestFocus();
     }
 
     private boolean alertButtonClicked(Optional<ButtonType> alertButton, ButtonType buttonType) {
@@ -297,7 +279,7 @@ public class ShoppingCartController extends Controller {
 
     private void clearShoppingCart() {
         try {
-            Client.deleteWholeCart(CURRENT_USER_LOGIN, getConnection());
+            currentUser.deleteWholeCart(getConnection());
         } catch (SQLException e) {
             e.printStackTrace();
         }

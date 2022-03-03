@@ -12,16 +12,16 @@
                 AnchorPane.rightAnchor="678.0" AnchorPane.topAnchor="569.0"/>
     <TableView fx:id="cartTableView" layoutX="15.0" layoutY="161.0" prefHeight="191.0" prefWidth="1000.0">
         <columns>
-            <TableColumn fx:id="cartNameColumn" prefWidth="310.0" resizable="false" text="Name"/>
-            <TableColumn fx:id="cartPriceColumn" minWidth="0.0" prefWidth="65.0" resizable="false" text="Price"/>
-            <TableColumn fx:id="minusButtonColumn" editable="false" maxWidth="2000.0" minWidth="0.0" prefWidth="79.0"
+            <TableColumn fx:id="cartNameColumn" prefWidth="304.0" resizable="false" text="Name"/>
+            <TableColumn fx:id="cartPriceColumn" minWidth="0.0" prefWidth="87.0" resizable="false" text="Price"/>
+            <TableColumn fx:id="minusButtonColumn" editable="false" maxWidth="2000.0" minWidth="0.0" prefWidth="69.0"
                          resizable="false" sortable="false"/>
-            <TableColumn fx:id="cartQuantityColumn" maxWidth="2500.0" prefWidth="87.0" resizable="false"
+            <TableColumn fx:id="cartQuantityColumn" maxWidth="2500.0" prefWidth="91.0" resizable="false"
                          text="Quantity"/>
-            <TableColumn fx:id="plusButtonColumn" editable="false" maxWidth="2000.0" minWidth="0.0" prefWidth="67.0"
+            <TableColumn fx:id="plusButtonColumn" editable="false" maxWidth="2000.0" minWidth="0.0" prefWidth="65.0"
                          resizable="false" sortable="false"/>
-            <TableColumn fx:id="cartValueColumn" prefWidth="117.0" resizable="false" text="Value"/>
-            <TableColumn fx:id="deleteButtonColumn" editable="false" maxWidth="6500.0" prefWidth="274.0"
+            <TableColumn fx:id="cartValueColumn" prefWidth="118.0" resizable="false" text="Value"/>
+            <TableColumn fx:id="deleteButtonColumn" editable="false" maxWidth="6500.0" prefWidth="265.0"
                          resizable="false" sortable="false" style="-fx-alignment: center_left;"/>
         </columns>
         <columnResizePolicy>
