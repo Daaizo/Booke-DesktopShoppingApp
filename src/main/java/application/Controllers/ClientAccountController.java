@@ -1,11 +1,11 @@
 package application.Controllers;
 
-import application.Main;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.Light;
@@ -13,6 +13,7 @@ import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -22,6 +23,7 @@ import users.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class ClientAccountController extends Controller {
@@ -88,32 +90,34 @@ public class ClientAccountController extends Controller {
             e.printStackTrace();
         }
         setLabels();
-
     }
 
     private void setLabels() {
         tfLogin.setText(currentUser.getLogin());
         tfLastName.setText(currentUser.getLastName());
         tfName.setText(currentUser.getName());
-        //TODO set confirmChangesButtonClicked on tab,enter, and somewhere else clicked
     }
 
     @FXML
     void confirmChangesButtonClicked() {
-        if (isAnyDataChanged() && !areFieldsEmpty()) {
-            try {
-                updateChangesInDatabase();
-                showNotification(createNotification(new Label("Data successfully changed")), 3000);
-                accountSettingsButtonClicked();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        if (isAnyDataChanged()) {
+            if (!isAndFieldEmpty()) {
+                try {
+                    if (updateChangesInDatabase()) {
+                        showNotification(createNotification(new Label("Data successfully changed")), 3000);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        } else {
+            createAndShowAlert(Alert.AlertType.INFORMATION, "", "Account", "There are no changes to save !");
         }
         anchor.requestFocus();
     }
 
-    private boolean areFieldsEmpty() {
-        return isTextFieldEmpty(tfLogin, loginLabel) && isTextFieldEmpty(tfLastName, lastNameLabel) && isTextFieldEmpty(tfName, nameLabel);
+    private boolean isAndFieldEmpty() {
+        return isTextFieldEmpty(tfLogin, loginLabel) || isTextFieldEmpty(tfLastName, lastNameLabel) || isTextFieldEmpty(tfName, nameLabel);
     }
 
     private boolean isTextFieldEmpty(TextField tf, Label label) {
@@ -127,20 +131,28 @@ public class ClientAccountController extends Controller {
         }
     }
 
-    private void updateChangesInDatabase() throws SQLException {
+    private boolean updateChangesInDatabase() throws SQLException {
 
         String login = tfLogin.getText();
         String name = tfName.getText();
         String lastName = tfLastName.getText();
-        if (!login.equals(currentUser.getLogin()) && isLoginUnique(login)) {
-            currentUser.updateClientLogin(getConnection(), login);
+        if (!login.equals(currentUser.getLogin())) {
+            if (isLoginUnique(login)) {
+                currentUser.updateClientLogin(getConnection(), login);
+                CURRENT_USER_LOGIN = login;
+                return true;
+            }
+
         }
         if (!name.equals(currentUser.getName())) {
             currentUser.updateClientName(getConnection(), name);
+            return true;
         }
         if (!lastName.equals(currentUser.getLastName())) {
             currentUser.updateClientLastName(getConnection(), lastName);
+            return true;
         }
+        return false;
 
     }
 
@@ -148,8 +160,8 @@ public class ClientAccountController extends Controller {
         return !(tfLogin.getText().equals(currentUser.getLogin()) && tfName.getText().equals(currentUser.getName()) && tfLastName.getText().equals(currentUser.getLastName()));
     }
 
-    private boolean isLoginUnique(String login) {
-        if (loginValues.containsKey(login)) {
+    private boolean isLoginUnique(String login) throws SQLException {
+        if (Client.isClientInDataBase(getConnection(), login)) {
             createAndShowAlert(Alert.AlertType.WARNING, "A user with this login already exists.", "Login", "Please choose a new login and try again.");
             return false;
         } else return true;
@@ -157,8 +169,58 @@ public class ClientAccountController extends Controller {
     }
 
     @FXML
-    void changePasswordButtonClicked() {
-        //TODO copy all of requirements from registration scene and check it
+    void changePasswordButtonClicked(ActionEvent event) {
+        Optional<String> result = createAndShowConfirmPasswordAlert();
+        result.ifPresent(s -> {
+            if (result.get().equals(currentUser.getPassword())) {
+                Optional<String> newAlert = enterNewPasswordAlert();
+                newAlert.ifPresent(newPassword -> {
+                    System.out.println(newPassword);
+                    if (Pattern.matches(PASSWORDS_REGEX, newPassword)) {
+                        try {
+                            currentUser.updateClientPassword(getConnection(), newPassword);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            } else {
+                ButtonType tryAgain = new ButtonType("Try again");
+                ButtonType cancel = new ButtonType("Cancel");
+                Optional<ButtonType> res = createAndShowAlert(tryAgain, cancel, "Incorrect password, please try again", "Wrong password");
+                res.ifPresent(buttonType -> {
+                    if (res.get() == tryAgain) changePasswordButtonClicked(event);
+                });
+            }
+        });
+    }
+
+    private Optional<String> enterNewPasswordAlert() {
+        Dialog<String> dialog = new Dialog<>();
+        PasswordField passwordField = new PasswordField();
+        HBox content = new HBox();
+        content.setAlignment(Pos.CENTER);
+        content.setSpacing(10);
+        content.getChildren().addAll(new Label("Enter password here :"), passwordField);
+        dialog.getDialogPane().setContent(content);
+        dialog.setTitle("New password");
+        dialog.setHeaderText("A password can only be saved if the following conditions are met :\n 6-20 characters, one number, one uppercase letter, one lowercase letter, one special character ");
+        setLogoAndCssToCustomDialog(dialog);
+        dialog.getDialogPane().setMinWidth(650);
+        ButtonType savePass = new ButtonType("Save new password", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(savePass, ButtonType.CANCEL);
+        Node savaPasswordButton = dialog.getDialogPane().lookupButton(savePass);
+        dialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK);
+        savaPasswordButton.setDisable(true);
+        dialog.getDialogPane().requestFocus();
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == savePass) {
+                return passwordField.getText();
+            }
+            return null;
+        });
+        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> savaPasswordButton.setDisable(!Pattern.matches(PASSWORDS_REGEX, newValue)));
+        return dialog.showAndWait();
     }
 
     private Optional<String> createAndShowConfirmPasswordAlert() {
@@ -179,7 +241,6 @@ public class ClientAccountController extends Controller {
                 checkConnectionWithDb();
                 currentUser.deleteClient(getConnection());
                 createAndShowAlert(Alert.AlertType.WARNING, "", "", "The account has been successfully deleted.");
-                Main.getUsersToHashMap(getConnection());
                 switchScene(event, loginScene);
 
             } catch (SQLException e) {
@@ -309,6 +370,7 @@ public class ClientAccountController extends Controller {
             displayOrderDetails(button.getRowId().getOrderNumber());
             fillOrderDetailLabels(button);
             makeProperButtonsVisible(orderStatusLabel.getText());
+            setButtonLightingEffect(null);
             displayInformationAboutOrderStatus();
         };
         button.setEventHandler(buttonClicked);
@@ -345,7 +407,7 @@ public class ClientAccountController extends Controller {
 
     private void displayOrders() {
         checkConnectionWithDb();
-        Order order = new Order(CURRENT_USER_LOGIN);
+        Order order = new Order(currentUser.getLogin());
         try {
             ResultSet orders = order.getOrdersFromCustomer(getConnection());
             ObservableList<OrderTable> listOfOrders = OrderTable.getOrders(orders);

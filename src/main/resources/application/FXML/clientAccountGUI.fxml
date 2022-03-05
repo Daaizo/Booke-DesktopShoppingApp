@@ -24,7 +24,7 @@
         <Pane fx:id="ordersPane" layoutX="24.0" layoutY="32.0" prefHeight="548.0" prefWidth="1050.0" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
-            <TableView fx:id="ordersTableView" layoutX="114.0" layoutY="88.0" prefHeight="501.0" prefWidth="861.0">
+            <TableView fx:id="ordersTableView" layoutX="104.0" layoutY="64.0" prefHeight="501.0" prefWidth="861.0">
                 <columns>
                     <TableColumn fx:id="ordersButtonColumn" prefWidth="112.0" resizable="false"/>
                     <TableColumn fx:id="ordersIdColumn" editable="false" minWidth="16.0" prefWidth="81.0"
@@ -47,7 +47,7 @@
         </Pane>
         <Pane fx:id="favouritesPane" prefHeight="548.0" prefWidth="1050.0" visible="false" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <TableView fx:id="favouritesTableView" layoutX="114.0" layoutY="88.0" prefHeight="523.0" prefWidth="808.0">
+            <TableView fx:id="favouritesTableView" layoutX="94.0" layoutY="77.0" prefHeight="523.0" prefWidth="808.0">
                 <columns>
                     <TableColumn fx:id="favouritesNameColumn" editable="false" prefWidth="262.0" resizable="false"
                                  sortable="false" text="Name"/>
@@ -63,7 +63,7 @@
                 </columnResizePolicy>
             </TableView>
         </Pane>
-        <Pane fx:id="detailsPane" layoutX="97.0" layoutY="65.0" prefHeight="622.0" prefWidth="935.0" visible="false"
+        <Pane fx:id="detailsPane" layoutX="97.0" layoutY="65.0" prefHeight="622.0" prefWidth="935.0"
               AnchorPane.bottomAnchor="-59.0" AnchorPane.leftAnchor="97.0" AnchorPane.rightAnchor="18.0"
               AnchorPane.topAnchor="65.0">
             <TableView fx:id="orderDetailsTableView" layoutX="23.0" layoutY="147.0" prefHeight="243.0"
@@ -81,7 +81,7 @@
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
-            <Button fx:id="changePaymentMethodButton" layoutX="46.0" layoutY="505.0" mnemonicParsing="false"
+            <Button fx:id="changePaymentMethodButton" layoutX="36.0" layoutY="491.0" mnemonicParsing="false"
                     onAction="#changePaymentMethodButtonClicked" prefHeight="52.0" prefWidth="303.0"
                     styleClass="OrangeButtons" text="Change Payment method"/>
             <Label layoutX="418.0" layoutY="32.0" prefHeight="65.0" prefWidth="170.0" styleClass="orderDetailsLabel"
@@ -100,10 +100,10 @@
                    prefWidth="269.0" styleClass="orderDetailsLabel"/>
             <Label id="displayLabel" fx:id="paymentMethodLabel" layoutX="588.0" layoutY="32.0" prefHeight="65.0"
                    prefWidth="226.0" styleClass="orderDetailsLabel"/>
-            <Button fx:id="cancelOrderButton" layoutX="466.0" layoutY="505.0" mnemonicParsing="false"
+            <Button fx:id="cancelOrderButton" layoutX="456.0" layoutY="491.0" mnemonicParsing="false"
                     onAction="#cancelOrderButtonClicked" prefHeight="52.0" prefWidth="315.0" styleClass="OrangeButtons"
                     text="Cancel order"/>
-            <Button fx:id="payOrderButton" layoutX="46.0" layoutY="426.0" mnemonicParsing="false"
+            <Button fx:id="payOrderButton" layoutX="36.0" layoutY="412.0" mnemonicParsing="false"
                     onAction="#payOrderButtonClicked" prefHeight="52.0" prefWidth="303.0" styleClass="OrangeButtons"
                     text="Pay"/>
             <StackPane fx:id="informationPane" layoutX="389.0" layoutY="45.0" prefHeight="44.0" prefWidth="382.0">
@@ -112,7 +112,7 @@
             </StackPane>
         </Pane>
         <Pane fx:id="accountSettingsPane" layoutX="78.0" layoutY="32.0" prefHeight="596.0" prefWidth="972.0"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="0.0"
+              visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="32.0">
             <children>
                 <Label layoutX="188.0" layoutY="78.0" prefHeight="30.0" prefWidth="162.0" styleClass="orderDetailsLabel"
