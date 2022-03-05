@@ -14,6 +14,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import users.Client;
 
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,36 @@ public class RegisterController extends Controller {
         createGoBackButton(event -> switchScene(event, loginScene));
         setAllPasswordRequirementImages(false);
         setPasswordVisibilityButtons();
+        setPasswordFieldListener();
+        seTextFieldListeners();
+    }
 
+    private void setPasswordFieldListener() {
+        tfPassword.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                if (Pattern.matches(PASSWORDS_REGEX, newValue)) {
+                    setAllPasswordRequirementImages(true);
+                } else {
+                    checkPasswordRequirementAndSetProperImage(passUppercaseLetterImage, "(.*[A-Z].*)");  // if string contains at least one : // uppercase latter
+                    checkPasswordRequirementAndSetProperImage(passSpecialSignImage, "(.*[!@#$&%^&*()_+].*)"); // special sign
+                    checkPasswordRequirementAndSetProperImage(passLengthImage, "^.{6,20}$"); // 6-20 characters
+                    checkPasswordRequirementAndSetProperImage(passNumberImage, "(.*[0-9].*)"); // number
+                    checkPasswordRequirementAndSetProperImage(passLowercaseLetterImage, "(.*[a-z].*)"); //lowercase
+                }
+            }
+            basicTheme(tfPassword, passwordLabel);
+            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
+        });
+    }
+
+    private void seTextFieldListeners() {
+        tfLogin.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfLogin, loginLabel));
+        tfName.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfName, nameLabel));
+        tfLastName.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfLastName, lastnameLabel));
+        tfPasswordRepeat.textProperty().addListener((observableValue, s, t1) -> {
+            basicTheme(tfPassword, passwordLabel);
+            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
+        });
     }
 
     protected void setPasswordVisibilityButtons() {
@@ -58,6 +88,7 @@ public class RegisterController extends Controller {
     }
 
     private void showPasswordButtonPressed(TextField field, Button button, ImageView graphic) {
+
         button.setGraphic(graphic);
         password = field.getText();
         field.clear();
@@ -160,8 +191,8 @@ public class RegisterController extends Controller {
 
     }
 
-    private boolean areFieldsFilledCorrectlyAndLoginIsUnique() {
-        return !isLoginEmpty() && !isNameEmpty() && !isLastNameEmpty() && !isPasswordEmpty() && passFieldMatches() && checkPasswordComplexity() && isLoginUnique() && isCheckboxChecked();
+    private boolean areFieldsFilledCorrectlyAndLoginIsUnique() throws SQLException {
+        return !isLoginEmpty() && !isNameEmpty() && !isLastNameEmpty() && !isPasswordEmpty() && checkPasswordComplexity() && passFieldMatches() && isLoginUnique() && isCheckboxChecked();
     }
 
     private Client newUser() {
@@ -175,22 +206,25 @@ public class RegisterController extends Controller {
 
     @FXML
     void registerButtonClicked(ActionEvent event) {
-        if (areFieldsFilledCorrectlyAndLoginIsUnique()) {
-            Client newUser = newUser();
-            checkConnectionWithDb();
-            newUser.addUserToDatabase(getConnection());
 
-            createAndShowAlert(Alert.AlertType.INFORMATION, "Your account has been successfully created", "Success", "");
-            updateHashMapWithLoginValues(newUser.getLogin(), newUser.getPassword());
-            switchScene(event, loginScene);
-        } else {
-            anchor.requestFocus();
+        try {
+            if (areFieldsFilledCorrectlyAndLoginIsUnique()) {
+                Client newUser = newUser();
+                newUser.addUserToDatabase(getConnection());
+                createAndShowAlert(Alert.AlertType.INFORMATION, "Your account has been successfully created", "Success", "");
+                switchScene(event, loginScene);
+            } else {
+                anchor.requestFocus();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    private boolean isLoginUnique() {
+    private boolean isLoginUnique() throws SQLException {
+        checkConnectionWithDb();
         String login = tfLogin.getText().trim();
-        if (loginValues.containsKey(login)) {
+        if (Client.isClientInDataBase(getConnection(), login)) {
             displayLabelWithGivenText(loginLabel, "Account with that login already exists");
             colorField(tfLogin, loginLabel, Color.RED);
             return false;
@@ -228,10 +262,7 @@ public class RegisterController extends Controller {
 
     private boolean checkPasswordComplexity() {
 
-        String passwordsRegex = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
-        //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
-        //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
-        if (Pattern.matches(passwordsRegex, tfPassword.getText())) {
+        if (Pattern.matches(PASSWORDS_REGEX, tfPassword.getText())) {
             setAllPasswordRequirementImages(true);
             colorField(tfPassword, passwordLabel, Color.GREEN);
             colorField(tfPasswordRepeat, repeatPasswordLabel, Color.GREEN);
