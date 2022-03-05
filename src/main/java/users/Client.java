@@ -24,6 +24,17 @@ public class Client extends User {
         this.login = login;
     }
 
+    public static boolean isClientInDataBase(Connection connection, String login) throws SQLException {
+        String query = """
+                select * from customer where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, login);
+        boolean isClientInDatabase = preparedStatement.executeQuery().next();
+        preparedStatement.close();
+        return isClientInDatabase;
+    }
+
     public ResultSet getClientData(Connection connection) throws SQLException {
         String data = """
                 select customerlogin, customername, customerlastname,customerpassword from customer where customerlogin = ?
@@ -35,29 +46,67 @@ public class Client extends User {
 
     public void setClientData(ResultSet data) {
         try {
-            data.next();
-            this.login = data.getString(1);
-            this.name = data.getString(2);
-            this.lastName = data.getString(3);
-            this.password = data.getString(4);
-            data.close();
+            if (data.next()) {
+                this.login = data.getString(1);
+                this.name = data.getString(2);
+                this.lastName = data.getString(3);
+                this.password = data.getString(4);
+                data.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    public void updateClientData(Connection connection, String thingToSet, String valueToSet) throws SQLException {
+    public void updateClientName(Connection connection, String newName) throws SQLException {
         String setData = """
                 update customer
-                    set ? = ?
+                    set customername = ?
                     where customerlogin = ?
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(setData);
-        preparedStatement.setString(1, thingToSet);
-        preparedStatement.setString(2, valueToSet);
-        preparedStatement.setString(3, login);
+        preparedStatement.setString(1, newName);
+        preparedStatement.setString(2, login);
+        preparedStatement.executeQuery();
+        preparedStatement.close();
+    }
+
+    public void updateClientLogin(Connection connection, String newLogin) throws SQLException {
+        String setData = """
+                update customer
+                    set customerlogin = ?
+                    where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(setData);
+        preparedStatement.setString(1, newLogin);
+        preparedStatement.setString(2, login);
+        preparedStatement.executeQuery();
+        preparedStatement.close();
+        this.login = newLogin;
+    }
+
+    public void updateClientLastName(Connection connection, String newLastName) throws SQLException {
+        String setData = """
+                update customer
+                    set customerLastName = ?
+                    where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(setData);
+        preparedStatement.setString(1, newLastName);
+        preparedStatement.setString(2, login);
+        preparedStatement.executeQuery();
+        preparedStatement.close();
+    }
+
+    public void updateClientPassword(Connection connection, String newPassword) throws SQLException {
+        String setData = """
+                update customer
+                    set customerPassword = ?
+                    where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(setData);
+        preparedStatement.setString(1, newPassword);
+        preparedStatement.setString(2, login);
         preparedStatement.executeQuery();
         preparedStatement.close();
     }
