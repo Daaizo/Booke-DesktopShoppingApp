@@ -207,6 +207,58 @@ public class Client extends User {
         return set.getInt(1);
     }
 
+    public int getNumberOfOrders(Connection connection) throws SQLException {
+        String query = """
+                select count( distinct oh.orderheaderkey) from orderheader oh
+                where oh.customerkey = ( select customerkey from customer where customerlogin = ?)
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, login);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        int numberOfOrders = resultSet.getInt(1);
+        preparedStatement.close();
+        return numberOfOrders;
+    }
+
+    public double getTotalValueOfAllOrders(Connection connection) throws SQLException {
+        //excluding canceled
+        String query = """
+                select sum(sq.price) "Total value of orders" from(
+                                select oh.orderheaderkey, sum(od.quantity*p.catalogprice) Price,os.orderstatusname  from orderheader oh
+                                inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
+                                inner join product p on p.productkey = od.productkey
+                                inner join orderstatus os on os.orderstatuskey = oh.orderstatuskey
+                                where oh.customerkey = ( select customerkey from customer where customerlogin = ?)
+                                group by oh.orderheaderkey,os.orderstatusname
+                                ) sq
+                where lower(sq.orderstatusname) != 'canceled'
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, login);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        double valueOfAllOrders = resultSet.getDouble(1);
+        preparedStatement.close();
+        return valueOfAllOrders;
+    }
+
+    public int getNumbersOfOrdersWithStatus(String status, Connection connection) throws SQLException {
+        String query = """
+                select count( distinct oh.orderheaderkey) from orderheader oh
+                inner join orderstatus os on os.orderstatuskey = oh.orderstatuskey
+                where oh.customerkey = ( select customerkey from customer where customerlogin = ?) and os.orderstatusname = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, login);
+        preparedStatement.setString(2, status);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        int numberOfOrders = 0;
+        if (resultSet.next()) numberOfOrders = resultSet.getInt(1);
+        preparedStatement.close();
+        return numberOfOrders;
+    }
+
     public int getQuantityOfProductInCart(String productName, Connection connection) throws SQLException {
         String productQuantity = "select sum(quantity) from shoppingcart sc" +
                 " inner join customer cu on cu.customerkey = sc.customerkey" +
@@ -231,6 +283,7 @@ public class Client extends User {
         return set.getDouble(1);
     }
 
+
     public void addUserToDatabase(Connection connection) {
         try {
             String userToDb = "insert into CUSTOMER (customerlogin,customername,customerlastname,customerpassword) values ('"
@@ -243,8 +296,5 @@ public class Client extends User {
         }
     }
 
-    @Override
-    public void changeData() {
 
-    }
 }
