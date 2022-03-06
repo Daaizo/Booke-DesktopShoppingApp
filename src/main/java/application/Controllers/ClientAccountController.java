@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import users.*;
@@ -48,9 +49,10 @@ public class ClientAccountController extends Controller {
     @FXML
     private TableView<ProductTable> favouritesTableView;
     @FXML
-    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel, nameLabel, loginLabel, lastNameLabel;
+    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel, nameLabel, loginLabel,
+            lastNameLabel, noOrdersLabel, valueOfOrdersLabel, noCanceledOrdersLabel, noInProgressOrdersLabel, noUnpaidOrdersLabel, noFinishedOrdersLabel;
     @FXML
-    private Button ordersButton, accountSettingsButton, favouritesButton, payOrderButton, changePaymentMethodButton, cancelOrderButton, deleteAccountButton, changePasswordButton;
+    private Button ordersButton, accountSettingsButton, favouritesButton, payOrderButton, changePaymentMethodButton, cancelOrderButton;
 
     //TODO database DIAGRAMS update needed !
     @FXML
@@ -79,9 +81,58 @@ public class ClientAccountController extends Controller {
     }
 
     @FXML
+    void allOrderedProductsButtonClicked() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        VBox content = new VBox();
+
+        TableView<ProductTable> orderedProductTable = createAllOrderedProductTable();
+        try {
+            displayOrderedProducts(orderedProductTable);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        orderedProductTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        content.setSpacing(10);
+        content.getChildren().add(orderedProductTable);
+        dialog.getDialogPane().setContent(content);
+        dialog.setHeaderText("All ordered products");
+        setLogoAndCssToCustomDialog(dialog);
+        dialog.getDialogPane().setMinWidth(650);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.showAndWait();
+        anchor.requestFocus();
+    }
+
+    private TableView<ProductTable> createAllOrderedProductTable() {
+        TableView<ProductTable> orderedProductTable = new TableView<>();
+        orderedProductTable.setPlaceholder(new Label("There are no ordered products "));
+        orderedProductTable.setPrefWidth(500);
+        TableColumn<ProductTable, String> productName = new TableColumn<>("name");
+        productName.setMinWidth(200);
+        TableColumn<ProductTable, String> productPrice = new TableColumn<>("price");
+        productPrice.setPrefWidth(200);
+        TableColumn<ProductTable, String> productSubcategory = new TableColumn<>("subcategory");
+        productSubcategory.setPrefWidth(230);
+        orderedProductTable.getColumns().addAll(productName, productPrice, productSubcategory);
+        productName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        productPrice.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
+        productSubcategory.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+        return orderedProductTable;
+    }
+
+    private void displayOrderedProducts(TableView<ProductTable> tableView) throws SQLException {
+        ResultSet products = Product.getAllProductsOrderedByUser(getConnection(), CURRENT_USER_LOGIN);
+        ObservableList<ProductTable> listOfProducts = ProductTable.getProductsBasicInfo(products);
+        tableView.setItems(listOfProducts);
+        showOnlyRowsWithData(tableView);
+        tableView.setMaxHeight(250);
+    }
+
+    @FXML
     void accountSettingsButtonClicked() {
         makePaneVisible(accountSettingsPane);
         setButtonLightingEffect(accountSettingsButton);
+        setDetailsOfOrdersLabels();
         try {
             ResultSet data = currentUser.getClientData(getConnection());
             currentUser.setClientData(data);
@@ -89,13 +140,56 @@ public class ClientAccountController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        setLabels();
+        setAccountDetailsLabels();
     }
 
-    private void setLabels() {
+    @FXML
+    void addAllFavouritesToCartButtonClicked() {
+        ObservableList<ProductTable> list = favouritesTableView.getItems();
+        for (ProductTable product : list) {
+            try {
+                currentUser.addItemToUsersCart(product.getProductName(), getConnection());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        showNotification(createNotification(new Label("Items successfully added to cart")), 2500);
+        anchor.requestFocus();
+    }
+
+    @FXML
+    void deleteAllFavouritesButtonClicked() {
+        ObservableList<ProductTable> list = favouritesTableView.getItems();
+        for (ProductTable product : list) {
+            try {
+                currentUser.deleteItemFromUsersFavourite(product.getProductName(), getConnection());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        showNotification(createNotification(new Label("Items successfully deleted")), 2500);
+        displayFavourites();
+        anchor.requestFocus();
+
+    }
+
+    private void setAccountDetailsLabels() {
         tfLogin.setText(currentUser.getLogin());
         tfLastName.setText(currentUser.getLastName());
         tfName.setText(currentUser.getName());
+    }
+
+    private void setDetailsOfOrdersLabels() {
+        try {
+            noOrdersLabel.setText(currentUser.getNumberOfOrders(getConnection()) + "");
+            valueOfOrdersLabel.setText(currentUser.getTotalValueOfAllOrders(getConnection()) + CURRENCY);
+            noCanceledOrdersLabel.setText(currentUser.getNumbersOfOrdersWithStatus("Canceled", getConnection()) + "");
+            noInProgressOrdersLabel.setText(currentUser.getNumbersOfOrdersWithStatus("In progress", getConnection()) + "");
+            noUnpaidOrdersLabel.setText(currentUser.getNumbersOfOrdersWithStatus("Waiting for payment", getConnection()) + "");
+            noFinishedOrdersLabel.setText(currentUser.getNumbersOfOrdersWithStatus("Finished", getConnection()) + "");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -169,16 +263,16 @@ public class ClientAccountController extends Controller {
     }
 
     @FXML
-    void changePasswordButtonClicked(ActionEvent event) {
+    void changePasswordButtonClicked() {
         Optional<String> result = createAndShowConfirmPasswordAlert();
         result.ifPresent(s -> {
             if (result.get().equals(currentUser.getPassword())) {
                 Optional<String> newAlert = enterNewPasswordAlert();
                 newAlert.ifPresent(newPassword -> {
-                    System.out.println(newPassword);
                     if (Pattern.matches(PASSWORDS_REGEX, newPassword)) {
                         try {
                             currentUser.updateClientPassword(getConnection(), newPassword);
+                            showNotification(createNotification(new Label("Password changed")), 3000);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -189,30 +283,23 @@ public class ClientAccountController extends Controller {
                 ButtonType cancel = new ButtonType("Cancel");
                 Optional<ButtonType> res = createAndShowAlert(tryAgain, cancel, "Incorrect password, please try again", "Wrong password");
                 res.ifPresent(buttonType -> {
-                    if (res.get() == tryAgain) changePasswordButtonClicked(event);
+                    if (res.get() == tryAgain) changePasswordButtonClicked();
                 });
             }
         });
+        anchor.requestFocus();
     }
 
     private Optional<String> enterNewPasswordAlert() {
-        Dialog<String> dialog = new Dialog<>();
         PasswordField passwordField = new PasswordField();
-        HBox content = new HBox();
-        content.setAlignment(Pos.CENTER);
-        content.setSpacing(10);
-        content.getChildren().addAll(new Label("Enter password here :"), passwordField);
-        dialog.getDialogPane().setContent(content);
+        Dialog<String> dialog = createCustomEnterPasswordAlert(passwordField);
         dialog.setTitle("New password");
-        dialog.setHeaderText("A password can only be saved if the following conditions are met :\n 6-20 characters, one number, one uppercase letter, one lowercase letter, one special character ");
-        setLogoAndCssToCustomDialog(dialog);
-        dialog.getDialogPane().setMinWidth(650);
+        dialog.setHeaderText("A password can only be saved if the following conditions are met :\n6-20 characters, one number, one uppercase letter, one lowercase letter, one special character ");
         ButtonType savePass = new ButtonType("Save new password", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(savePass, ButtonType.CANCEL);
+        dialog.getDialogPane().getButtonTypes().add(savePass);
         Node savaPasswordButton = dialog.getDialogPane().lookupButton(savePass);
         dialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK);
         savaPasswordButton.setDisable(true);
-        dialog.getDialogPane().requestFocus();
         dialog.setResultConverter(buttonType -> {
             if (buttonType == savePass) {
                 return passwordField.getText();
@@ -223,13 +310,34 @@ public class ClientAccountController extends Controller {
         return dialog.showAndWait();
     }
 
-    private Optional<String> createAndShowConfirmPasswordAlert() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Password");
-        dialog.setHeaderText("Confirm that it is you ");
-        dialog.setContentText("Type your password here : ");
+    private Dialog<String> createCustomEnterPasswordAlert(PasswordField passwordField) {
+        Button button = new Button();
+        setPasswordVisibilityButton(button, passwordField);
+        Dialog<String> dialog = new Dialog<>();
+        passwordField.setPrefSize(600, 30);
+        HBox content = new HBox();
+        content.setAlignment(Pos.CENTER_LEFT);
+        content.setSpacing(10);
+        content.getChildren().addAll(new Label("Enter password here :"), passwordField, button);
+        dialog.getDialogPane().setContent(content);
         setLogoAndCssToCustomDialog(dialog);
         dialog.getDialogPane().setMinWidth(650);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        return dialog;
+    }
+
+    private Optional<String> createAndShowConfirmPasswordAlert() {
+        PasswordField passwordField = new PasswordField();
+        Dialog<String> dialog = createCustomEnterPasswordAlert(passwordField);
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                return passwordField.getText();
+            }
+            return null;
+        });
+        dialog.setTitle("Password");
+        dialog.setHeaderText("Confirm that it is you ");
         return dialog.showAndWait();
     }
 
@@ -413,14 +521,13 @@ public class ClientAccountController extends Controller {
             ObservableList<OrderTable> listOfOrders = OrderTable.getOrders(orders);
             if (listOfOrders.isEmpty()) {
                 displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
-                ordersTableView.setVisible(false);
+                ordersPane.setVisible(false);
             } else {
-                ordersTableView.setVisible(true);
+                ordersPane.setVisible(true);
                 emptyTableViewLabel.setVisible(false);
                 fillOrdersColumnsWithData(listOfOrders);
 
             }
-
             ordersTableView.setMaxHeight(530);
             orders.close();
         } catch (SQLException e) {
@@ -460,34 +567,30 @@ public class ClientAccountController extends Controller {
         checkConnectionWithDb();
         try {
             ResultSet favourites = currentUser.getFavouriteProducts(getConnection());
-            ObservableList<ProductTable> listOfFavourites = ProductTable.getProductFromFavourites(favourites);
+            ObservableList<ProductTable> listOfFavourites = ProductTable.getProductsBasicInfo(favourites);
             if (listOfFavourites.isEmpty()) {
                 displayLabelWithGivenText(emptyTableViewLabel, "List of favourites is empty");
-                favouritesTableView.setVisible(false);
+                favouritesPane.setVisible(false);
+
             } else {
                 fillFavouritesColumns(listOfFavourites);
                 emptyTableViewLabel.setVisible(false);
-                favouritesTableView.setVisible(true);
+                favouritesPane.setVisible(true);
+                favouritesPane.setVisible(true);
                 showOnlyRowsWithData(favouritesTableView);
+                favouritesTableView.setMaxHeight(365);
             }
-
             favourites.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void reloadTableView(TableView<?> tableView) {
-        tableView.getItems().clear();
-        displayOrders();
-    }
 
     private void changeOrderStatusAndDisplayProperButtons(String status) {
         try {
             Order order = new Order(Integer.parseInt(orderIdLabel.getText()));
             order.setOrderStatus(getConnection(), status);
-            reloadTableView(ordersTableView);
             orderStatusLabel.setText(status);
             displayInformationAboutOrderStatus();
             makeProperButtonsVisible(status);
@@ -500,7 +603,6 @@ public class ClientAccountController extends Controller {
         try {
             Order order = new Order(Integer.parseInt(orderIdLabel.getText()));
             order.setPaymentMethod(getConnection(), paymentMethod);
-            reloadTableView(ordersTableView);
             paymentMethodLabel.setText(paymentMethod);
         } catch (SQLException e) {
             e.printStackTrace();
