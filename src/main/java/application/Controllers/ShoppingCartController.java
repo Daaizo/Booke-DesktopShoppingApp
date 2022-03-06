@@ -54,9 +54,9 @@ public class ShoppingCartController extends Controller {
     }
 
     private void createClearCartButton() {
-        clearCartButton = createButton("delete.png", 800, 80);
-        clearCartButton.setText("  Delete whole cart");
-        clearCartButton.setId("clearCartButton");
+        clearCartButton = createButton("", 800, 80);
+        clearCartButton.setText("Delete whole cart");
+        clearCartButton.getStyleClass().add("DeleteButtons");
         clearCartButton.setMinWidth(200);
         clearCartButton.setOnAction(event -> {
             Optional<ButtonType> buttonCLicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "Delete", "Do you want to delete whole cart ?");
