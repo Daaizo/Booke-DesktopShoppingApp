@@ -8,22 +8,29 @@
 #orderDetailsButton{
   -fx-background-color : #0066ff;
   -fx-background-radius:12px;
-
   -fx-alignment:center;
 }
-#clearCartButton{
+.topButtons:hover{
+-fx-background-color :#7498be;
+}
+.topButtons{
+-fx-background-color :transparent;
+}
+
+.DeleteButtons{
     -fx-border-color : red;
     -fx-border-width : 2px;
     -fx-border-radius : 10px;
     -fx-alignment:center;
-     -fx-font-size :15px;
+     -fx-font-size :17px;
      -fx-font-weight: bolder  ;
      -fx-text-alignment : center ;
+     -fx-background-color : transparent;
 }
-#clearCartButton:hover{
-    -fx-background-color : red;
+.DeleteButtons:hover{
+    -fx-background-color : #ff4d4d;
     -fx-background-radius :10px;
-
+     -fx-background-insets: 0;
 }
 #informationLabel{
     -fx-background-color: white;
@@ -38,8 +45,11 @@
     -fx-font-weight: bolder  ;
     -fx-text-alignment : center ;
 }
-#displayLabel{
+.importantDataLabels{
     -fx-text-fill: white;
+    -fx-font-size: 20px;
+     -fx-font-weight: bolder  ;
+
 }
 #orderDetailsButton:hover{
     -fx-background-color : #3385ff;
@@ -49,6 +59,14 @@
 -fx-border-color : #fc766a ;
 }
 
+#loginHereButton{
+    -fx-background-color : transparent;
+    -fx-font-size : 18px;
+}
+#loginHereButton:hover{
+    -fx-font-weight: bolder  ;
+
+}
 #clientButtons{
  -fx-background-color: transparent;
  -fx-padding: 10px;
@@ -62,13 +80,7 @@
 }
 
 .accountButtons:hover{
--fx-background-color: #fc8d83;
-}
-.topButtons:hover{
--fx-background-color :#7498be;
-}
-.topButtons{
--fx-background-color :transparent;
+-fx-background-color: #fb5e50;
 }
 
 #exitButton:hover{
@@ -107,20 +119,33 @@
 }
 
 
-.alert{
+.alert,
+.choice-dialog.dialog-pane,
+.dialog-pane{
     -fx-background-color: -backgroundColorA;
     -fx-border-color: -backgroundColorB;
     -fx-font-size : 22px;
     -fx-font-weight: bolder  ;
     -fx-font-alignment : center;
      -fx-font-family :Helvetica;
+     -fx-alignment:center;
 }
 .alert .button{
     -fx-font-size : 15 px;
     -fx-alignment:center;
+    -fx-border-radius :9px;
+    -fx-background-radius :9px;
+    -fx-border-color : -backgroundColorB;
+    -fx-background-color: transparent;
+
+}
+.alert .button:hover{
+    -fx-background-color:-backgroundColorB;
+    -fx-background-insets : 0px;
 }
 .alert:header .header-panel {
   -fx-background-color: -backgroundColorB;
+  -fx-alignment:center;
 }
 
 
@@ -128,24 +153,29 @@
     -fx-background-color : -backgroundColorB;
     -fx-background-radius : 13px;
     -fx-border-width : 2px;
-    -fx-border-radius : 12px;
+    -fx-border-radius : 13px;
     -fx-font-size : 17px;
     -fx-text-fill : #5b84b1;
     -fx-font-weight: bolder  ;
     -fx-font-family :Helvetica;
     -fx-font-alignment : center;
-
+    -fx-background-insets: 0;
 }
 .OrangeButtons:focused,
 .OrangeButtons:hover{
     -fx-border-color :Black;
-    -fx-border-radius : 12px;
-    -fx-border-width:2px;
+    -fx-background-insets: 0;
 
 }
-.passwordAnchor .passwordLabels{
+.AccountDetails{
+    -fx-font-size :21px;
+     -fx-font-weight: bolder  ;
+}
+ .passwordLabels{
     -fx-border-color : transparent;
-    -fx-font-size : 17px;
+    -fx-font-size :18px;
+     -fx-font-weight	: bolder  ;
+
 }
 
  .text-field:focused,
@@ -165,16 +195,20 @@
 .table-view .column-header-background .filler,
 .tab-pane:top .tab-header-area .tab-header-background,
 .table-view .corner,
-.table-view:row-selection:unconstrained-resize .placeholder
+.table-view:row-selection:unconstrained-resize .placeholder,
+.table-view:row-selection:unconstrained-resize .filler,
+.table-view:row-selection:unconstrained-resize .corner
 {
       -fx-background-color: transparent;
-
 }
 
 
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
--fx-font-size : 20px;
--fx-alignment :bottom-left;
+   -fx-font-weight	: bolder  ;
+    -fx-font-family :Helvetica;
+    -fx-text-fill : -backgroundColorB;
+    -fx-font-size : 20px;
+    -fx-alignment : center;
 }
 
 .tab-pane:top .tab-header-area .headers-region .tab:selected:top .tab-container{
