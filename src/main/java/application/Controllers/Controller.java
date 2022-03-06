@@ -1,6 +1,5 @@
 package application.Controllers;
 
-import application.Main;
 import dataBase.SqlConnection;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -20,7 +19,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -30,13 +31,15 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 
 public abstract class Controller {
     public static String CURRENT_USER_LOGIN;
     public static final String CURRENCY = " $";
+    public static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
+    //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
+    //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
@@ -46,7 +49,7 @@ public abstract class Controller {
     public final URL iconsUrl = getClass().getResource("/application/Icons/");
     public final URL cssUrl = getClass().getResource("/application/style.css");
     private SqlConnection instance;
-    public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
+    protected String password;
     @FXML
     protected AnchorPane anchor;
 
@@ -57,6 +60,7 @@ public abstract class Controller {
         mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
         createExitButton();
         createLogoutButton();
+
     }
 
     protected ImageView setSmallLogoInCorner() {
@@ -165,10 +169,6 @@ public abstract class Controller {
         return this.instance.getConnection();
     }
 
-    public void updateHashMapWithLoginValues(String login, String pass) {
-        loginValues.put(login, pass);
-    }
-
     protected void colorField(TextField field, Label label, Color color) {
 
         DropShadow shadow = new DropShadow();
@@ -272,5 +272,26 @@ public abstract class Controller {
         fade.setAutoReverse(true);
         fade.play();
 
+    }
+
+    protected void setPasswordVisibilityButton(Button showPasswordButton, TextField passwordTextField) {
+        String hiddenPassIconName = "hiddenPassword.png";
+        String showPassIconName = "showPassword.png";
+        showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
+        showPasswordButton.setBackground(Background.EMPTY);
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(passwordTextField, showPasswordButton, setImageFromIconsFolder(showPassIconName)));
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(passwordTextField, showPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
+    }
+
+    protected void showPasswordButtonPressed(TextField field, Button button, ImageView graphic) {
+        button.setGraphic(graphic);
+        password = field.getText();
+        field.clear();
+        field.setPromptText(password);
+    }
+
+    protected void showPasswordButtonReleased(TextField field, Button button, ImageView graphic) {
+        button.setGraphic(graphic);
+        field.setText(password);
     }
 }
