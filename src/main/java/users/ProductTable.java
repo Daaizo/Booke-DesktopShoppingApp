@@ -69,7 +69,7 @@ public class ProductTable {
         return listOfProducts;
     }
 
-    public static ObservableList<ProductTable> getProductFromFavourites(ResultSet products) {
+    public static ObservableList<ProductTable> getProductsBasicInfo(ResultSet products) {
         ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
         try {
             while (products.next()) {

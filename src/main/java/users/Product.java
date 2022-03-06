@@ -45,6 +45,21 @@ public class Product {
         this.productSubcategory = subcategory;
     }
 
+    public static ResultSet getAllProductsOrderedByUser(Connection connection, String currentUserLogin) throws SQLException {
+        String allProducts = """
+                select distinct p.productname,p.catalogprice,sc.subcategoryname from orderheader oh
+                  inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
+                  inner join product p on p.productkey = od.productkey
+                  inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                  where oh.customerkey = ( select customerkey from customer where customerlogin = ?)
+                  order by 1
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(allProducts);
+        preparedStatement.setString(1, currentUserLogin);
+        return preparedStatement.executeQuery();
+
+    }
+
     public static ResultSet getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin) throws SQLException {
         String sql = """
                 select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory", c.categoryname "Category",
