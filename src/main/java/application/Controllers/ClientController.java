@@ -3,6 +3,7 @@ package application.Controllers;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -19,9 +20,10 @@ import java.sql.SQLException;
 
 public class ClientController extends Controller {
 
-    private int cartLabelXPosition;
-    private int cartLabelYPosition;
-
+    private final int cartLabelXPosition = 60;
+    private final int cartLabelYPosition = 2;
+    private final double durationOfNotification = 3000;
+    private final Client currentUser = new Client(CURRENT_USER_LOGIN);
     @FXML
     private AnchorPane ebooksAnchorPane, gamesAnchorPane;
     @FXML
@@ -29,7 +31,7 @@ public class ClientController extends Controller {
     @FXML
     private Label cartQuantityLabel;
     @FXML
-    private StackPane cartNotification, starNotification;
+    private StackPane cartNotification, starNotification, yellowStartNotification;
     @FXML
     private Pane categoryPickingPane;
     @FXML
@@ -44,13 +46,8 @@ public class ClientController extends Controller {
     @FXML
     public void initialize() {
         prepareScene();
-        this.cartLabelXPosition = 60;
-        this.cartLabelYPosition = 2;
-        starNotification = createNotification(new Label("     Star button clicked"));
-        cartNotification = createNotification(new Label("     Item added to cart"));
-        createAccountButton();
-        createGoBackButton();
-        createCartButton();
+        createNotifications();
+        createButtons();
         try {
             displayEbooks();
             displayGames();
@@ -58,6 +55,24 @@ public class ClientController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void createNotifications() {
+        starNotification = createNotification(new Label("Item added to favourites"));
+        cartNotification = createNotification(new Label("Item added to cart"));
+        yellowStartNotification = createNotification(new Label("Item removed from favourites"));
+    }
+
+    private void turnOfNotifications() {
+        starNotification.setVisible(false);
+        cartNotification.setVisible(false);
+        yellowStartNotification.setVisible(false);
+    }
+
+    private void createButtons() {
+        createAccountButton();
+        createGoBackButton();
+        createCartButton();
     }
 
     @FXML
@@ -101,7 +116,7 @@ public class ClientController extends Controller {
     private void setQuantityLabel() throws SQLException {
         checkConnectionWithDb();
         cartQuantityLabel.setLayoutX(cartLabelXPosition + 20);
-        int quantity = Client.getQuantityOfProductsInCart(CURRENT_USER_LOGIN, getConnection());
+        int quantity = currentUser.getQuantityOfProductsInCart(getConnection());
         if (quantity > 9)
             displayLabelWithGivenText(cartQuantityLabel, "9+");
         else displayLabelWithGivenText(cartQuantityLabel, " " + quantity);
@@ -112,8 +127,9 @@ public class ClientController extends Controller {
         ebooksNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         ebooksPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         ebooksSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-        ebooksStarButtonColumn.setCellFactory(buttonInsideCell -> new ButtonInsideTableColumn<>("star.png", "add to favourite", starButtonClicked()));
-        ebooksCartButtonColumn.setCellFactory(buttonInsideCell -> cartButtonClicked());
+        ebooksStarButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
+        ebooksStarButtonColumn.setCellFactory(buttonInsideCell -> createStarButtonInsideTableView());
+        ebooksCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
         ebooksTableView.setItems(list);
         showOnlyRowsWithData(ebooksTableView);
 
@@ -122,9 +138,9 @@ public class ClientController extends Controller {
 
     void displayEbooks() throws SQLException {
         checkConnectionWithDb();
-        ResultSet products = Product.getProductsFromDatabase(getConnection());
+        ResultSet products = Product.getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN);
         assert products != null;
-        ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategory(products, "ebooks");
+        ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategoryAndCheckIfTheyAreInUsersFavourite(products, "ebooks");
         fillEbooksColumnsWithData(listOfEbooks);
     }
 
@@ -132,51 +148,71 @@ public class ClientController extends Controller {
         gamesNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         gamesPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         gamesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-        gamesStarButtonColumn.setCellFactory(buttonInsideCell -> new ButtonInsideTableColumn<>("star.png", "add to favourite", starButtonClicked()));
-        gamesCartButtonColumn.setCellFactory(buttonInsideCell -> cartButtonClicked());
+        gamesStarButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
+        gamesStarButtonColumn.setCellFactory(productTableStringTableColumn -> createStarButtonInsideTableView());
+        gamesCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
         gamesTableView.setItems(list);
         showOnlyRowsWithData(gamesTableView);
     }
 
     void displayGames() throws SQLException {
         checkConnectionWithDb();
-        ResultSet products = Product.getProductsFromDatabase(getConnection());
+        ResultSet products = Product.getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN);
         assert products != null;
-        ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategory(products, "games");
+        ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategoryAndCheckIfTheyAreInUsersFavourite(products, "games");
         fillGamesColumnsWithData(listOfGames);
     }
 
-    private EventHandler<MouseEvent> starButtonClicked() {
-        return
-                event -> {
-                    cartNotification.setVisible(false);
-                    showNotification(starNotification, 1200);
-                };
+    private EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideTableColumn<ProductTable, String> button, StackPane notificationName) {
+        return mouseEvent -> {
+            String productName = button.getRowId().getProductName();
+
+            checkConnectionWithDb();
+            try {
+                if (notificationName.equals(cartNotification)) {
+                    currentUser.addItemToUsersCart(productName, getConnection());
+                    setQuantityLabel();
+                } else {
+                    currentUser.addItemToUsersFavourite(productName, getConnection());
+                    button.getRowId().setIsProductFavourite("yes");
+                    button.getTableView().refresh();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            turnOfNotifications();
+            showNotification(notificationName, durationOfNotification);
+        };
     }
 
-    private ButtonInsideTableColumn<ProductTable, String> cartButtonClicked() {
-        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("add_cart.png", "add to cart");
-        EventHandler<MouseEvent> eventHandler = event -> {
-            String productName = button.getRowId().getProductName();
-            starNotification.setVisible(false);
-            showNotification(cartNotification, 1200);
-
+    public <T> EventHandler<MouseEvent> deleteFromFavouriteClicked(T rowId) {
+        return mouseEvent -> {
             try {
-                checkConnectionWithDb();
-                Client.addItemToUsersCart(productName, CURRENT_USER_LOGIN, getConnection());
+                ProductTable productTableCellId = (ProductTable) rowId;
+                String clickedProductName = productTableCellId.getProductName();
+                currentUser.deleteItemFromUsersFavourite(clickedProductName, getConnection());
+                turnOfNotifications();
+                showNotification(yellowStartNotification, durationOfNotification);
+                ((ProductTable) rowId).setIsProductFavourite("no");
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            } finally {
-                try {
-                    setQuantityLabel();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
         };
-        button.setCssClassId("clientTableviewButtons");
 
-        button.setEventHandler(eventHandler);
+    }
+
+    private ButtonInsideTableColumn<ProductTable, String> createStarButtonInsideTableView() {
+        ButtonInsideTableColumn<ProductTable, String> starButton = new ButtonInsideTableColumn<>("star.png", "add to favourites");
+        starButton.setEventHandler(buttonInsideTableViewClicked(starButton, starNotification));
+        starButton.setCssClassId("clientTableviewButtons");
+
+        return starButton;
+    }
+
+    private ButtonInsideTableColumn<ProductTable, String> createCartButtonInsideTableView() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("add_cart.png", "add to cart");
+        button.setCssClassId("clientTableviewButtons");
+        button.setEventHandler(buttonInsideTableViewClicked(button, cartNotification));
         return button;
     }
 
@@ -193,26 +229,20 @@ public class ClientController extends Controller {
         public void setCssId(String cssId) {
             this.cssId = cssId;
         }
-
         public void setCssClassId(String classId) {
             this.cssClassId = classId;
         }
-
         public T getRowId() {
             return rowId;
         }
 
-        public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText, EventHandler<MouseEvent> eventHandler) {
-            this.iconName = iconNameWithExtension;
-            this.button = new Button(buttonText);
-            this.eventHandler = eventHandler;
-        }
-
         public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText) {
             this.iconName = iconNameWithExtension;
-            this.button = new Button(buttonText);
-            button.fire();
+            this.button = new Button();
+            this.button.setText(buttonText);
+            button.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
         }
+
 
         public void setEventHandler(EventHandler<MouseEvent> eventHandler) {
             this.eventHandler = eventHandler;
@@ -221,17 +251,31 @@ public class ClientController extends Controller {
         @Override
         protected void updateItem(V item, boolean empty) {
             super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            } else {
 
-            button.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
-            button.setOnMouseClicked(eventHandler);
-            button.setGraphic(setImageFromIconsFolder(iconName));
-            button.setBackground(Background.EMPTY);
-            button.setId(cssId);
-            button.getStyleClass().add(cssClassId);
-            setGraphic(button);
+                button.setOnMouseClicked(eventHandler);
+                button.setGraphic(setImageFromIconsFolder(iconName));
+                button.setBackground(Background.EMPTY);
+                button.setId(cssId);
+                button.getStyleClass().add(cssClassId);
+                setGraphic(button);
+
+                if (item != null) {
+                    if (item.equals("yes")) {
+                        setGraphic(setImageFromIconsFolder("yellowStar.png"));
+                        setText("");
+                        button.fire();
+                        setOnMouseClicked(deleteFromFavouriteClicked(getRowId()));
+                        setOnMouseEntered(event -> setCursor(Cursor.HAND));
+                        setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
+                        getStyleClass().add("clientTableviewButtons");
+                    }
+                }
+            }
         }
     }
-
 
 
     //simple hover effects

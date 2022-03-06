@@ -11,7 +11,7 @@ public class Product {
     private String productSubcategory;
     private String productCategory;
     private int productInCartQuantity;
-
+    private String isFavourite;
 
     private String productTotalValue;
 
@@ -24,10 +24,12 @@ public class Product {
         this.productSubcategory = subcategory;
     }
 
-    public Product(String name, String price, String subcategory) {
+    public Product(String name, String price, String subcategory, String isFavourite) {
         this.productName = name;
         this.productPrice = price;
         this.productSubcategory = subcategory;
+        this.isFavourite = isFavourite;
+
     }
 
     public Product(String name, String price, int quantity, String total) {
@@ -37,6 +39,44 @@ public class Product {
         this.productTotalValue = total;
     }
 
+    public Product(String name, String price, String subcategory) {
+        this.productName = name;
+        this.productPrice = price;
+        this.productSubcategory = subcategory;
+    }
+
+    public static ResultSet getAllProductsOrderedByUser(Connection connection, String currentUserLogin) throws SQLException {
+        String allProducts = """
+                select distinct p.productname,p.catalogprice,sc.subcategoryname from orderheader oh
+                  inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
+                  inner join product p on p.productkey = od.productkey
+                  inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                  where oh.customerkey = ( select customerkey from customer where customerlogin = ?)
+                  order by 1
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(allProducts);
+        preparedStatement.setString(1, currentUserLogin);
+        return preparedStatement.executeQuery();
+
+    }
+
+    public static ResultSet getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin) throws SQLException {
+        String sql = """
+                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory", c.categoryname "Category",
+                case
+                    when (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
+                    else 'no'
+                end as "is favourite"
+                from product p
+                                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                                    inner join category c on c.categorykey = sc.categorykey
+                                    full join favourites f on f.productkey = p.productkey
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, currentUserLogin);
+        return preparedStatement.executeQuery();
+
+    }
 
     public static ResultSet getProductsFromDatabase(Connection connection) {
         try {
@@ -139,6 +179,15 @@ public class Product {
 
     public void setProductInCartQuantity(int productInCartQuantity) {
         this.productInCartQuantity = productInCartQuantity;
+    }
+
+    public String isFavourite() {
+        return isFavourite;
+    }
+
+    public Product setFavourite(String favourite) {
+        isFavourite = favourite;
+        return this;
     }
 
     public String getProductTotalValue() {

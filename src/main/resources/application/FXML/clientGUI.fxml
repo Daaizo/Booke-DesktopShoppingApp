@@ -12,16 +12,16 @@
    <AnchorPane fx:id="ebooksAnchorPane" layoutX="-2.0" prefHeight="694.0" prefWidth="1050.0"
                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-2.0" AnchorPane.rightAnchor="2.0"
                AnchorPane.topAnchor="0.0">
-      <TableView id="ebooksTableView" fx:id="ebooksTableView" layoutX="68.0" layoutY="143.0" prefHeight="610.0"
-                 prefWidth="927.0">
+      <TableView id="ebooksTableView" fx:id="ebooksTableView" layoutX="31.0" layoutY="143.0" prefHeight="610.0"
+                 prefWidth="964.0">
          <columns>
-            <TableColumn id="ebooksNameColumn" fx:id="ebooksNameColumn" editable="false" prefWidth="179.0"
+            <TableColumn id="ebooksNameColumn" fx:id="ebooksNameColumn" editable="false" prefWidth="252.0"
                          resizable="false" sortable="false" text="Name"/>
-            <TableColumn fx:id="ebooksPriceColumn" editable="false" prefWidth="130.0" resizable="false" sortable="false"
+            <TableColumn fx:id="ebooksPriceColumn" editable="false" prefWidth="72.0" resizable="false" sortable="false"
                          text="Price"/>
-            <TableColumn fx:id="ebooksSubcategoryColumn" editable="false" prefWidth="164.0" resizable="false"
+            <TableColumn fx:id="ebooksSubcategoryColumn" editable="false" prefWidth="184.0" resizable="false"
                          sortable="false" text="Subcategory"/>
-            <TableColumn fx:id="ebooksCartButtonColumn" editable="false" prefWidth="211.0" resizable="false"
+            <TableColumn fx:id="ebooksCartButtonColumn" editable="false" prefWidth="213.0" resizable="false"
                          sortable="false"/>
             <TableColumn fx:id="ebooksStarButtonColumn" editable="false" prefWidth="242.0" resizable="false"
                          sortable="false"/>
@@ -55,18 +55,18 @@
    <AnchorPane fx:id="gamesAnchorPane" layoutY="46.0" prefHeight="648.0" prefWidth="1050.0" visible="false"
                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                AnchorPane.topAnchor="0.0">
-      <TableView id="ebooksTableView" fx:id="gamesTableView" layoutX="68.0" layoutY="143.0" prefHeight="537.0"
-                 prefWidth="910.0">
+      <TableView id="ebooksTableView" fx:id="gamesTableView" layoutX="27.0" layoutY="144.0" prefHeight="537.0"
+                 prefWidth="1004.0">
          <columns>
-            <TableColumn id="ebooksNameColumn" fx:id="gamesNameColumn" editable="false" prefWidth="172.0"
+            <TableColumn id="ebooksNameColumn" fx:id="gamesNameColumn" editable="false" prefWidth="297.0"
                          resizable="false" sortable="false" text="Name"/>
-            <TableColumn fx:id="gamesPriceColumn" editable="false" prefWidth="137.0" resizable="false" sortable="false"
+            <TableColumn fx:id="gamesPriceColumn" editable="false" prefWidth="125.0" resizable="false" sortable="false"
                          text="Price"/>
-            <TableColumn fx:id="gamesSubcategoryColumn" editable="false" prefWidth="164.0" resizable="false"
+            <TableColumn fx:id="gamesSubcategoryColumn" editable="false" prefWidth="170.0" resizable="false"
                          sortable="false" text="Subcategory"/>
-            <TableColumn fx:id="gamesCartButtonColumn" editable="false" prefWidth="211.0" resizable="false"
+            <TableColumn fx:id="gamesCartButtonColumn" editable="false" prefWidth="174.0" resizable="false"
                          sortable="false"/>
-            <TableColumn fx:id="gamesStarButtonColumn" editable="false" prefWidth="242.0" resizable="false"
+            <TableColumn fx:id="gamesStarButtonColumn" editable="false" prefWidth="237.0" resizable="false"
                          sortable="false"/>
          </columns>
          <columnResizePolicy>

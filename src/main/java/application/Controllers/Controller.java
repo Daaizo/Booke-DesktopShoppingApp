@@ -1,13 +1,14 @@
 package application.Controllers;
 
-import application.Main;
 import dataBase.SqlConnection;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -18,7 +19,10 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -27,26 +31,25 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 
 public abstract class Controller {
     public static String CURRENT_USER_LOGIN;
     public static final String CURRENCY = " $";
-
+    public static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
+    //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
+    //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/adminGUI.fxml";
     public final String clientScene = "/application/FXML/clientGUI.fxml";
     public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
-    public final String absolutePathToIcons = "/application/Icons/";
     public final String clientAccountScene = "/application/FXML/clientAccountGUI.fxml";
-
     public final URL iconsUrl = getClass().getResource("/application/Icons/");
     public final URL cssUrl = getClass().getResource("/application/style.css");
     private SqlConnection instance;
-    public HashMap<String, String> loginValues = Main.loginValues; // username - key, password - value
+    protected String password;
     @FXML
     protected AnchorPane anchor;
 
@@ -57,9 +60,10 @@ public abstract class Controller {
         mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
         createExitButton();
         createLogoutButton();
+
     }
 
-    private ImageView setSmallLogoInCorner() {
+    protected ImageView setSmallLogoInCorner() {
         ImageView logo = setImageFromIconsFolder("transparentLogo.png");
         logo.setY(5);
         logo.setX(5);
@@ -68,11 +72,11 @@ public abstract class Controller {
 
     protected void showOnlyRowsWithData(TableView<?> tableView) {
         tableView.setMaxHeight(510);
-        tableView.setFixedCellSize(70);
-        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(50));
+        tableView.setFixedCellSize(55);
+        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(40));
     }
 
-    private AnchorPane createHorizontalLine() {
+    protected AnchorPane createHorizontalLine() {
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setMinSize(1050, 3);
         anchorPane.setLayoutX(0);
@@ -82,19 +86,28 @@ public abstract class Controller {
     }
 
     protected Button createButton(String imageName, int x, int y) {
+        int sideLength = 49;
         Button button = new Button();
         button.getStyleClass().add("topButtons");
         button.setLayoutX(x);
         button.setLayoutY(y);
-        button.setMaxSize(49, 49);
-        button.setPrefSize(49, 49);
+        button.setMaxSize(sideLength + 2, sideLength);
+        button.setPrefSize(sideLength + 2, sideLength);
         button.setGraphic(setImageFromIconsFolder(imageName));
+        button.setOnMouseClicked(mouseEvent -> anchor.requestFocus());
+        button.setOnAction(event -> anchor.requestFocus());
         anchor.getChildren().add(button);
         return button;
     }
 
+    protected Button createGoBackButton(EventHandler<ActionEvent> event) {
+        Button goBackButton = createButton("back-button.png", 5, 65);
+        goBackButton.setOnAction(event);
+        return goBackButton;
+    }
+
     protected void createExitButton() {
-        Button closeButton = createButton("close.png", 999, 2);
+        Button closeButton = createButton("close.png", 1000, 2);
         closeButton.setId("exitButton");
         closeButton.setOnAction(actionEvent -> Platform.exit());
     }
@@ -108,6 +121,7 @@ public abstract class Controller {
     AnchorPane setAnchorSizeAndColors() {
         anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px;-fx-background-color : #5B84B1FF ");
         anchor.setMinSize(1050, 694);
+        anchor.setMaxSize(1050, 694);
         return anchor;
     }
 
@@ -155,10 +169,6 @@ public abstract class Controller {
         return this.instance.getConnection();
     }
 
-    public void updateHashMapWithLoginValues(String login, String pass) {
-        loginValues.put(login, pass);
-    }
-
     protected void colorField(TextField field, Label label, Color color) {
 
         DropShadow shadow = new DropShadow();
@@ -169,10 +179,11 @@ public abstract class Controller {
         shadow.setHeight(25);
         shadow.setRadius(10);
         field.setEffect(shadow);
-        field.setOnMouseExited(mouseEvent -> {
+        field.setOnMouseClicked(mouseEvent -> {
             basicTheme(field);
             label.setVisible(false);
         });
+
 
     }
 
@@ -198,17 +209,16 @@ public abstract class Controller {
 
     protected StackPane createNotification(Label label) {
         StackPane pane = new StackPane();
-        pane.setPrefWidth(250);
-        pane.setPrefHeight(49);
         ImageView image = setImageFromIconsFolder("check.png");
         pane.setId("notification");
         label.setId("notificationLabel");
-        pane.getChildren().addAll(image, label);
+        label.setPadding(new Insets(0, 0, 0, 47));
+        pane.getChildren().addAll(label, image);
         label.setWrapText(true);
         StackPane.setAlignment(label, Pos.CENTER);
         StackPane.setAlignment(image, Pos.CENTER_LEFT);
-        pane.setLayoutX(740);
-        pane.setLayoutY(84);
+        pane.setLayoutX(720);
+        pane.setLayoutY(75);
         pane.setVisible(false);
         anchor.getChildren().add(pane);
         return pane;
@@ -221,14 +231,14 @@ public abstract class Controller {
         alert.setTitle(title);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
         DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         dialogPane.getStyleClass().add("alert");
         return alert.showAndWait();
     }
 
-    protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, ButtonType buttonType1, ButtonType buttonType2,
-                                                      String headerText, String title) {
-        Alert alert = new Alert(type, "", buttonType1, buttonType2);
+    protected Optional<ButtonType> createAndShowAlert(ButtonType buttonType1, ButtonType buttonType2, String headerText, String title) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", buttonType1, buttonType2);
         alert.setHeaderText(headerText);
         alert.setTitle(title);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
@@ -236,6 +246,20 @@ public abstract class Controller {
         dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         dialogPane.getStyleClass().add("alert");
         return alert.showAndWait();
+    }
+
+    protected Optional<ButtonType> deleteProductAlert(String productName, String productQuantity, String fromWhere) {
+        Optional<ButtonType> buttonClicked;
+        if (productQuantity.compareTo("1") == 0) {
+            buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM " + fromWhere.toUpperCase(),
+                    "Confirmation",
+                    "Do you want to delete '" + productName + "' from " + fromWhere);
+        } else {
+            buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "DELETING PRODUCT FROM " + fromWhere.toUpperCase(),
+                    "Confirmation",
+                    "Do you want to delete " + productQuantity + " pieces of '" + productName + "' from " + fromWhere);
+        }
+        return buttonClicked;
     }
 
     protected void showNotification(StackPane notification, double timeDuration) {
@@ -248,5 +272,26 @@ public abstract class Controller {
         fade.setAutoReverse(true);
         fade.play();
 
+    }
+
+    protected void setPasswordVisibilityButton(Button showPasswordButton, TextField passwordTextField) {
+        String hiddenPassIconName = "hiddenPassword.png";
+        String showPassIconName = "showPassword.png";
+        showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
+        showPasswordButton.setBackground(Background.EMPTY);
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(passwordTextField, showPasswordButton, setImageFromIconsFolder(showPassIconName)));
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(passwordTextField, showPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
+    }
+
+    protected void showPasswordButtonPressed(TextField field, Button button, ImageView graphic) {
+        button.setGraphic(graphic);
+        password = field.getText();
+        field.clear();
+        field.setPromptText(password);
+    }
+
+    protected void showPasswordButtonReleased(TextField field, Button button, ImageView graphic) {
+        button.setGraphic(graphic);
+        field.setText(password);
     }
 }

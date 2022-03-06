@@ -45,6 +45,9 @@ public class Order {
         this.customerLogin = customerLogin;
     }
 
+    public Order(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
     public void createOrder(Connection connection) throws SQLException {
         String currentDate = dateFormat.format(new Date());
@@ -110,6 +113,32 @@ public class Order {
         preparedStatement.setInt(1, orderNumber);
         return preparedStatement.executeQuery();
 
+    }
+
+    public void setOrderStatus(Connection connection, String orderStatus) throws SQLException {
+        String changeStatus = """
+                update orderheader
+                    set orderstatuskey = ( select orderstatuskey from orderstatus where orderstatusname = ?)
+                    where orderheaderkey = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(changeStatus);
+        preparedStatement.setString(1, orderStatus);
+        preparedStatement.setInt(2, orderNumber);
+        preparedStatement.execute();
+        preparedStatement.close();
+    }
+
+    public void setPaymentMethod(Connection connection, String paymentMethodName) throws SQLException {
+        String changeStatus = """
+                update orderheader
+                    set paymentmethodkey = ( select paymentmethodkey from paymentmethod where paymentmethodname = ?)
+                    where orderheaderkey = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(changeStatus);
+        preparedStatement.setString(1, paymentMethodName);
+        preparedStatement.setInt(2, orderNumber);
+        preparedStatement.execute();
+        preparedStatement.close();
     }
 
     public String getPaymentMethodName() {
@@ -196,9 +225,6 @@ public class Order {
         return productName;
     }
 
-    public Order setProductName(String productName) {
-        this.productName = productName;
-        return this;
-    }
+
 }
 

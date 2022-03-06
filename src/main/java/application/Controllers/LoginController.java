@@ -7,32 +7,32 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import users.Client;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class LoginController extends Controller {
 
-
     @FXML
     public Button registerButton, loginButton;
-
     @FXML
     private TextField tfLogin, tfPassword;
-
     @FXML
     private Label passwordLabel, loginLabel;
 
 
     @FXML
     public void initialize() {
-        AnchorPane mainAnchor = setAnchorSizeAndColors();
+        setAnchorSizeAndColors();
         createExitButton();
     }
 
 
     private void loginError() {
-        createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "", "login or password is incorrect");
+        createAndShowAlert(Alert.AlertType.WARNING, "Login or password is incorrect !", "", "Please try again");
 
     }
 
@@ -58,14 +58,29 @@ public class LoginController extends Controller {
     }
 
     private boolean isLoginInDatabase(String login) {
-        return loginValues.get(login) != null;
+        boolean isInDataBase = false;
+        try {
+            isInDataBase = Client.isClientInDataBase(getConnection(), login);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isInDataBase;
     }
 
+    private String getClientPassword(String username) {
+        Client client = new Client(username);
+        try {
+            ResultSet data = client.getClientData(getConnection());
+            client.setClientData(data);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return client.getPassword();
+    }
 
-    private void checkPassword(String username, String password, ActionEvent event) {
+    public void checkPassword(String username, String password, ActionEvent event) {
 
-        String pass = loginValues.get(username);
-        if (passwordMatches(pass, password)) {
+        if (passwordMatches(getClientPassword(username), password)) {
             CURRENT_USER_LOGIN = username;
             if (isAdmin(username)) {
                 switchScene(event, adminScene);
@@ -99,7 +114,7 @@ public class LoginController extends Controller {
             colorField(tfPassword, passwordLabel, Color.RED);
             displayLabelWithGivenText(passwordLabel, "Filed is empty");
         }
-
+        anchor.requestFocus();
     }
 
     @FXML

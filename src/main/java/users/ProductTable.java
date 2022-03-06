@@ -1,5 +1,6 @@
 package users;
 
+import application.Controllers.Controller;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -16,7 +17,7 @@ public class ProductTable {
     private final SimpleStringProperty productSubcategory;
     private final SimpleIntegerProperty productQuantity;
     private final SimpleStringProperty productTotalValue;
-
+    private final SimpleStringProperty isProductFavourite;
 
     public ProductTable(Product product) {
         this.productId = new SimpleIntegerProperty(product.getProductId());
@@ -26,6 +27,7 @@ public class ProductTable {
         this.productSubcategory = new SimpleStringProperty(product.getProductSubcategory());
         this.productQuantity = new SimpleIntegerProperty(product.getProductInCartQuantity());
         this.productTotalValue = new SimpleStringProperty(product.getProductTotalValue());
+        this.isProductFavourite = new SimpleStringProperty(product.isFavourite());
     }
 
 
@@ -35,7 +37,7 @@ public class ProductTable {
             while (products.next()) {
                 int id = products.getInt(1);
                 String name = products.getString(2);
-                String price = products.getString(3);
+                String price = products.getString(3) + Controller.CURRENCY;
                 String subcategory = products.getString(4);
                 String category = products.getString(5);
                 listOfProducts.add(new ProductTable(new Product(id, name, price, subcategory, category)));
@@ -47,17 +49,34 @@ public class ProductTable {
         return listOfProducts;
     }
 
-    public static ObservableList<ProductTable> getProductsFromCategory(ResultSet products, String categoryName) {
+    public static ObservableList<ProductTable> getProductsFromCategoryAndCheckIfTheyAreInUsersFavourite(ResultSet products, String categoryName) {
         ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
         try {
             while (products.next()) {
                 if (products.getString(5).compareTo(categoryName) == 0) {
                     String name = products.getString(2);
-                    String price = products.getString(3);
+                    String price = products.getString(3) + Controller.CURRENCY;
                     String subcategory = products.getString(4);
-                    listOfProducts.add(new ProductTable(new Product(name, price, subcategory)));
+                    String isFavourite = products.getString(6);
+                    listOfProducts.add(new ProductTable(new Product(name, price, subcategory, isFavourite)));
                 }
 
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
+    }
+
+    public static ObservableList<ProductTable> getProductsBasicInfo(ResultSet products) {
+        ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (products.next()) {
+                String name = products.getString(1);
+                String price = products.getString(2) + Controller.CURRENCY;
+                String subcategory = products.getString(3);
+                listOfProducts.add(new ProductTable(new Product(name, price, subcategory)));
             }
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());
@@ -81,6 +100,10 @@ public class ProductTable {
             exception.printStackTrace();
         }
         return listOfProducts;
+    }
+
+    public SimpleStringProperty isProductFavouriteProperty() {
+        return isProductFavourite;
     }
 
     public String getProductSubcategory() {
@@ -143,5 +166,13 @@ public class ProductTable {
 
     public void setProductTotalValue(String productTotalValue) {
         this.productTotalValue.set(productTotalValue);
+    }
+
+    public String getIsProductFavourite() {
+        return isProductFavourite.get();
+    }
+
+    public void setIsProductFavourite(String isProductFavourite) {
+        this.isProductFavourite.set(isProductFavourite);
     }
 }
