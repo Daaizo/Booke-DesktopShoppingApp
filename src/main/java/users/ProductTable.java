@@ -49,18 +49,50 @@ public class ProductTable {
         return listOfProducts;
     }
 
-    public static ObservableList<ProductTable> getProductsFromCategoryAndCheckIfTheyAreInUsersFavourite(ResultSet products, String categoryName) {
+    public static ObservableList<ProductTable> getProductsFromCategoryWithInformationIfTheyAreInUsersFavourite(ResultSet products) {
         ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
         try {
             while (products.next()) {
-                if (products.getString(5).compareTo(categoryName) == 0) {
-                    String name = products.getString(2);
-                    String price = products.getString(3) + Controller.CURRENCY;
-                    String subcategory = products.getString(4);
-                    String isFavourite = products.getString(6);
-                    listOfProducts.add(new ProductTable(new Product(name, price, subcategory, isFavourite)));
-                }
+                String name = products.getString(2);
+                String price = products.getString(3) + Controller.CURRENCY;
+                String subcategory = products.getString(4);
+                String isFavourite = products.getString(5);
+                listOfProducts.add(new ProductTable(new Product(name, price, subcategory, isFavourite)));
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
+    }
 
+    public static ObservableList<ProductTable> getProductsFromSubcategoryWithInformationIfTheyAreInUsersFavourite(ResultSet products) {
+        ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (products.next()) {
+                int id = products.getInt(1);
+                String name = products.getString(2);
+                String price = products.getString(3) + Controller.CURRENCY;
+                String isFavourite = products.getString(6);
+                listOfProducts.add(new ProductTable(new Product(id, name, price, isFavourite)));
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
+    }
+
+    public static ObservableList<ProductTable> getAllProductsWithInformationIfTheyAreInUsersFavourite(ResultSet products) {
+        ObservableList<ProductTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (products.next()) {
+                String name = products.getString(2);
+                String price = products.getString(3) + Controller.CURRENCY;
+                String subcategory = products.getString(4);
+                String category = products.getString(5);
+                String isFavourite = products.getString(6);
+                listOfProducts.add(new ProductTable(new Product(name, price, subcategory, category, isFavourite)));
             }
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());

@@ -29,7 +29,14 @@ public class Product {
         this.productPrice = price;
         this.productSubcategory = subcategory;
         this.isFavourite = isFavourite;
+    }
 
+    public Product(String name, String price, String subcategory, String category, String isFavourite) {
+        this.productName = name;
+        this.productPrice = price;
+        this.productSubcategory = subcategory;
+        this.productCategory = category;
+        this.isFavourite = isFavourite;
     }
 
     public Product(String name, String price, int quantity, String total) {
@@ -43,6 +50,13 @@ public class Product {
         this.productName = name;
         this.productPrice = price;
         this.productSubcategory = subcategory;
+    }
+
+    public Product(int id, String name, String price, String isFavourite) {
+        this.productId = id;
+        this.productName = name;
+        this.productPrice = price;
+        this.isFavourite = isFavourite;
     }
 
     public static ResultSet getAllProductsOrderedByUser(Connection connection, String currentUserLogin) throws SQLException {
@@ -71,11 +85,48 @@ public class Product {
                                     inner join subcategory sc on sc.subcategorykey = p.subcategorykey
                                     inner join category c on c.categorykey = sc.categorykey
                                     full join favourites f on f.productkey = p.productkey
+                order by 2
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);
         return preparedStatement.executeQuery();
+    }
 
+    public static ResultSet getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin, String categoryName) throws SQLException {
+        String sql = """
+                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory",
+                                case
+                                    when (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
+                                    else 'no'
+                                end as "is favourite"
+                from product p
+                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                    inner join category c on c.categorykey = sc.categorykey
+                    full join favourites f on f.productkey = p.productkey
+                    where c.categoryname = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, currentUserLogin);
+        preparedStatement.setString(2, categoryName);
+        return preparedStatement.executeQuery();
+    }
+
+    public static ResultSet getProductsFromSubcategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin, String subcategory) throws SQLException {
+        String sql = """
+                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price",
+                                               case
+                                                   when (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
+                                                   else 'no'
+                                               end as "is favourite"
+                from product p
+                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                    full join favourites f on f.productkey = p.productkey
+                    where sc.subcategoryname = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, currentUserLogin);
+        preparedStatement.setString(2, subcategory);
+        return preparedStatement.executeQuery();
     }
 
     public static ResultSet getProductsFromDatabase(Connection connection) {
