@@ -71,9 +71,23 @@ public abstract class Controller {
     }
 
     protected void showOnlyRowsWithData(TableView<?> tableView) {
-        tableView.setMaxHeight(510);
+        tableView.setMaxHeight(480);
         tableView.setFixedCellSize(55);
         tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(40));
+    }
+
+    protected int comparePriceWithCurrency(String a, String b) {
+        String onlyNumberA = a.replace(CURRENCY, "").trim();
+        String onlyNumberB = b.replace(CURRENCY, "").trim();
+        double numberA = Double.parseDouble(onlyNumberA);
+        double numberB = Double.parseDouble(onlyNumberB);
+        return Double.compare(numberA, numberB);
+    }
+
+    protected void setSoringTypeToColumns(TableColumn<?, String> priceColumn, TableColumn<?, ?> buttonColumnA, TableColumn<?, ?> buttonColumnB) {
+        priceColumn.setComparator(this::comparePriceWithCurrency);
+        buttonColumnA.setSortable(false);
+        buttonColumnB.setSortable(false);
     }
 
     protected AnchorPane createHorizontalLine() {
