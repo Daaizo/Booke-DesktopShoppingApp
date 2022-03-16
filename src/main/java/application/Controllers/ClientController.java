@@ -7,7 +7,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -25,23 +24,20 @@ public class ClientController extends Controller {
     private final double durationOfNotification = 3000;
     private final Client currentUser = new Client(CURRENT_USER_LOGIN);
     @FXML
-    private AnchorPane ebooksAnchorPane, gamesAnchorPane;
-    @FXML
-    private Button ebooksButton, gamesButton, goBackButton;
+    private Button goBackButton;
     @FXML
     private Label cartQuantityLabel;
     @FXML
     private StackPane cartNotification, starNotification, yellowStartNotification;
     @FXML
-    private Pane categoryPickingPane;
+    private Pane categoryPickingPane, ebooksPane, gamesPane, allProductsPane;
     @FXML
-    private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, ebooksNameColumn, ebooksSubcategoryColumn;
+    private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, ebooksNameColumn, ebooksSubcategoryColumn, allProductsNameColumn,
+            allProductsSubcategoryColumn, allProductsPriceColumn, gamesPriceColumn, ebooksPriceColumn, allProductsCategoryColumn;
     @FXML
-    private TableColumn<ProductTable, Double> gamesPriceColumn, ebooksPriceColumn;
+    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn, gamesCartButtonColumn, gamesStarButtonColumn, allProductsCartButtonColumn, allProductsStarButtonColumn;
     @FXML
-    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn, gamesCartButtonColumn, gamesStarButtonColumn;
-    @FXML
-    private TableView<ProductTable> gamesTableView, ebooksTableView;
+    private TableView<ProductTable> gamesTableView, ebooksTableView, allProductsTableView;
 
     @FXML
     public void initialize() {
@@ -49,12 +45,65 @@ public class ClientController extends Controller {
         createNotifications();
         createButtons();
         try {
-            displayEbooks();
-            displayGames();
             setQuantityLabel();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+
+    @FXML
+    void allProductsButtonClicked() {
+        try {
+            displayAllProducts();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        makePaneAndGoBackButtonVisible(allProductsPane);
+        setSoringTypeToColumns(allProductsPriceColumn, allProductsCartButtonColumn, allProductsStarButtonColumn);
+    }
+
+    @FXML
+    void gamesButtonClicked() {
+        try {
+            displayGames();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        makePaneAndGoBackButtonVisible(gamesPane);
+        setSoringTypeToColumns(gamesPriceColumn, gamesCartButtonColumn, gamesStarButtonColumn);
+    }
+
+    @FXML
+    void ebooksButtonClicked() {
+        try {
+            displayEbooks();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        makePaneAndGoBackButtonVisible(ebooksPane);
+        setSoringTypeToColumns(ebooksPriceColumn, ebooksCartButtonColumn, ebooksStarButtonColumn);
+    }
+
+    private void hideAllPanes() {
+        gamesPane.setVisible(false);
+        categoryPickingPane.setVisible(false);
+        ebooksPane.setVisible(false);
+        allProductsPane.setVisible(false);
+    }
+
+    private void ifPaneMatchesMakeItVisible(Pane paneA, Pane paneB) {
+        if (paneA.equals(paneB)) paneB.setVisible(true);
+    }
+
+    private void makePaneAndGoBackButtonVisible(Pane pane) {
+        goBackButton.setVisible(true);
+        hideAllPanes();
+        ifPaneMatchesMakeItVisible(pane, categoryPickingPane);
+        ifPaneMatchesMakeItVisible(pane, gamesPane);
+        ifPaneMatchesMakeItVisible(pane, ebooksPane);
+        ifPaneMatchesMakeItVisible(pane, allProductsPane);
+
     }
 
     private void createNotifications() {
@@ -75,7 +124,7 @@ public class ClientController extends Controller {
         createCartButton();
     }
 
-    @FXML
+
     void createAccountButton() {
         Button userAccountInformationButton = createButton("user.png", cartLabelXPosition + 60, cartLabelYPosition);
         userAccountInformationButton.setOnAction(event -> switchScene(event, clientAccountScene));
@@ -88,28 +137,9 @@ public class ClientController extends Controller {
     }
 
     private void createGoBackButton() {
-        goBackButton = super.createGoBackButton(event -> {
-            categoryPickingPane.setVisible(true);
-            ebooksAnchorPane.setVisible(false);
-            gamesAnchorPane.setVisible(false);
-            goBackButton.setVisible(false);
-        });
+        goBackButton = super.createGoBackButton(event -> makePaneAndGoBackButtonVisible(categoryPickingPane));
         goBackButton.fire();
         goBackButton.setVisible(false);
-    }
-
-    @FXML
-    void gamesButtonClicked() {
-        gamesAnchorPane.setVisible(true);
-        categoryPickingPane.setVisible(false);
-        goBackButton.setVisible(true);
-    }
-
-    @FXML
-    void ebooksButtonClicked() {
-        ebooksAnchorPane.setVisible(true);
-        categoryPickingPane.setVisible(false);
-        goBackButton.setVisible(true);
     }
 
 
@@ -121,6 +151,27 @@ public class ClientController extends Controller {
             displayLabelWithGivenText(cartQuantityLabel, "9+");
         else displayLabelWithGivenText(cartQuantityLabel, " " + quantity);
 
+    }
+
+    private void fillAllProductsColumnsWithData(ObservableList<ProductTable> list) {
+        allProductsNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        allProductsPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
+        allProductsSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
+        allProductsStarButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
+        allProductsStarButtonColumn.setCellFactory(buttonInsideCell -> createStarButtonInsideTableView());
+        allProductsCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
+        allProductsCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productCategory"));
+        allProductsTableView.setItems(list);
+        showOnlyRowsWithData(allProductsTableView);
+
+    }
+
+    private void displayAllProducts() throws SQLException {
+        checkConnectionWithDb();
+        ResultSet products = Product.getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN);
+        assert products != null;
+        ObservableList<ProductTable> listOfProducts = ProductTable.getAllProductsWithInformationIfTheyAreInUsersFavourite(products);
+        fillAllProductsColumnsWithData(listOfProducts);
     }
 
     private void fillEbooksColumnsWithData(ObservableList<ProductTable> list) {
@@ -138,9 +189,9 @@ public class ClientController extends Controller {
 
     void displayEbooks() throws SQLException {
         checkConnectionWithDb();
-        ResultSet products = Product.getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN);
+        ResultSet products = Product.getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN, "ebooks");
         assert products != null;
-        ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategoryAndCheckIfTheyAreInUsersFavourite(products, "ebooks");
+        ObservableList<ProductTable> listOfEbooks = ProductTable.getProductsFromCategoryWithInformationIfTheyAreInUsersFavourite(products);
         fillEbooksColumnsWithData(listOfEbooks);
     }
 
@@ -157,9 +208,9 @@ public class ClientController extends Controller {
 
     void displayGames() throws SQLException {
         checkConnectionWithDb();
-        ResultSet products = Product.getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN);
+        ResultSet products = Product.getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), CURRENT_USER_LOGIN, "games");
         assert products != null;
-        ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategoryAndCheckIfTheyAreInUsersFavourite(products, "games");
+        ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategoryWithInformationIfTheyAreInUsersFavourite(products);
         fillGamesColumnsWithData(listOfGames);
     }
 
@@ -277,33 +328,6 @@ public class ClientController extends Controller {
         }
     }
 
-
-    //simple hover effects
-    @FXML
-    void ebookOnMouseEntered() {
-
-        ebooksButton.setStyle("-fx-background-color: #fc766a; -fx-text-fill:  #5B84B1FF;");
-    }
-
-    @FXML
-    void ebookOnMouseExited() {
-        ebooksButton.setStyle("-fx-background-color:  #5B84B1FF; -fx-text-fill: #fc766a;-fx-border-color : #fc766a ;");
-    }
-
-
-    @FXML
-    void gamesButtonOnMouseEntered() {
-        gamesButton.setStyle("-fx-background-color: #fc766a; -fx-text-fill:  #5B84B1FF;");
-
-    }
-
-    @FXML
-    void gamesButtonOnMouseExited() {
-        gamesButton.setStyle("-fx-background-color:  #5B84B1FF; -fx-text-fill: #fc766a;-fx-border-color : #fc766a;");
-
-    }
-
-//
 
 
 }

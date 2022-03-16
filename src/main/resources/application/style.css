@@ -1,20 +1,33 @@
 
 *{
--exitButtonColor : #ff6666;
--backgroundColorA: #5B84B1FF; 	// bluish
--backgroundColorB: #fc766a; 		// orange
+    -exitButtonColor : #ff6666;
+    -backgroundColorA: #5B84B1FF; 	// bluish
+    -backgroundColorB: #fc766a; 		// orange
 }
 
+.CategoryPickingButtons{
+    -fx-background-color : -backgroundColorA;
+    -fx-border-color : -backgroundColorB;
+    -fx-font-size :75px;
+    -fx-text-fill: -backgroundColorB;
+    -fx-font-weight: bolder  ;
+    -fx-style : italic;
+    -fx-text-alignment : center ;
+}
+.CategoryPickingButtons:hover{
+    -fx-background-color : -backgroundColorB;
+    -fx-text-fill: -backgroundColorA;
+}
 #orderDetailsButton{
-  -fx-background-color : #0066ff;
-  -fx-background-radius:12px;
-  -fx-alignment:center;
+    -fx-background-color : #0066ff;
+    -fx-background-radius:12px;
+    -fx-alignment:center;
 }
-.topButtons:hover{
--fx-background-color :#7498be;
+    .topButtons:hover{
+    -fx-background-color :#7498be;
 }
-.topButtons{
--fx-background-color :transparent;
+    .topButtons{
+    -fx-background-color :transparent;
 }
 
 .DeleteButtons{
@@ -22,15 +35,15 @@
     -fx-border-width : 2px;
     -fx-border-radius : 10px;
     -fx-alignment:center;
-     -fx-font-size :17px;
-     -fx-font-weight: bolder  ;
-     -fx-text-alignment : center ;
-     -fx-background-color : transparent;
+    -fx-font-size :17px;
+    -fx-font-weight: bolder  ;
+    -fx-text-alignment : center ;
+    -fx-background-color : transparent;
 }
 .DeleteButtons:hover{
     -fx-background-color : #ff4d4d;
     -fx-background-radius :10px;
-     -fx-background-insets: 0;
+    -fx-background-insets: 0;
 }
 #informationLabel{
     -fx-background-color: white;
@@ -56,7 +69,7 @@
 }
 
 .clientTableviewButtons:hover{
--fx-border-color : #fc766a ;
+    -fx-border-color : #fc766a ;
 }
 
 #loginHereButton{
@@ -68,8 +81,8 @@
 
 }
 #clientButtons{
- -fx-background-color: transparent;
- -fx-padding: 10px;
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
 }
 
 .accountButtons{
@@ -80,13 +93,12 @@
 }
 
 .accountButtons:hover{
--fx-background-color: #fb5e50;
+    -fx-background-color: #fb5e50;
 }
 
 #exitButton:hover{
-
--fx-background-color :-exitButtonColor;
--fx-border-color: -exitButtonColor;
+    -fx-background-color :-exitButtonColor;
+    -fx-border-color: -exitButtonColor;
 }
 
 #titleLabel{
@@ -102,20 +114,20 @@
     -fx-font-size : 15px;
 }
 .shoppingCartLabels{
-     -fx-font-size :20px;
-     -fx-font-weight: bolder  ;
+    -fx-font-size :20px;
+    -fx-font-weight: bolder  ;
 }
 #notification #notificationLabel{
-        -fx-font-size : 17px;
-        -fx-font-weight: bolder  ;
-        -fx-font-family :Helvetica;
+    -fx-font-size : 17px;
+    -fx-font-weight: bolder  ;
+    -fx-font-family :Helvetica;
 }
 #notification{
-     -fx-border-color : white;
-     -fx-background-color : transparent ;
-      -fx-padding: 10px;
-     -fx-border-radius : 10px;
-     -fx-background-radius : 10px;
+    -fx-border-color : white;
+    -fx-background-color : transparent ;
+    -fx-padding: 10px;
+    -fx-border-radius : 10px;
+    -fx-background-radius : 10px;
 }
 
 
@@ -127,8 +139,8 @@
     -fx-font-size : 22px;
     -fx-font-weight: bolder  ;
     -fx-font-alignment : center;
-     -fx-font-family :Helvetica;
-     -fx-alignment:center;
+    -fx-font-family :Helvetica;
+    -fx-alignment:center;
 }
 .alert .button{
     -fx-font-size : 15 px;
@@ -144,8 +156,8 @@
     -fx-background-insets : 0px;
 }
 .alert:header .header-panel {
-  -fx-background-color: -backgroundColorB;
-  -fx-alignment:center;
+    -fx-background-color: -backgroundColorB;
+    -fx-alignment:center;
 }
 
 
@@ -169,12 +181,12 @@
 }
 .AccountDetails{
     -fx-font-size :21px;
-     -fx-font-weight: bolder  ;
+    -fx-font-weight: bolder  ;
 }
  .passwordLabels{
     -fx-border-color : transparent;
     -fx-font-size :18px;
-     -fx-font-weight	: bolder  ;
+    -fx-font-weight	: bolder  ;
 
 }
 
@@ -199,12 +211,12 @@
 .table-view:row-selection:unconstrained-resize .filler,
 .table-view:row-selection:unconstrained-resize .corner
 {
-      -fx-background-color: transparent;
+    -fx-background-color: transparent;
 }
 
 
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
-   -fx-font-weight	: bolder  ;
+    -fx-font-weight	: bolder  ;
     -fx-font-family :Helvetica;
     -fx-text-fill : -backgroundColorB;
     -fx-font-size : 20px;
@@ -219,9 +231,9 @@
     -fx-border-color : transparent;
     -fx-font-weight	: bolder  ;
     -fx-font-family :Helvetica;
-     -fx-alignment :top-center;
-     -fx-text-alignment : center ;
-     -fx-font-size : 20px;
+    -fx-alignment :top-center;
+    -fx-text-alignment : center ;
+    -fx-font-size : 20px;
 
 
 }
@@ -240,12 +252,12 @@
 }
 
  .table-view .table-cell{
-     -fx-border-color: black;
-     -fx-border-style: solid hidden hidden hidden;
-     -fx-border-width : 2px;
-     -fx-background-color: -backgroundColorA;
-     -fx-padding: 0px;
-     -fx-font-size : 20px;
+    -fx-border-color: black;
+    -fx-border-style: solid hidden hidden hidden;
+    -fx-border-width : 2px;
+    -fx-background-color: -backgroundColorA;
+    -fx-padding: 0px;
+    -fx-font-size : 19px;
     -fx-font-alignment: center;
     -fx-alignment : center;
  }
@@ -272,21 +284,22 @@
     -fx-padding: 0;
     -fx-shape: null;
 }
+
 .table-view .virtual-flow .scroll-bar:vertical,
- .table-view .virtual-flow .scroll-bar:vertical .track,
- .table-view .virtual-flow .scroll-bar:vertical .track-background,
- .table-view .virtual-flow .scroll-bar:horizontal,
- .table-view .virtual-flow .scroll-bar:horizontal .track,
- .table-view .virtual-flow .scroll-bar:horizontal .track-background {
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background,
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
      -fx-background-color: transparent;
  }
  .table-view .virtual-flow .scroll-bar:vertical .thumb{
-      -fx-background-color:  -backgroundColorB;
-  }
+    -fx-background-color:  -backgroundColorB;
+}
 
   .table-view .virtual-flow .scroll-bar .increment-button,
   .table-view .virtual-flow .scroll-bar .decrement-button {
-      -fx-opacity: 1;
-      -fx-background-color : transparent;
-      -fx-padding: 2;
-  }
+    -fx-opacity: 1;
+    -fx-background-color : transparent;
+    -fx-padding: 2;
+ }
