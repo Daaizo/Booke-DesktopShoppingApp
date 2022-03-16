@@ -148,21 +148,16 @@ public class Product {
 
     public static ResultSet getProductFromCartAndSetValueBasedOnQuantity(Connection connection, String currentUsername) {
         try {
-            String query = "select p.productname, p.catalogprice || ? \"PRICE\" ,sc.quantity, sum(p.catalogprice * sc.quantity) ||  ? \"TOTAL\" from shoppingcart  sc\n" +
-                    "inner join customer c on c.customerkey = sc.customerkey\n" +
-                    "inner join product p on p.productkey = sc.productkey\n" +
-                    "where sc.customerkey = \n" +
-                    "                        (\n" +
-                    "                        select customerkey from customer \n" +
-                    "                        where customerlogin = '" + currentUsername + "'\n" +
-                    "                        )\n" +
-                    "group by  p.productname, p.catalogprice ,sc.quantity";
-
-
+            String query = """
+                    select p.productname, p.catalogprice   ,sc.quantity, sum(p.catalogprice * sc.quantity) from shoppingcart  sc
+                            inner join customer c on c.customerkey = sc.customerkey
+                            inner join product p on p.productkey = sc.productkey
+                            where sc.customerkey =
+                                                    (    select customerkey from customer     where customerlogin = ?  )
+                            group by  p.productname, p.catalogprice ,sc.quantity
+                    """;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, Controller.CURRENCY);
-            preparedStatement.setString(2, Controller.CURRENCY);
-
+            preparedStatement.setString(1, currentUsername);
             return preparedStatement.executeQuery();
         } catch (SQLException e) {
             System.out.println("error with executing SQL query");

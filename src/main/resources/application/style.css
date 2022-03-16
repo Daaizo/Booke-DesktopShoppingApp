@@ -23,12 +23,20 @@
     -fx-background-radius:12px;
     -fx-alignment:center;
 }
-    .topButtons:hover{
+#cartQuantityLabel{
+    -fx-font-size : 15px;
+    -fx-text-fill: white;
+    -fx-background-color :transparent;
+
+}
+
+.topButtons:hover{
     -fx-background-color :#7498be;
 }
-    .topButtons{
+ .topButtons{
     -fx-background-color :transparent;
 }
+
 
 .DeleteButtons{
     -fx-border-color : red;
@@ -123,8 +131,8 @@
     -fx-font-family :Helvetica;
 }
 #notification{
-    -fx-border-color : white;
-    -fx-background-color : transparent ;
+    -fx-border-color : black;
+    -fx-background-color : white ;
     -fx-padding: 10px;
     -fx-border-radius : 10px;
     -fx-background-radius : 10px;
@@ -214,7 +222,9 @@
     -fx-background-color: transparent;
 }
 
-
+.table-row-cell:selected {
+   -fx-text-background-color: black;
+}
 .table-view:row-selection:unconstrained-resize .column-header-background .nested-column-header .table-column .label{
     -fx-font-weight	: bolder  ;
     -fx-font-family :Helvetica;

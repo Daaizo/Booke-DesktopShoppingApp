@@ -15,9 +15,8 @@ import java.sql.SQLException;
 
 
 public class LoginController extends Controller {
-
     @FXML
-    public Button registerButton, loginButton;
+    public Button registerButton, loginButton, showPasswordButton;
     @FXML
     private TextField tfLogin, tfPassword;
     @FXML
@@ -28,12 +27,13 @@ public class LoginController extends Controller {
     public void initialize() {
         setAnchorSizeAndColors();
         createExitButton();
+        setPasswordVisibilityButton(showPasswordButton, tfPassword);
     }
 
 
     private void loginError() {
         createAndShowAlert(Alert.AlertType.WARNING, "Login or password is incorrect !", "", "Please try again");
-
+        tfPassword.clear();
     }
 
     private boolean passwordMatches(String password, String login) {
@@ -121,5 +121,6 @@ public class LoginController extends Controller {
     void registerButtonClicked(ActionEvent event) {
         switchScene(event, registrationScene);
     }
+
 
 }

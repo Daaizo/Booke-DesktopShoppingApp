@@ -1,5 +1,6 @@
-package application.Controllers;
+package application.Controllers.Client;
 
+import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,7 +16,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -31,7 +31,7 @@ public class ClientAccountController extends Controller {
 
     private final Lighting lighting = new Lighting();
     private final Client currentUser = new Client(CURRENT_USER_LOGIN);
-
+    private HashMap<String, String> orderStatusHashMap = new HashMap<>();
     @FXML
     private Pane ordersPane, favouritesPane, detailsPane, accountSettingsPane;
     @FXML
@@ -43,7 +43,7 @@ public class ClientAccountController extends Controller {
     @FXML
     private TableView<OrderTable> ordersTableView, orderDetailsTableView;
     @FXML
-    TableColumn<ProductTable, String> favouritesNameColumn, favouritesPriceColumn, favouritesSubcategoryColumn, favouritesButtonColumn;
+    private TableColumn<ProductTable, String> favouritesNameColumn, favouritesPriceColumn, favouritesSubcategoryColumn, favouritesButtonColumn;
     @FXML
     private TextField tfLogin, tfName, tfLastName;
     @FXML
@@ -61,6 +61,7 @@ public class ClientAccountController extends Controller {
         createGoBackButton(event -> switchScene(event, clientScene));
         createLightingEffect();
         createInformationImageAndAttachItToLabel();
+        orderStatusHashMap = createHashMapWithOrderStatuses();
         createEmptyTableViewLabel();
         ordersButton.fire();
 
@@ -93,7 +94,12 @@ public class ClientAccountController extends Controller {
         }
         orderedProductTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         content.setSpacing(10);
-        content.getChildren().add(orderedProductTable);
+        if (orderedProductTable.getItems().isEmpty()) {
+            content.getChildren().add(new Label("There are no ordered products"));
+        } else {
+            content.getChildren().add(orderedProductTable);
+
+        }
         dialog.getDialogPane().setContent(content);
         dialog.setHeaderText("All ordered products");
         setLogoAndCssToCustomDialog(dialog);
@@ -397,15 +403,19 @@ public class ClientAccountController extends Controller {
         orderStatusLabel.setOnMouseExited(mouseEvent -> informationLabel.setVisible(false));
     }
 
-    private void displayInformationAboutOrderStatus() {
+    private HashMap<String, String> createHashMapWithOrderStatuses() {
         HashMap<String, String> orderStatus = new HashMap<>();
         orderStatus.put("Canceled", "Your order has been cancelled and your payment will be refunded");
         orderStatus.put("In progress", "Your order has been paid and is awaiting approval");
         orderStatus.put("Finished", "Order has been sent to the email assigned to your account");
         orderStatus.put("Waiting for payment", "The order has not been paid");
+        return orderStatus;
+    }
+
+    private void setInformationAboutOrderStatus(HashMap<String, String> orderStatusHashMap) {
         informationLabel.setWrapText(true);
-        informationLabel.setText(orderStatus.get(orderStatusLabel.getText()));
-        StackPane.setAlignment(informationLabel, Pos.CENTER);
+        informationLabel.setText(orderStatusHashMap.get(orderStatusLabel.getText()));
+        informationLabel.setVisible(false);
     }
 
     private void setButtonLightingEffect(Button button) {
@@ -471,15 +481,15 @@ public class ClientAccountController extends Controller {
     }
 
 
-    private ClientController.ButtonInsideTableColumn<OrderTable, String> orderIdButton() {
-        ClientController.ButtonInsideTableColumn<OrderTable, String> button = new ClientController().new ButtonInsideTableColumn<>("", "details");
+    private ClientSceneController.ButtonInsideTableColumn<OrderTable, String> orderIdButton() {
+        ClientSceneController.ButtonInsideTableColumn<OrderTable, String> button = new ClientSceneController().new ButtonInsideTableColumn<>("", "details");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             makePaneVisible(detailsPane);
             displayOrderDetails(button.getRowId().getOrderNumber());
             fillOrderDetailLabels(button);
             makeProperButtonsVisible(orderStatusLabel.getText());
             setButtonLightingEffect(null);
-            displayInformationAboutOrderStatus();
+            setInformationAboutOrderStatus(orderStatusHashMap);
         };
         button.setEventHandler(buttonClicked);
         button.setCssId("orderDetailsButton");
@@ -499,7 +509,7 @@ public class ClientAccountController extends Controller {
         }
     }
 
-    private void fillOrderDetailLabels(ClientController.ButtonInsideTableColumn<OrderTable, String> button) {
+    private void fillOrderDetailLabels(ClientSceneController.ButtonInsideTableColumn<OrderTable, String> button) {
         orderIdLabel.setText(button.getRowId().getOrderNumber() + "");
         totalValueLabel.setText(button.getRowId().getOrderTotalValue() + "");
         paymentMethodLabel.setText(button.getRowId().getOrderPaymentMethodName());
@@ -543,8 +553,8 @@ public class ClientAccountController extends Controller {
         favouritesTableView.setItems(listOfOrders);
     }
 
-    private ClientController.ButtonInsideTableColumn<ProductTable, String> createDeleteFromFavouritesButton() {
-        ClientController.ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ClientController().new ButtonInsideTableColumn<>("delete.png", "delete from favourites");
+    private ClientSceneController.ButtonInsideTableColumn<ProductTable, String> createDeleteFromFavouritesButton() {
+        ClientSceneController.ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ClientSceneController().new ButtonInsideTableColumn<>("delete.png", "delete from favourites");
         deleteFromFavouritesButton.setEventHandler(mouseEvent -> {
             String productName = deleteFromFavouritesButton.getRowId().getProductName();
             Optional<ButtonType> result = deleteProductAlert(productName, "1", "favourites");
@@ -592,7 +602,7 @@ public class ClientAccountController extends Controller {
             Order order = new Order(Integer.parseInt(orderIdLabel.getText()));
             order.setOrderStatus(getConnection(), status);
             orderStatusLabel.setText(status);
-            displayInformationAboutOrderStatus();
+            setInformationAboutOrderStatus(orderStatusHashMap);
             makeProperButtonsVisible(status);
         } catch (SQLException e) {
             e.printStackTrace();

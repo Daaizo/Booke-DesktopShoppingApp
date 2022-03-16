@@ -74,7 +74,7 @@ public class RegisterController extends Controller {
         });
     }
 
-    protected void setPasswordVisibilityButtons() {
+    private void setPasswordVisibilityButtons() {
         String hiddenPassIconName = "hiddenPassword.png";
         String showPassIconName = "showPassword.png";
         showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
@@ -87,18 +87,6 @@ public class RegisterController extends Controller {
         showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
     }
 
-    private void showPasswordButtonPressed(TextField field, Button button, ImageView graphic) {
-
-        button.setGraphic(graphic);
-        password = field.getText();
-        field.clear();
-        field.setPromptText(password);
-    }
-
-    private void showPasswordButtonReleased(TextField field, Button button, ImageView graphic) {
-        button.setGraphic(graphic);
-        field.setText(password);
-    }
 
 
     @FXML

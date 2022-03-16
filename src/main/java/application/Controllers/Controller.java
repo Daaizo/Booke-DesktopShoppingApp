@@ -42,16 +42,16 @@ public abstract class Controller {
     //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
     public final String loginScene = "/application/FXML/loginGUI.fxml";
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
-    public final String adminScene = "/application/FXML/adminGUI.fxml";
-    public final String clientScene = "/application/FXML/clientGUI.fxml";
-    public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
-    public final String clientAccountScene = "/application/FXML/clientAccountGUI.fxml";
+    public final String adminScene = "/application/FXML/AdminSceneFXML/adminStartingSceneGUI.fxml";
+    public final String clientScene = "/application/FXML/ClientSceneFXML/clientStartingSceneGUI.fxml";
+    public final String shoppingCartScene = "/application/FXML/ClientSceneFXML/shoppingCartGUI.fxml";
+    public final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountGUI.fxml";
     public final URL iconsUrl = getClass().getResource("/application/Icons/");
     public final URL cssUrl = getClass().getResource("/application/style.css");
     private SqlConnection instance;
     protected String password;
     @FXML
-    protected AnchorPane anchor;
+    public AnchorPane anchor;
 
 
     public void prepareScene() {
@@ -79,6 +79,7 @@ public abstract class Controller {
     protected int comparePriceWithCurrency(String a, String b) {
         String onlyNumberA = a.replace(CURRENCY, "").trim();
         String onlyNumberB = b.replace(CURRENCY, "").trim();
+
         double numberA = Double.parseDouble(onlyNumberA);
         double numberB = Double.parseDouble(onlyNumberB);
         return Double.compare(numberA, numberB);
@@ -126,7 +127,7 @@ public abstract class Controller {
         closeButton.setOnAction(actionEvent -> Platform.exit());
     }
 
-    private void createLogoutButton() {
+    protected void createLogoutButton() {
         Button logoutButton = createButton("logout.png", 948, 2);
         logoutButton.setOnAction(actionEvent -> switchScene(actionEvent, loginScene));
     }

@@ -5,8 +5,8 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="712.0"
-            prefWidth="1050.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
-            fx:controller="application.Controllers.ShoppingCartController">
+            prefWidth="1050.0" stylesheets="@../../style.css" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.Client.ShoppingCartController">
     <ScrollPane id="paymentMethodsScrollPane" fx:id="paymentMethodsPane" layoutX="30.0" layoutY="541.0"
                 prefHeight="131.0" prefWidth="366.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="30.0"
                 AnchorPane.rightAnchor="654.0" AnchorPane.topAnchor="541.0"/>

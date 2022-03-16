@@ -122,9 +122,9 @@ public class ProductTable {
         try {
             while (products.next()) {
                 String name = products.getString(1);
-                String price = products.getString(2);
+                String price = products.getString(2) + Controller.CURRENCY;
                 int quantity = products.getInt(3);
-                String totalValue = products.getString(4);
+                String totalValue = products.getString(4) + Controller.CURRENCY;
                 listOfProducts.add(new ProductTable(new Product(name, price, quantity, totalValue)));
             }
         } catch (SQLException exception) {

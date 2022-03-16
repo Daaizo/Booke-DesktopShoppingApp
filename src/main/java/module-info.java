@@ -11,6 +11,10 @@ module simpleApp.source {
     opens application.Controllers to javafx.fxml;
     exports users;
     opens users to javafx.fxml;
+    exports application.Controllers.Client;
+    opens application.Controllers.Client to javafx.fxml;
+    exports application.Controllers.Admin;
+    opens application.Controllers.Admin to javafx.fxml;
 
 
 }

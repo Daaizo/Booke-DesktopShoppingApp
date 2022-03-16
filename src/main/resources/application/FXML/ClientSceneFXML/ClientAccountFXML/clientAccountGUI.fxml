@@ -5,8 +5,8 @@
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="anchor" fx:id="anchor" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#Dragging" prefHeight="684.0" prefWidth="1050.0"
-            stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
-            fx:controller="application.Controllers.ClientAccountController">
+            stylesheets="@../../../style.css" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.Client.ClientAccountController">
     <AnchorPane layoutY="1.0" prefHeight="699.0" prefWidth="1050.0">
         <Button fx:id="ordersButton" layoutX="122.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                 minWidth="-Infinity" mnemonicParsing="false" onAction="#ordersButtonClicked" prefHeight="51.0"
@@ -51,7 +51,7 @@
         <Pane fx:id="detailsPane" layoutX="66.0" layoutY="29.0" prefHeight="642.0" prefWidth="984.0"
               AnchorPane.bottomAnchor="-43.0" AnchorPane.leftAnchor="66.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="29.0">
-            <TableView fx:id="orderDetailsTableView" layoutX="31.0" layoutY="181.0" prefHeight="243.0"
+            <TableView fx:id="orderDetailsTableView" layoutX="73.0" layoutY="187.0" prefHeight="243.0"
                        prefWidth="790.0">
                 <columns>
                     <TableColumn fx:id="orderDetailsProductColumn" prefWidth="270.0" resizable="false" text="Product "/>
@@ -70,21 +70,21 @@
                     maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                     onAction="#changePaymentMethodButtonClicked" prefHeight="50.0" prefWidth="350.0"
                     styleClass="OrangeButtons" text="Change Payment method"/>
-            <Label layoutX="425.0" layoutY="45.0" prefHeight="65.0" prefWidth="170.0" styleClass="orderDetailsLabel"
-                   text="Pament method :"/>
-            <Label layoutX="31.0" layoutY="107.0" prefHeight="74.0" prefWidth="181.0" styleClass="orderDetailsLabel"
+            <Label layoutX="467.0" layoutY="51.0" prefHeight="65.0" prefWidth="170.0" styleClass="orderDetailsLabel"
+                   text="Payment method :"/>
+            <Label layoutX="73.0" layoutY="113.0" prefHeight="74.0" prefWidth="181.0" styleClass="orderDetailsLabel"
                    text="Total order value :"/>
-            <Label layoutX="31.0" layoutY="56.0" prefHeight="65.0" prefWidth="95.0" styleClass="orderDetailsLabel"
+            <Label layoutX="73.0" layoutY="62.0" prefHeight="65.0" prefWidth="95.0" styleClass="orderDetailsLabel"
                    text="Order id : "/>
-            <Label layoutX="425.0" layoutY="95.0" prefHeight="65.0" prefWidth="137.0" styleClass="orderDetailsLabel"
+            <Label layoutX="467.0" layoutY="101.0" prefHeight="65.0" prefWidth="137.0" styleClass="orderDetailsLabel"
                    text="Order status :"/>
-            <Label fx:id="orderIdLabel" layoutX="132.0" layoutY="56.0" prefHeight="65.0" prefWidth="88.0"
+            <Label fx:id="orderIdLabel" layoutX="174.0" layoutY="62.0" prefHeight="65.0" prefWidth="88.0"
                    styleClass="importantDataLabels"/>
-            <Label fx:id="totalValueLabel" layoutX="212.0" layoutY="107.0" prefHeight="74.0" prefWidth="198.0"
+            <Label fx:id="totalValueLabel" layoutX="254.0" layoutY="113.0" prefHeight="74.0" prefWidth="198.0"
                    styleClass="importantDataLabels"/>
-            <Label fx:id="orderStatusLabel" layoutX="571.0" layoutY="95.0" prefHeight="65.0" prefWidth="293.0"
+            <Label fx:id="orderStatusLabel" layoutX="613.0" layoutY="101.0" prefHeight="65.0" prefWidth="293.0"
                    styleClass="importantDataLabels"/>
-            <Label fx:id="paymentMethodLabel" layoutX="595.0" layoutY="45.0" prefHeight="65.0" prefWidth="226.0"
+            <Label fx:id="paymentMethodLabel" layoutX="637.0" layoutY="51.0" prefHeight="65.0" prefWidth="226.0"
                    styleClass="importantDataLabels"/>
             <Button fx:id="cancelOrderButton" layoutX="694.0" layoutY="545.0" mnemonicParsing="false"
                     onAction="#cancelOrderButtonClicked" prefHeight="31.0" prefWidth="270.0" styleClass="DeleteButtons"
@@ -92,72 +92,67 @@
             <Button fx:id="payOrderButton" layoutX="5.0" layoutY="460.0" maxHeight="-Infinity" maxWidth="-Infinity"
                     minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#payOrderButtonClicked"
                     prefHeight="50.0" prefWidth="350.0" styleClass="OrangeButtons" text="Pay now"/>
-            <StackPane layoutX="393.0" layoutY="56.0" prefHeight="44.0" prefWidth="515.0">
-                <Label id="informationLabel" fx:id="informationLabel" prefHeight="43.0" prefWidth="472.0"
-                       visible="false"/>
-            </StackPane>
-            <Label id="titleLabel" layoutX="298.0" layoutY="-15.0" prefHeight="52.0" prefWidth="278.0"
+            <Label id="titleLabel" layoutX="296.0" layoutY="-12.0" prefHeight="52.0" prefWidth="278.0"
                    style="-fx-font-size: 45;" text="Order details"/>
+            <Label id="informationLabel" fx:id="informationLabel" layoutX="459.0" layoutY="63.0" prefHeight="43.0"
+                   prefWidth="472.0"/>
         </Pane>
         <Pane fx:id="accountSettingsPane" layoutX="64.0" layoutY="32.0" prefHeight="596.0" prefWidth="992.0"
               visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="14.0"
               AnchorPane.topAnchor="32.0">
             <Pane prefHeight="263.0" prefWidth="920.0">
-                <Label layoutX="25.0" layoutY="80.0" prefHeight="31.0" prefWidth="427.0"
-                       styleClass="AccountDetails" text="Number of all orders (inlcuding canceled) :"/>
-                <Label layoutX="25.0" layoutY="130.0" prefHeight="31.0" prefWidth="435.0"
-                       styleClass="AccountDetails" text="Total value of orders (excluding canceled) :"/>
-                <Label layoutX="365.0" layoutY="230.0" prefHeight="31.0" prefWidth="170.0"
-                       styleClass="AccountDetails" text="Finished orders :"/>
+                <Label layoutX="25.0" layoutY="80.0" prefHeight="31.0" prefWidth="427.0" styleClass="AccountDetails"
+                       text="Number of all orders (including canceled) :"/>
+                <Label layoutX="25.0" layoutY="130.0" prefHeight="31.0" prefWidth="435.0" styleClass="AccountDetails"
+                       text="Total value of orders (excluding canceled) :"/>
+                <Label layoutX="365.0" layoutY="230.0" prefHeight="31.0" prefWidth="170.0" styleClass="AccountDetails"
+                       text="Finished orders :"/>
                 <Label fx:id="noOrdersLabel" layoutX="460.0" layoutY="80.0" prefHeight="30.0" prefWidth="129.0"
                        styleClass="importantDataLabels" text="Label"/>
-                <Label fx:id="valueOfOrdersLabel" layoutX="455.0" layoutY="130.0" prefHeight="30.0"
-                       prefWidth="181.0" styleClass="importantDataLabels" text="Label">
+                <Label fx:id="valueOfOrdersLabel" layoutX="455.0" layoutY="130.0" prefHeight="30.0" prefWidth="181.0"
+                       styleClass="importantDataLabels" text="Label">
                     <font>
                         <Font name="Berlin Sans FB Demi Bold" size="12.0"/>
                     </font>
                 </Label>
-                <Label layoutX="25.0" layoutY="230.0" prefHeight="31.0" prefWidth="170.0"
-                       styleClass="AccountDetails" text="Canceled orders :"/>
-                <Label layoutX="25.0" layoutY="180.0" prefHeight="31.0" prefWidth="198.0"
-                       styleClass="AccountDetails" text="Orders in progress :"/>
+                <Label layoutX="25.0" layoutY="230.0" prefHeight="31.0" prefWidth="170.0" styleClass="AccountDetails"
+                       text="Canceled orders :"/>
+                <Label layoutX="25.0" layoutY="180.0" prefHeight="31.0" prefWidth="198.0" styleClass="AccountDetails"
+                       text="Orders in progress :"/>
                 <Label fx:id="noInProgressOrdersLabel" layoutX="223.0" layoutY="180.0" prefHeight="31.0"
                        prefWidth="147.0" styleClass="importantDataLabels" text="Label">
                     <font>
                         <Font name="Agency FB Bold" size="31.0"/>
                     </font>
                 </Label>
-                <Label fx:id="noFinishedOrdersLabel" layoutX="535.0" layoutY="230.0" prefHeight="31.0"
-                       prefWidth="82.0" styleClass="importantDataLabels" text="Label"/>
-                <Label fx:id="noCanceledOrdersLabel" layoutX="202.0" layoutY="231.0" prefHeight="30.0"
-                       prefWidth="95.0" styleClass="importantDataLabels" text="Label"/>
+                <Label fx:id="noFinishedOrdersLabel" layoutX="535.0" layoutY="230.0" prefHeight="31.0" prefWidth="82.0"
+                       styleClass="importantDataLabels" text="Label"/>
+                <Label fx:id="noCanceledOrdersLabel" layoutX="202.0" layoutY="231.0" prefHeight="30.0" prefWidth="95.0"
+                       styleClass="importantDataLabels" text="Label"/>
                 <Label id="titleLabel" layoutX="21.0" layoutY="14.0" prefHeight="52.0" prefWidth="435.0"
                        style="-fx-font-size: 40;" text="Details of all orders" textFill="WHITE"/>
-                <Label layoutX="365.0" layoutY="180.0" prefHeight="31.0" prefWidth="170.0"
-                       styleClass="AccountDetails" text="Unpaid orders :"/>
-                <Label fx:id="noUnpaidOrdersLabel" layoutX="525.0" layoutY="180.0" prefHeight="31.0"
-                       prefWidth="82.0" styleClass="importantDataLabels" text="Label"/>
+                <Label layoutX="365.0" layoutY="180.0" prefHeight="31.0" prefWidth="170.0" styleClass="AccountDetails"
+                       text="Unpaid orders :"/>
+                <Label fx:id="noUnpaidOrdersLabel" layoutX="525.0" layoutY="180.0" prefHeight="31.0" prefWidth="82.0"
+                       styleClass="importantDataLabels" text="Label"/>
                 <Button layoutX="617.0" layoutY="26.0" mnemonicParsing="false"
                         onAction="#allOrderedProductsButtonClicked" prefHeight="44.0" prefWidth="293.0"
                         styleClass="OrangeButtons" text="All ordered products"/>
             </Pane>
             <Pane layoutX="-5.0" layoutY="288.0" prefHeight="229.0" prefWidth="930.0">
-                <Label layoutX="25.0" layoutY="71.0" prefHeight="30.0" prefWidth="162.0"
-                       styleClass="orderDetailsLabel" text="Account login :"/>
-                <Label layoutX="25.0" layoutY="182.0" prefHeight="11.0" prefWidth="181.0"
-                       styleClass="orderDetailsLabel" text="Last name :"/>
-                <Label layoutX="25.0" layoutY="124.0" prefHeight="11.0" prefWidth="181.0"
-                       styleClass="orderDetailsLabel" text="Name : "/>
+                <Label layoutX="25.0" layoutY="71.0" prefHeight="30.0" prefWidth="162.0" styleClass="orderDetailsLabel"
+                       text="Account login :"/>
+                <Label layoutX="25.0" layoutY="182.0" prefHeight="11.0" prefWidth="181.0" styleClass="orderDetailsLabel"
+                       text="Last name :"/>
+                <Label layoutX="25.0" layoutY="124.0" prefHeight="11.0" prefWidth="181.0" styleClass="orderDetailsLabel"
+                       text="Name : "/>
                 <TextField fx:id="tfLogin" layoutX="206.0" layoutY="76.0" prefHeight="25.0" prefWidth="260.0"/>
                 <TextField fx:id="tfName" layoutX="206.0" layoutY="129.0" prefHeight="25.0" prefWidth="260.0"/>
-                <TextField fx:id="tfLastName" layoutX="206.0" layoutY="187.0" prefHeight="25.0"
-                           prefWidth="260.0"/>
-                <Button layoutX="565.0" layoutY="161.0" mnemonicParsing="false"
-                        onAction="#changePasswordButtonClicked" prefHeight="44.0" prefWidth="303.0"
-                        styleClass="OrangeButtons" text="Change password"/>
-                <Button layoutX="565.0" layoutY="78.0" mnemonicParsing="false"
-                        onAction="#confirmChangesButtonClicked" prefHeight="44.0" prefWidth="303.0"
-                        styleClass="OrangeButtons" text="Confirm changes"/>
+                <TextField fx:id="tfLastName" layoutX="206.0" layoutY="187.0" prefHeight="25.0" prefWidth="260.0"/>
+                <Button layoutX="565.0" layoutY="161.0" mnemonicParsing="false" onAction="#changePasswordButtonClicked"
+                        prefHeight="44.0" prefWidth="303.0" styleClass="OrangeButtons" text="Change password"/>
+                <Button layoutX="565.0" layoutY="78.0" mnemonicParsing="false" onAction="#confirmChangesButtonClicked"
+                        prefHeight="44.0" prefWidth="303.0" styleClass="OrangeButtons" text="Confirm changes"/>
                 <Label fx:id="nameLabel" layoutX="332.0" layoutY="83.0" prefHeight="17.0" prefWidth="121.0"
                        text="Name required" visible="false"/>
                 <Label fx:id="loginLabel" layoutX="332.0" layoutY="30.0" prefHeight="17.0" prefWidth="121.0"
@@ -167,9 +162,8 @@
                 <Label id="titleLabel" layoutX="25.0" layoutY="8.0" prefHeight="44.0" prefWidth="435.0"
                        style="-fx-font-size: 40;" text="Account details" textFill="WHITE"/>
             </Pane>
-            <Button layoutX="732.0" layoutY="548.0" mnemonicParsing="false"
-                    onAction="#deleteAccountButtonClicked" prefHeight="36.0" prefWidth="226.0"
-                    styleClass="DeleteButtons" text="Delete account"/>
+            <Button layoutX="732.0" layoutY="548.0" mnemonicParsing="false" onAction="#deleteAccountButtonClicked"
+                    prefHeight="36.0" prefWidth="226.0" styleClass="DeleteButtons" text="Delete account"/>
         </Pane>
         <Pane fx:id="favouritesPane" prefHeight="548.0" prefWidth="1050.0" visible="false" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -188,9 +182,8 @@
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
-            <Button layoutX="604.0" layoutY="518.0" mnemonicParsing="false"
-                    onAction="#deleteAllFavouritesButtonClicked" prefHeight="51.0" prefWidth="399.0"
-                    styleClass="DeleteButtons" text="Delete all favourties"/>
+            <Button layoutX="604.0" layoutY="518.0" mnemonicParsing="false" onAction="#deleteAllFavouritesButtonClicked"
+                    prefHeight="51.0" prefWidth="399.0" styleClass="DeleteButtons" text="Delete all favorites"/>
             <Button layoutX="80.0" layoutY="518.0" mnemonicParsing="false"
                     onAction="#addAllFavouritesToCartButtonClicked" prefHeight="51.0" prefWidth="399.0"
                     styleClass="OrangeButtons" text="Add all favourites to shopping cart"/>
