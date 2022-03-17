@@ -1,12 +1,14 @@
 package application.Controllers.Client;
 
+import application.Controllers.ButtonInsideTableColumn;
 import application.Controllers.Controller;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
@@ -14,20 +16,22 @@ import javafx.scene.layout.StackPane;
 import users.Client;
 import users.ProductTable;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
-public class ClientSceneController extends Controller {
+public class ClientStartSceneController extends Controller {
 
-    @FXML
-    public static Label cartQuantityLabel;
     private final int cartLabelXPosition = 60;
     private final int cartLabelYPosition = 2;
-    protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
     private final double durationOfNotification = 3000;
     @FXML
-    protected StackPane cartNotification, starNotification, yellowStartNotification;
+    public static Label cartQuantityLabel;
     @FXML
-    private Pane categoryPickingPane, ebooksPane, gamesPane, allProductsPane, ebooksCategoryPane;
+    public static StackPane cartNotification, starNotification, yellowStartNotification;
+    protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
+    @FXML
+    private Pane mainPane, categoryPickingPane;
     @FXML
     private Button goBackButton, shoppingCartButton;
 
@@ -47,42 +51,28 @@ public class ClientSceneController extends Controller {
 
     @FXML
     private void allProductsButtonClicked() {
-        makePaneAndGoBackButtonVisible(allProductsPane);
+        loadPane("allProductsPaneGUI.fxml");
     }
 
     @FXML
     private void gamesButtonClicked() {
-        makePaneAndGoBackButtonVisible(gamesPane);
+        loadPane("allGamesPaneGUI.fxml");
     }
 
     @FXML
     private void ebooksButtonClicked() {
-        makePaneAndGoBackButtonVisible(ebooksCategoryPane);
+        loadPane("ebooksCategoriesGUI.fxml");
     }
 
-    private void hideAllPanes() {
-        ebooksCategoryPane.setVisible(false);
-        gamesPane.setVisible(false);
-        categoryPickingPane.setVisible(false);
-        ebooksPane.setVisible(false);
-        allProductsPane.setVisible(false);
-    }
-
-    private void ifPaneMatchesMakeItVisible(Pane paneA, Pane paneB) {
-        if (paneA.equals(paneB)) paneB.setVisible(true);
-    }
-
-    private void makePaneAndGoBackButtonVisible(Pane pane) {
+    private void loadPane(String fxmlName) {
+        try {
+            mainPane.getChildren().add(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/application/FXML/ClientSceneFXML/ProductsFXML/" + fxmlName))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         goBackButton.setVisible(true);
-        hideAllPanes();
-        ifPaneMatchesMakeItVisible(pane, categoryPickingPane);
-        ifPaneMatchesMakeItVisible(pane, gamesPane);
-        ifPaneMatchesMakeItVisible(pane, ebooksPane);
-        ifPaneMatchesMakeItVisible(pane, allProductsPane);
-        ifPaneMatchesMakeItVisible(pane, ebooksCategoryPane);
-
+        categoryPickingPane.setVisible(false);
     }
-
 
 
     private void createButtons() {
@@ -104,9 +94,14 @@ public class ClientSceneController extends Controller {
     }
 
     private void createGoBackButton() {
-        goBackButton = super.createGoBackButton(event -> makePaneAndGoBackButtonVisible(categoryPickingPane));
-        goBackButton.fire();
-        goBackButton.setVisible(false);
+        goBackButton = super.createGoBackButton(event -> {
+            categoryPickingPane.setVisible(true);
+            mainPane.getChildren().removeAll();
+            mainPane.getChildren().clear();
+            goBackButton.setVisible(false);
+        });
+
+
     }
 
     private void createQuantityLabel() {
@@ -139,7 +134,7 @@ public class ClientSceneController extends Controller {
         yellowStartNotification.setVisible(false);
     }
 
-    protected EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideTableColumn<ProductTable, String> button, StackPane notificationName) {
+    protected EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideProductTableView button, StackPane notificationName) {
         return mouseEvent -> {
             String productName = button.getRowId().getProductName();
 
@@ -177,62 +172,37 @@ public class ClientSceneController extends Controller {
 
     }
 
-    protected ButtonInsideTableColumn<ProductTable, String> createStarButtonInsideTableView() {
-        ButtonInsideTableColumn<ProductTable, String> starButton = new ButtonInsideTableColumn<>("star.png", "add to favourites");
+    protected ButtonInsideProductTableView createStarButtonInsideTableView() {
+        ButtonInsideProductTableView starButton = new ButtonInsideProductTableView("star.png", "add to favourites");
         starButton.setEventHandler(buttonInsideTableViewClicked(starButton, starNotification));
         starButton.setCssClassId("clientTableviewButtons");
 
         return starButton;
     }
 
-    protected ButtonInsideTableColumn<ProductTable, String> createCartButtonInsideTableView() {
-        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("add_cart.png", "add to cart");
+    protected ButtonInsideProductTableView createCartButtonInsideTableView() {
+        ButtonInsideProductTableView button = new ButtonInsideProductTableView("add_cart.png", "add to cart");
         button.setCssClassId("clientTableviewButtons");
         button.setEventHandler(buttonInsideTableViewClicked(button, cartNotification));
         return button;
     }
 
 
-    protected class ButtonInsideTableColumn<T, V> extends TableCell<T, V> {
+    class ButtonInsideProductTableView extends ButtonInsideTableColumn<ProductTable, String> {
 
-        private final Button button;
-        private final String iconName;
-        private EventHandler<MouseEvent> eventHandler;
-        private T rowId;
-        private String cssId;
-        private String cssClassId;
-
-        public void setCssId(String cssId) {
-            this.cssId = cssId;
-        }
-        public void setCssClassId(String classId) {
-            this.cssClassId = classId;
-        }
-        public T getRowId() {
-            return rowId;
-        }
-
-        public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText) {
-            this.iconName = iconNameWithExtension;
-            this.button = new Button();
-            this.button.setText(buttonText);
-            button.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
-        }
-
-
-        public void setEventHandler(EventHandler<MouseEvent> eventHandler) {
-            this.eventHandler = eventHandler;
+        public ButtonInsideProductTableView(String iconNameWithExtension, String buttonText) {
+            super(iconNameWithExtension, buttonText);
         }
 
         @Override
-        protected void updateItem(V item, boolean empty) {
+        protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
             if (empty) {
                 setGraphic(null);
+                setText(null);
             } else {
-
                 button.setOnMouseClicked(eventHandler);
-                button.setGraphic(setImageFromIconsFolder(iconName));
+                button.setGraphic(new ImageView(getClass().getResource("/application/Icons/") + iconName));
                 button.setBackground(Background.EMPTY);
                 button.setId(cssId);
                 button.getStyleClass().add(cssClassId);
@@ -251,8 +221,7 @@ public class ClientSceneController extends Controller {
                 }
             }
         }
+
     }
-
-
 
 }
