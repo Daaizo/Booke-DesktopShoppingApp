@@ -1,5 +1,6 @@
 package application.Controllers.Client;
 
+import application.Controllers.ButtonInsideTableColumn;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -137,8 +138,8 @@ public class ShoppingCartController extends Controller {
     }
 
 
-    private ClientSceneController.ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
-        ClientSceneController.ButtonInsideTableColumn<ProductTable, String> button = new ClientSceneController().new ButtonInsideTableColumn<>("plus.png", "");
+    private ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("plus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
@@ -160,8 +161,8 @@ public class ShoppingCartController extends Controller {
     }
 
 
-    private ClientSceneController.ButtonInsideTableColumn<ProductTable, String> minusButtonClicked() {
-        ClientSceneController.ButtonInsideTableColumn<ProductTable, String> button = new ClientSceneController().new ButtonInsideTableColumn<>("minus.png", "");
+    private ButtonInsideTableColumn<ProductTable, String> minusButtonClicked() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("minus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
@@ -183,8 +184,8 @@ public class ShoppingCartController extends Controller {
         return button;
     }
 
-    private ClientSceneController.ButtonInsideTableColumn<ProductTable, String> deleteButtonClicked() {
-        ClientSceneController.ButtonInsideTableColumn<ProductTable, String> button = new ClientSceneController().new ButtonInsideTableColumn<>("delete.png", "delete from cart");
+    private ButtonInsideTableColumn<ProductTable, String> deleteButtonClicked() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("delete.png", "delete from cart");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {

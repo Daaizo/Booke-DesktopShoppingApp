@@ -1,5 +1,6 @@
-package application.Controllers.Client;
+package application.Controllers.Client.Products;
 
+import application.Controllers.Client.ClientStartSceneController;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,7 +13,7 @@ import users.ProductTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AllProductsTableController extends ClientSceneController {
+public class AllProductsTableController extends ClientStartSceneController {
     @FXML
     private TableColumn<ProductTable, String> allProductsNameColumn, allProductsSubcategoryColumn, allProductsPriceColumn, allProductsCategoryColumn;
     @FXML

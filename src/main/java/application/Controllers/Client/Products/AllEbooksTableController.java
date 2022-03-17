@@ -1,5 +1,6 @@
-package application.Controllers.Client;
+package application.Controllers.Client.Products;
 
+import application.Controllers.Client.ClientStartSceneController;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,7 +13,7 @@ import users.ProductTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class AllEbooksTableController extends ClientSceneController {
+public final class AllEbooksTableController extends ClientStartSceneController {
     @FXML
     private TableColumn<ProductTable, String> ebooksNameColumn, ebooksSubcategoryColumn, ebooksPriceColumn;
     @FXML
@@ -23,6 +24,7 @@ public final class AllEbooksTableController extends ClientSceneController {
     @FXML
     public void initialize() {
         try {
+            ebooksTableView.getItems().clear();
             displayEbooks();
         } catch (SQLException e) {
             e.printStackTrace();

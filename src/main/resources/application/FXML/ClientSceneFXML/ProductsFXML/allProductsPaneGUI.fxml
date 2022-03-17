@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" prefHeight="681.0" prefWidth="1031.0"
             xmlns="http://javafx.com/javafx/17"
-            fx:controller="application.Controllers.Client.AllProductsTableController">
+            fx:controller="application.Controllers.Client.Products.AllProductsTableController">
    <children>
-      <TableView id="ebooksTableView" fx:id="allProductsTableView" layoutX="14.0" layoutY="153.0" prefHeight="537.0"
+      <TableView id="ebooksTableView" fx:id="allProductsTableView" layoutX="14.0" layoutY="90.0" prefHeight="537.0"
                  prefWidth="1004.0">
          <columns>
             <TableColumn id="ebooksNameColumn" fx:id="allProductsNameColumn" editable="false" prefWidth="244.0"
@@ -25,7 +24,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
          </columnResizePolicy>
       </TableView>
-      <Label id="titleLabel" alignment="CENTER" layoutX="301.0" layoutY="70.0" prefHeight="67.0" prefWidth="416.0"
+      <Label id="titleLabel" alignment="CENTER" layoutX="266.0" layoutY="6.0" prefHeight="47.0" prefWidth="500"
              text="ALL PRODUCTS"/>
    </children>
 </AnchorPane>

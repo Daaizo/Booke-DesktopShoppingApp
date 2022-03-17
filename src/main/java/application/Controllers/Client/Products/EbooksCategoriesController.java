@@ -1,4 +1,4 @@
-package application.Controllers.Client;
+package application.Controllers.Client.Products;
 
 import application.Controllers.Controller;
 import javafx.fxml.FXML;

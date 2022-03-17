@@ -16,7 +16,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AdminSceneController extends Controller {
+public class AdminStartSceneController extends Controller {
     @FXML
     private TableColumn<ClientTable, String> userFirstNameColumn, userIDColumn, userLoginColumn, userLastNameColumn, userPasswordColumn;
     @FXML

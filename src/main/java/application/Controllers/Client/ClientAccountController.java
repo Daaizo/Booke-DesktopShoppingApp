@@ -1,5 +1,6 @@
 package application.Controllers.Client;
 
+import application.Controllers.ButtonInsideTableColumn;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,31 +31,29 @@ import java.util.regex.Pattern;
 public class ClientAccountController extends Controller {
 
     private final Lighting lighting = new Lighting();
-    private final Client currentUser = new Client(CURRENT_USER_LOGIN);
+    protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
     private HashMap<String, String> orderStatusHashMap = new HashMap<>();
     @FXML
     private Pane ordersPane, favouritesPane, detailsPane, accountSettingsPane;
     @FXML
-    private TableColumn<OrderTable, String> ordersDateColumn, ordersDeliveryDateColumn, ordersPaymentColumn, ordersStatusColumn, ordersIdColumn, ordersButtonColumn, orderDetailsProductColumn, orderDetailsTotalValueColumn, orderDetailsValueColumn;
-    @FXML
-    private TableColumn<OrderTable, Double> ordersTotalValueColumn;
+    public Label emptyTableViewLabel;
+
     @FXML
     private TableColumn<OrderTable, Integer> orderDetailsQuantityColumn;
     @FXML
-    private TableView<OrderTable> ordersTableView, orderDetailsTableView;
-    @FXML
-    private TableColumn<ProductTable, String> favouritesNameColumn, favouritesPriceColumn, favouritesSubcategoryColumn, favouritesButtonColumn;
+    private TableColumn<OrderTable, String> orderDetailsProductColumn, orderDetailsTotalValueColumn, orderDetailsValueColumn;
+
     @FXML
     private TextField tfLogin, tfName, tfLastName;
     @FXML
-    private TableView<ProductTable> favouritesTableView;
-    @FXML
-    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, emptyTableViewLabel, nameLabel, loginLabel,
-            lastNameLabel, noOrdersLabel, valueOfOrdersLabel, noCanceledOrdersLabel, noInProgressOrdersLabel, noUnpaidOrdersLabel, noFinishedOrdersLabel;
+    private TableView<OrderTable> orderDetailsTableView;
     @FXML
     private Button ordersButton, accountSettingsButton, favouritesButton, payOrderButton, changePaymentMethodButton, cancelOrderButton;
-
+    @FXML
+    private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel, nameLabel, loginLabel,
+            lastNameLabel, noOrdersLabel, valueOfOrdersLabel, noCanceledOrdersLabel, noInProgressOrdersLabel, noUnpaidOrdersLabel, noFinishedOrdersLabel;
     //TODO database DIAGRAMS update needed !
+
     @FXML
     public void initialize() {
         prepareScene();
@@ -70,14 +69,12 @@ public class ClientAccountController extends Controller {
     @FXML
     void ordersButtonClicked() {
         makePaneVisible(ordersPane);
-        displayOrders();
         setButtonLightingEffect(ordersButton);
     }
 
     @FXML
     void favouritesButtonClicked() {
         makePaneVisible(favouritesPane);
-        displayFavourites();
         setButtonLightingEffect(favouritesButton);
     }
 
@@ -149,35 +146,8 @@ public class ClientAccountController extends Controller {
         setAccountDetailsLabels();
     }
 
-    @FXML
-    void addAllFavouritesToCartButtonClicked() {
-        ObservableList<ProductTable> list = favouritesTableView.getItems();
-        for (ProductTable product : list) {
-            try {
-                currentUser.addItemToUsersCart(product.getProductName(), getConnection());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        showNotification(createNotification(new Label("Items successfully added to cart")), 2500);
-        anchor.requestFocus();
-    }
 
-    @FXML
-    void deleteAllFavouritesButtonClicked() {
-        ObservableList<ProductTable> list = favouritesTableView.getItems();
-        for (ProductTable product : list) {
-            try {
-                currentUser.deleteItemFromUsersFavourite(product.getProductName(), getConnection());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        showNotification(createNotification(new Label("Items successfully deleted")), 2500);
-        displayFavourites();
-        anchor.requestFocus();
 
-    }
 
     private void setAccountDetailsLabels() {
         tfLogin.setText(currentUser.getLogin());
@@ -458,17 +428,7 @@ public class ClientAccountController extends Controller {
             case "In progress" -> cancelOrderButton.setDisable(false);
         }
     }
-    private void fillOrdersColumnsWithData(ObservableList<OrderTable> list) {
-        ordersIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderNumber"));
-        ordersButtonColumn.setCellFactory(orderTableStringTableColumn -> orderIdButton());
-        ordersDateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
-        ordersDeliveryDateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDeliveryDate"));
-        ordersTotalValueColumn.setCellValueFactory(new PropertyValueFactory<>("orderTotalValue"));
-        ordersStatusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatusName"));
-        ordersPaymentColumn.setCellValueFactory(new PropertyValueFactory<>("orderPaymentMethodName"));
-        ordersTableView.setItems(list);
-        showOnlyRowsWithData(ordersTableView);
-    }
+
 
     private void fillOrderDetailColumnsWithData(ObservableList<OrderTable> list) {
         orderDetailsProductColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
@@ -480,10 +440,10 @@ public class ClientAccountController extends Controller {
         orderDetailsTableView.setMaxHeight(250);
     }
 
-
-    private ClientSceneController.ButtonInsideTableColumn<OrderTable, String> orderIdButton() {
-        ClientSceneController.ButtonInsideTableColumn<OrderTable, String> button = new ClientSceneController().new ButtonInsideTableColumn<>("", "details");
+    private ButtonInsideTableColumn<OrderTable, String> createOrderIdButton() {
+        ButtonInsideTableColumn<OrderTable, String> button = new ButtonInsideTableColumn<>("", "details");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
+            //order id pane on
             makePaneVisible(detailsPane);
             displayOrderDetails(button.getRowId().getOrderNumber());
             fillOrderDetailLabels(button);
@@ -509,7 +469,7 @@ public class ClientAccountController extends Controller {
         }
     }
 
-    private void fillOrderDetailLabels(ClientSceneController.ButtonInsideTableColumn<OrderTable, String> button) {
+    private void fillOrderDetailLabels(ButtonInsideTableColumn<OrderTable, String> button) {
         orderIdLabel.setText(button.getRowId().getOrderNumber() + "");
         totalValueLabel.setText(button.getRowId().getOrderTotalValue() + "");
         paymentMethodLabel.setText(button.getRowId().getOrderPaymentMethodName());
@@ -523,78 +483,9 @@ public class ClientAccountController extends Controller {
         paymentMethodLabel.setDisable(disable);
     }
 
-    private void displayOrders() {
-        checkConnectionWithDb();
-        Order order = new Order(currentUser.getLogin());
-        try {
-            ResultSet orders = order.getOrdersFromCustomer(getConnection());
-            ObservableList<OrderTable> listOfOrders = OrderTable.getOrders(orders);
-            if (listOfOrders.isEmpty()) {
-                displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
-                ordersPane.setVisible(false);
-            } else {
-                ordersPane.setVisible(true);
-                emptyTableViewLabel.setVisible(false);
-                fillOrdersColumnsWithData(listOfOrders);
 
-            }
-            ordersTableView.setMaxHeight(530);
-            orders.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void fillFavouritesColumns(ObservableList<ProductTable> listOfOrders) {
-        favouritesNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        favouritesPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
-        favouritesSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-        favouritesButtonColumn.setCellFactory(cell -> createDeleteFromFavouritesButton());
-        favouritesTableView.setItems(listOfOrders);
-    }
 
-    private ClientSceneController.ButtonInsideTableColumn<ProductTable, String> createDeleteFromFavouritesButton() {
-        ClientSceneController.ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ClientSceneController().new ButtonInsideTableColumn<>("delete.png", "delete from favourites");
-        deleteFromFavouritesButton.setEventHandler(mouseEvent -> {
-            String productName = deleteFromFavouritesButton.getRowId().getProductName();
-            Optional<ButtonType> result = deleteProductAlert(productName, "1", "favourites");
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    currentUser.deleteItemFromUsersFavourite(productName, getConnection());
-                    showNotification(createNotification(new Label("Item removed from favourites")), 2500);
-                    displayFavourites();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        deleteFromFavouritesButton.setCssClassId("clientTableviewButtons");
-
-        return deleteFromFavouritesButton;
-    }
-
-    private void displayFavourites() {
-        checkConnectionWithDb();
-        try {
-            ResultSet favourites = currentUser.getFavouriteProducts(getConnection());
-            ObservableList<ProductTable> listOfFavourites = ProductTable.getProductsBasicInfo(favourites);
-            if (listOfFavourites.isEmpty()) {
-                displayLabelWithGivenText(emptyTableViewLabel, "List of favourites is empty");
-                favouritesPane.setVisible(false);
-
-            } else {
-                fillFavouritesColumns(listOfFavourites);
-                emptyTableViewLabel.setVisible(false);
-                favouritesPane.setVisible(true);
-                favouritesPane.setVisible(true);
-                showOnlyRowsWithData(favouritesTableView);
-                favouritesTableView.setMaxHeight(365);
-            }
-            favourites.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private void changeOrderStatusAndDisplayProperButtons(String status) {

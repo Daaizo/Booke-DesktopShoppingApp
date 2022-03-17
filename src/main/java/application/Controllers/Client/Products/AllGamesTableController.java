@@ -1,5 +1,6 @@
-package application.Controllers.Client;
+package application.Controllers.Client.Products;
 
+import application.Controllers.Client.ClientStartSceneController;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,10 +10,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import users.Product;
 import users.ProductTable;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AllGamesTableController extends ClientSceneController {
+public class AllGamesTableController extends ClientStartSceneController {
     @FXML
     private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, gamesPriceColumn;
     @FXML
@@ -21,15 +23,13 @@ public class AllGamesTableController extends ClientSceneController {
     private TableView<ProductTable> gamesTableView;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         try {
             displayGames();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         setSoringTypeToColumns(gamesPriceColumn, gamesCartButtonColumn, gamesStarButtonColumn);
-
     }
 
     private void fillGamesColumnsWithData(ObservableList<ProductTable> list) {
@@ -43,7 +43,8 @@ public class AllGamesTableController extends ClientSceneController {
         showOnlyRowsWithData(gamesTableView);
     }
 
-    void displayGames() throws SQLException {
+    void displayGames() throws SQLException, IOException {
+
         checkConnectionWithDb();
         ResultSet products = Product.getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), Controller.CURRENT_USER_LOGIN, "games");
         assert products != null;
