@@ -1,4 +1,4 @@
-package application.Controllers.Client;
+package application.Controllers.Client.Account;
 
 import application.Controllers.ButtonInsideTableColumn;
 import application.Controllers.Controller;

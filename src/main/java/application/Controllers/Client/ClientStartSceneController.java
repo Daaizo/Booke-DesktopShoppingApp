@@ -46,6 +46,7 @@ public class ClientStartSceneController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        goBackButton.setVisible(false);
     }
 
 

@@ -44,8 +44,8 @@ public abstract class Controller {
     public final String registrationScene = "/application/FXML/registerGUI.fxml";
     public final String adminScene = "/application/FXML/AdminSceneFXML/adminStartingSceneGUI.fxml";
     public final String clientScene = "/application/FXML/ClientSceneFXML/clientStartingSceneGUI.fxml";
-    public final String shoppingCartScene = "/application/FXML/ClientSceneFXML/shoppingCartGUI.fxml";
-    public final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountGUI.fxml";
+    public final String shoppingCartScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/shoppingCartGUI.fxml";
+    public final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountStartSceneGUI.fxml";
     public final URL iconsUrl = getClass().getResource("/application/Icons/");
     public final URL cssUrl = getClass().getResource("/application/style.css");
     private SqlConnection instance;

@@ -1,7 +1,6 @@
-package application.Controllers.Client.AccountDetails;
+package application.Controllers.Client.Account;
 
 import application.Controllers.ButtonInsideTableColumn;
-import application.Controllers.Client.ClientAccountController;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -16,13 +15,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public class ClientFavourites extends ClientAccountController {
+public class ClientFavourites extends ClientAccountStartSceneController {
     @FXML
     private Pane favouritesPane;
     @FXML
     private TableView<ProductTable> favouritesTableView;
     @FXML
     private TableColumn<ProductTable, String> favouritesNameColumn, favouritesPriceColumn, favouritesSubcategoryColumn, favouritesButtonColumn;
+
+
+    @FXML
+    private void initialize() {
+        try {
+            displayFavourites();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        anchor.getChildren().add(emptyTableViewLabel);
+        emptyTableViewLabel.setLayoutX(200);
+        emptyTableViewLabel.setLayoutY(200);
+    }
 
     @FXML
     void addAllFavouritesToCartButtonClicked() {
@@ -35,11 +47,11 @@ public class ClientFavourites extends ClientAccountController {
             }
         }
         showNotification(createNotification(new Label("Items successfully added to cart")), 2500);
-        anchor.requestFocus();
+        favouritesPane.requestFocus();
     }
 
     @FXML
-    void deleteAllFavouritesButtonClicked() {
+    void deleteAllFavouritesButtonClicked() throws SQLException {
         ObservableList<ProductTable> list = favouritesTableView.getItems();
         for (ProductTable product : list) {
             try {
@@ -50,31 +62,28 @@ public class ClientFavourites extends ClientAccountController {
         }
         showNotification(createNotification(new Label("Items successfully deleted")), 2500);
         displayFavourites();
-        anchor.requestFocus();
+        favouritesPane.requestFocus();
 
     }
 
-    private void displayFavourites() {
+    private void displayFavourites() throws SQLException {
         checkConnectionWithDb();
-        try {
-            ResultSet favourites = currentUser.getFavouriteProducts(getConnection());
-            ObservableList<ProductTable> listOfFavourites = ProductTable.getProductsBasicInfo(favourites);
-            if (listOfFavourites.isEmpty()) {
-                displayLabelWithGivenText(emptyTableViewLabel, "List of favourites is empty");
-                favouritesPane.setVisible(false);
+        ResultSet favourites = currentUser.getFavouriteProducts(getConnection());
+        ObservableList<ProductTable> listOfFavourites = ProductTable.getProductsBasicInfo(favourites);
+        if (listOfFavourites.isEmpty()) {
+            displayLabelWithGivenText(emptyTableViewLabel, "List of favourites is empty");
+            favouritesPane.setVisible(false);
 
-            } else {
-                fillFavouritesColumns(listOfFavourites);
-                emptyTableViewLabel.setVisible(false);
+        } else {
+            fillFavouritesColumns(listOfFavourites);
+            emptyTableViewLabel.setVisible(false);
                 favouritesPane.setVisible(true);
                 favouritesPane.setVisible(true);
                 showOnlyRowsWithData(favouritesTableView);
                 favouritesTableView.setMaxHeight(365);
             }
             favourites.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
     }
 
     private void fillFavouritesColumns(ObservableList<ProductTable> listOfOrders) {
