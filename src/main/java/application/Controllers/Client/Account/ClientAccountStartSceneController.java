@@ -2,7 +2,6 @@ package application.Controllers.Client.Account;
 
 import application.Controllers.Controller;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
@@ -11,40 +10,48 @@ import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import users.Client;
 
-import java.io.IOException;
 import java.util.Objects;
-
 
 public class ClientAccountStartSceneController extends Controller {
 
     private final Lighting lighting = new Lighting();
-    protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
-
     @FXML
-    public static Label emptyTableViewLabel;
+    public static StackPane notification;
+
+    protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
+    @FXML
+    public static Label notificationLabel;
+
     @FXML
     private Pane menuPane, mainPane, startPane;
     @FXML
     private Button ordersButton, accountSettingsButton, favouritesButton;
+    @FXML
+    public static Button goBackButton;
+    @FXML
+    public static Label emptyTableViewLabel;
+    protected final String pathToFxml = "/ClientSceneFXML/ClientAccountFXML/";
+    private final double durationOfNotification = 2500;
 
     //TODO database DIAGRAMS update needed !
 
     @FXML
     private void initialize() {
         prepareScene();
-        createGoBackButton(event -> {
+        goBackButton = createGoBackButton(event -> {
             switchScene(event, clientScene);
-            mainPane.getChildren().removeAll();
-            mainPane.getChildren().clear();
+            clearPane(mainPane);
         });
         createLightingEffect();
         createEmptyTableViewLabel();
-
+        notificationLabel = new Label();
+        notification = createNotification(notificationLabel);
     }
 
 
@@ -66,14 +73,9 @@ public class ClientAccountStartSceneController extends Controller {
         setButtonLightingEffect(accountSettingsButton);
     }
 
+
     private void loadScene(String fxmlName) {
-        try {
-            mainPane.getChildren().removeAll();
-            mainPane.getChildren().clear();
-            mainPane.getChildren().add(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/" + fxmlName))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        loadFXMLAndInitializeController(pathToFxml + fxmlName, mainPane);
         menuPane.setVisible(true);
         startPane.setVisible(false);
     }
@@ -90,10 +92,7 @@ public class ClientAccountStartSceneController extends Controller {
         emptyTableViewLabel.setVisible(false);
         emptyTableViewLabel.setAlignment(Pos.CENTER);
         emptyTableViewLabel.setTextAlignment(TextAlignment.CENTER);
-
-
     }
-
 
     private void setButtonLightingEffect(Button button) {
         ordersButton.setEffect(null);
@@ -104,8 +103,19 @@ public class ClientAccountStartSceneController extends Controller {
         else if (button == accountSettingsButton) accountSettingsButton.setEffect(lighting);
     }
 
-    private void makePaneVisible(Pane pane) {
+    protected void showNotification(String text) {
+        notificationLabel.setText(text);
+        super.showNotification(notification, durationOfNotification);
+    }
+
+    protected void makePaneVisible(Pane pane) {
+        pane.setVisible(true);
         emptyTableViewLabel.setVisible(false);
+    }
+
+    protected void makeLabelVisible(Pane pane) {
+        pane.setVisible(false);
+        emptyTableViewLabel.setVisible(true);
     }
 
     protected void setLogoAndCssToCustomDialog(Dialog<?> dialog) {

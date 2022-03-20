@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.Pane?>
-<Pane xmlns:fx="http://javafx.com/fxml/1" fx:id="detailsPane" prefHeight="642.0" prefWidth="984.0"
-      xmlns="http://javafx.com/javafx/17" fx:controller="application.Controllers.Client.Account.ClientOrderDetails">
-   <children>
-      <TableView fx:id="orderDetailsTableView" layoutX="73.0" layoutY="187.0" prefHeight="243.0" prefWidth="790.0">
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" xmlns="http://javafx.com/javafx/17">
+   <Pane fx:id="detailsPane" layoutX="7.0" layoutY="24.0" prefHeight="666.0" prefWidth="991.0"
+         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+         AnchorPane.topAnchor="0.0">
+      <TableView fx:id="orderDetailsTableView" layoutX="114.0" layoutY="226.0" prefHeight="243.0"
+                 prefWidth="790.0">
          <columns>
             <TableColumn fx:id="orderDetailsProductColumn" prefWidth="270.0" resizable="false" text="Product "/>
             <TableColumn fx:id="orderDetailsValueColumn" minWidth="0.0" prefWidth="164.0" resizable="false"
                          text="Cost"/>
             <TableColumn fx:id="orderDetailsQuantityColumn" minWidth="0.0" prefWidth="152.0" resizable="false"
                          text="Quantity"/>
-            <TableColumn fx:id="orderDetailsTotalValueColumn" prefWidth="203.0" resizable="false" text="Total value"/>
+            <TableColumn fx:id="orderDetailsTotalValueColumn" prefWidth="203.0" resizable="false"
+                         text="Total value"/>
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
          </columnResizePolicy>
       </TableView>
-      <Button fx:id="changePaymentMethodButton" layoutX="519.0" layoutY="460.0" maxHeight="-Infinity"
+      <Button fx:id="changePaymentMethodButton" layoutX="587.0" layoutY="493.0" maxHeight="-Infinity"
               maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-              onAction="#changePaymentMethodButtonClicked" prefHeight="50.0" prefWidth="350.0"
-              styleClass="OrangeButtons" text="Change Payment method"/>
-      <Label layoutX="467.0" layoutY="51.0" prefHeight="65.0" prefWidth="170.0" styleClass="orderDetailsLabel"
+              prefHeight="50.0" prefWidth="350.0" styleClass="OrangeButtons" text="Change Payment method"/>
+      <Label layoutX="508.0" layoutY="101.0" prefHeight="65.0" prefWidth="190.0" styleClass="orderDetailsLabel"
              text="Payment method :"/>
-      <Label layoutX="73.0" layoutY="113.0" prefHeight="74.0" prefWidth="181.0" styleClass="orderDetailsLabel"
+      <Label layoutX="114.0" layoutY="152.0" prefHeight="74.0" prefWidth="181.0" styleClass="orderDetailsLabel"
              text="Total order value :"/>
-      <Label layoutX="73.0" layoutY="62.0" prefHeight="65.0" prefWidth="95.0" styleClass="orderDetailsLabel"
+      <Label layoutX="114.0" layoutY="101.0" prefHeight="65.0" prefWidth="95.0" styleClass="orderDetailsLabel"
              text="Order id : "/>
-      <Label layoutX="467.0" layoutY="101.0" prefHeight="65.0" prefWidth="137.0" styleClass="orderDetailsLabel"
+      <Label layoutX="508.0" layoutY="157.0" prefHeight="65.0" prefWidth="137.0" styleClass="orderDetailsLabel"
              text="Order status :"/>
-      <Label fx:id="orderIdLabel" layoutX="174.0" layoutY="62.0" prefHeight="65.0" prefWidth="88.0"
+      <Label fx:id="orderIdLabel" layoutX="212.0" layoutY="102.0" prefHeight="65.0" prefWidth="88.0"
              styleClass="importantDataLabels"/>
-      <Label fx:id="totalValueLabel" layoutX="254.0" layoutY="113.0" prefHeight="74.0" prefWidth="198.0"
+      <Label fx:id="totalValueLabel" layoutX="295.0" layoutY="152.0" prefHeight="74.0" prefWidth="198.0"
              styleClass="importantDataLabels"/>
-      <Label fx:id="orderStatusLabel" layoutX="613.0" layoutY="101.0" prefHeight="65.0" prefWidth="293.0"
+      <Label fx:id="orderStatusLabel" layoutX="645.0" layoutY="157.0" prefHeight="65.0" prefWidth="293.0"
              styleClass="importantDataLabels"/>
-      <Label fx:id="paymentMethodLabel" layoutX="637.0" layoutY="51.0" prefHeight="65.0" prefWidth="226.0"
+      <Label fx:id="paymentMethodLabel" layoutX="690.0" layoutY="101.0" prefHeight="65.0" prefWidth="220.0"
              styleClass="importantDataLabels"/>
-      <Button fx:id="cancelOrderButton" layoutX="694.0" layoutY="545.0" mnemonicParsing="false"
-              onAction="#cancelOrderButtonClicked" prefHeight="31.0" prefWidth="270.0" styleClass="DeleteButtons"
-              text="Cancel order"/>
-      <Button fx:id="payOrderButton" layoutX="5.0" layoutY="460.0" maxHeight="-Infinity" maxWidth="-Infinity"
-              minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#payOrderButtonClicked"
-              prefHeight="50.0" prefWidth="350.0" styleClass="OrangeButtons" text="Pay now"/>
-      <Label id="titleLabel" layoutX="296.0" layoutY="-12.0" prefHeight="52.0" prefWidth="278.0"
+      <Button fx:id="cancelOrderButton" layoutX="674.0" layoutY="564.0" mnemonicParsing="false" prefHeight="31.0"
+              prefWidth="270.0" styleClass="DeleteButtons" text="Cancel order"/>
+      <Button fx:id="payOrderButton" layoutX="74.0" layoutY="493.0" maxHeight="-Infinity" maxWidth="-Infinity"
+              minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0"
+              prefWidth="350.0" styleClass="OrangeButtons" text="Pay now"/>
+      <Label id="titleLabel" layoutX="357.0" layoutY="25.0" prefHeight="52.0" prefWidth="278.0"
              style="-fx-font-size: 45;" text="Order details"/>
-      <Label id="informationLabel" fx:id="informationLabel" layoutX="459.0" layoutY="63.0" prefHeight="43.0"
+      <Label id="informationLabel" fx:id="informationLabel" layoutX="508.0" layoutY="112.0" prefHeight="43.0"
              prefWidth="472.0"/>
-   </children>
-</Pane>
+   </Pane>
+</AnchorPane>

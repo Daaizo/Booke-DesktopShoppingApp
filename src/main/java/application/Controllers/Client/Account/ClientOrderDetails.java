@@ -1,11 +1,13 @@
 package application.Controllers.Client.Account;
 
-import application.Controllers.ButtonInsideTableColumn;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import users.Order;
 import users.OrderTable;
 import users.Product;
@@ -15,7 +17,10 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class ClientOrderDetails extends ClientAccountStartSceneController {
-    private final HashMap<String, String> orderStatusHashMap = new HashMap<>();
+    private final HashMap<String, String> orderStatusHashMap = createHashMapWithOrderStatuses();
+
+    @FXML
+    private Pane detailsPane, allOrdersPane;
     @FXML
     private Label orderIdLabel, totalValueLabel, paymentMethodLabel, orderStatusLabel, informationLabel;
     @FXML
@@ -26,43 +31,82 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     private TableView<OrderTable> orderDetailsTableView;
     @FXML
     private Button payOrderButton, changePaymentMethodButton, cancelOrderButton;
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------
+    //all fields are assigned in FXML but controller is set on run time
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    @FXML
-    private void initialize() {
+    private OrderTable rowId;
 
+    public void setSpecificRowId(OrderTable rowId) {
+        this.rowId = rowId;
+    }
+
+    public void setAllOrdersPane(Pane pane) {
+        this.allOrdersPane = pane;
+    }
+
+    public void initialize() {
+        detailsPane.requestFocus();
+        setButtons();
+        displayOrderDetails(rowId.getOrderNumber());
+        fillOrderDetailLabels(rowId);
+        makeProperButtonsVisible(orderStatusLabel.getText());
+        createInformationImageAndAttachItToLabel();
+        setInformationAboutOrderStatus(orderStatusHashMap);
 
     }
 
+    private void changeGoBuckButtonAction() {
+        EventHandler<ActionEvent> oldEvent = goBackButton.getOnAction();
+        goBackButton.setOnAction(event -> {
+            detailsPane.getChildren().clear();
+            loadFXMLAndInitializeController(pathToFxml + "clientOrdersGUI.fxml", allOrdersPane);
+            allOrdersPane.setVisible(true);
+            goBackButton.setOnAction(oldEvent);
+        });
 
-    @FXML
-    void payOrderButtonClicked() {
-        changeOrderStatusAndDisplayProperButtons("In progress");
-        showNotification(createNotification(new Label("order successfully paid")), 4000);
     }
 
-    @FXML
-    void cancelOrderButtonClicked() {
-        Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "Canceling", "Are you sure about canceling the order ?");
-        if (buttonClicked.isPresent() && buttonClicked.get() == ButtonType.OK) {
-            changeOrderStatusAndDisplayProperButtons("Canceled");
-            setDisableToAllLabels(true);
-        }
-        anchor.requestFocus();
+    private void setButtons() {
+        setCancelOrderButtonAction();
+        setPayOrderButtonAction();
+        setChangePaymentMethodButtonAction();
+        changeGoBuckButtonAction();
+
     }
 
-    @FXML
-    void changePaymentMethodButtonClicked() {
-        try {
-            Optional<String> buttonInsideAlertText = setAvailablePaymentMethodsToAlert(paymentMethodLabel.getText());
-            if (buttonInsideAlertText.isPresent() && !buttonInsideAlertText.get().equals(ButtonType.CANCEL.getText())) {
-                buttonInsideAlertText.ifPresent(this::changePaymentMethod);
-                showNotification(createNotification(new Label("payment method changed")), 4000);
+    private void setPayOrderButtonAction() {
+        payOrderButton.setOnAction(event -> {
+            changeOrderStatusAndDisplayProperButtons("In progress");
+            showNotification("order successfully paid");
+        });
+
+    }
+
+    private void setCancelOrderButtonAction() {
+        cancelOrderButton.setOnAction(event -> {
+            Optional<ButtonType> buttonClicked = createAndShowAlert(Alert.AlertType.CONFIRMATION, "", "Canceling", "Are you sure about canceling the order ?");
+            if (buttonClicked.isPresent() && buttonClicked.get() == ButtonType.OK) {
+                changeOrderStatusAndDisplayProperButtons("Canceled");
+                setDisableToAllLabels(true);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        anchor.requestFocus();
+            anchor.requestFocus();
+        });
+    }
 
+    private void setChangePaymentMethodButtonAction() {
+        changePaymentMethodButton.setOnAction(event -> {
+            try {
+                Optional<String> buttonInsideAlertText = setAvailablePaymentMethodsToAlert(paymentMethodLabel.getText());
+                if (buttonInsideAlertText.isPresent() && !buttonInsideAlertText.get().equals(ButtonType.CANCEL.getText())) {
+                    buttonInsideAlertText.ifPresent(this::changePaymentMethod);
+                    showNotification("payment method changed");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            anchor.requestFocus();
+        });
     }
 
     private void makeProperButtonsVisible(String orderStatus) {
@@ -87,7 +131,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         orderDetailsValueColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         orderDetailsTableView.setItems(list);
         showOnlyRowsWithData(orderDetailsTableView);
-        orderDetailsTableView.setMaxHeight(250);
+        orderDetailsTableView.setMaxHeight(230);
     }
 
     private Optional<String> setAvailablePaymentMethodsToAlert(String paymentMethod) throws SQLException {
@@ -120,11 +164,11 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         }
     }
 
-    private void fillOrderDetailLabels(ButtonInsideTableColumn<OrderTable, String> button) {
-        orderIdLabel.setText(button.getRowId().getOrderNumber() + "");
-        totalValueLabel.setText(button.getRowId().getOrderTotalValue() + "");
-        paymentMethodLabel.setText(button.getRowId().getOrderPaymentMethodName());
-        orderStatusLabel.setText(button.getRowId().getOrderStatusName());
+    private void fillOrderDetailLabels(OrderTable rowId) {
+        orderIdLabel.setText(rowId.getOrderNumber() + "");
+        totalValueLabel.setText(rowId.getOrderTotalValue() + "");
+        paymentMethodLabel.setText(rowId.getOrderPaymentMethodName());
+        orderStatusLabel.setText(rowId.getOrderStatusName());
         setDisableToAllLabels(orderStatusLabel.getText().equals("Canceled"));
     }
 
