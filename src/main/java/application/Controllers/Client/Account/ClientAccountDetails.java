@@ -68,7 +68,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
             if (!isAndFieldEmpty()) {
                 try {
                     if (updateChangesInDatabase()) {
-                        showNotification(createNotification(new Label("Data successfully changed")), 3000);
+                        showNotification("Data successfully changed");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -90,7 +90,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
                     if (Pattern.matches(PASSWORDS_REGEX, newPassword)) {
                         try {
                             currentUser.updateClientPassword(getConnection(), newPassword);
-                            showNotification(createNotification(new Label("Password changed")), 3000);
+                            showNotification("Password changed");
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
