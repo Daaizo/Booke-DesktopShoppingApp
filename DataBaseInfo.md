@@ -1,11 +1,12 @@
-database made in Oracle SQL developer. Used through Oracle Sql Developer as local database.
+database made in Oracle SQL developer. Used with Oracle local server.
 
 entity-relationship diagram – ERD
-![image](https://user-images.githubusercontent.com/84875747/153762977-1471fd93-2e45-4bc1-b1b6-4cb160b9178c.png)
+![image](https://user-images.githubusercontent.com/84875747/159306732-acc3b33d-9f51-4a5e-94e1-2aaf892c316a.png)
 
 
 Relational model
+![image](https://user-images.githubusercontent.com/84875747/159305512-baec01bc-53e0-4540-ba61-279801a83d97.png)
 
-![image](https://user-images.githubusercontent.com/84875747/153762942-d15c6f8e-4e37-4ee3-96a4-f46b991adfaa.png)
+
 
 
