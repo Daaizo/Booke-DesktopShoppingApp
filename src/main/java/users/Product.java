@@ -84,30 +84,31 @@ public class Product {
                 from product p
                                     inner join subcategory sc on sc.subcategorykey = p.subcategorykey
                                     inner join category c on c.categorykey = sc.categorykey
-                                    full join favourites f on f.productkey = p.productkey
-                order by 2
+                                    left join favourites f on f.productkey = p.productkey and f.customerkey = (select customerkey from customer where customerlogin  = ?)
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);
+        preparedStatement.setString(2, currentUserLogin);
         return preparedStatement.executeQuery();
     }
 
     public static ResultSet getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin, String categoryName) throws SQLException {
         String sql = """
                 select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory",
-                                case
-                                    when (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
-                                    else 'no'
-                                end as "is favourite"
-                from product p
-                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
-                    inner join category c on c.categorykey = sc.categorykey
-                    full join favourites f on f.productkey = p.productkey
-                    where c.categoryname = ?
+                                                case
+                                                    when  (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
+                                                    else 'no'
+                                                end as "is favourite"
+                                from product p
+                                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                                    inner join category c on c.categorykey = sc.categorykey
+                                    full join favourites f on f.productkey = p.productkey and f.customerkey = (select customerkey from customer where customerlogin  = ?)
+                                    where c.categoryname = ?
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);
-        preparedStatement.setString(2, categoryName);
+        preparedStatement.setString(2, currentUserLogin);
+        preparedStatement.setString(3, categoryName);
         return preparedStatement.executeQuery();
     }
 
@@ -148,21 +149,16 @@ public class Product {
 
     public static ResultSet getProductFromCartAndSetValueBasedOnQuantity(Connection connection, String currentUsername) {
         try {
-            String query = "select p.productname, p.catalogprice || ? \"PRICE\" ,sc.quantity, sum(p.catalogprice * sc.quantity) ||  ? \"TOTAL\" from shoppingcart  sc\n" +
-                    "inner join customer c on c.customerkey = sc.customerkey\n" +
-                    "inner join product p on p.productkey = sc.productkey\n" +
-                    "where sc.customerkey = \n" +
-                    "                        (\n" +
-                    "                        select customerkey from customer \n" +
-                    "                        where customerlogin = '" + currentUsername + "'\n" +
-                    "                        )\n" +
-                    "group by  p.productname, p.catalogprice ,sc.quantity";
-
-
+            String query = """
+                    select p.productname, p.catalogprice   ,sc.quantity, sum(p.catalogprice * sc.quantity) from shoppingcart  sc
+                            inner join customer c on c.customerkey = sc.customerkey
+                            inner join product p on p.productkey = sc.productkey
+                            where sc.customerkey =
+                                                    (    select customerkey from customer     where customerlogin = ?  )
+                            group by  p.productname, p.catalogprice ,sc.quantity
+                    """;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, Controller.CURRENCY);
-            preparedStatement.setString(2, Controller.CURRENCY);
-
+            preparedStatement.setString(1, currentUsername);
             return preparedStatement.executeQuery();
         } catch (SQLException e) {
             System.out.println("error with executing SQL query");

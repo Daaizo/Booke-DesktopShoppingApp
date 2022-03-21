@@ -156,8 +156,8 @@
             </font>
         </Label>
         <Button id="loginHereButton" alignment="BASELINE_LEFT" layoutX="885.0" layoutY="49.0" mnemonicParsing="false"
-                onAction="#goBackButtonClicked" prefHeight="27.0" prefWidth="121.0"
-                style="-fx-background-color: transparent;" text="Login here" textFill="#fc766a" underline="true">
+                onAction="#goBackButtonClicked" prefHeight="27.0" prefWidth="121.0" text="Login here" textFill="#fc766a"
+                underline="true">
             <font>
                 <Font size="18.0"/>
             </font>

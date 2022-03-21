@@ -1,5 +1,6 @@
-package application.Controllers;
+package application.Controllers.Admin;
 
+import application.Controllers.Controller;
 import application.Main;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AdminController extends Controller {
+public class AdminStartSceneController extends Controller {
     @FXML
     private TableColumn<ClientTable, String> userFirstNameColumn, userIDColumn, userLoginColumn, userLastNameColumn, userPasswordColumn;
     @FXML

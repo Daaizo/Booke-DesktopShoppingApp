@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="anchor" fx:id="anchor" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#Dragging" prefHeight="684.0" prefWidth="1050.0"
+            stylesheets="@../../../style.css" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.Client.Account.ClientAccountStartSceneController">
+   <Pane fx:id="menuPane" layoutY="1.0" prefHeight="684.0" prefWidth="1050.0" visible="false"
+         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+         AnchorPane.topAnchor="0.0">
+      <children>
+         <Button fx:id="ordersButton" layoutX="122.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                 minWidth="-Infinity" mnemonicParsing="false" onAction="#allOrdersButtonClicked" prefHeight="51.0"
+                 prefWidth="260.0" style="-fx-background-radius: 0;" styleClass="accountButtons" text="All orders"/>
+         <Button fx:id="favouritesButton" layoutX="382.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#favouritesButtonClicked"
+                 prefHeight="51.0" prefWidth="260.0" style="-fx-background-radius: 0;" styleClass="accountButtons"
+                 text="Favourites"/>
+         <Button fx:id="accountSettingsButton" layoutX="642.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                 onAction="#accountSettingsButtonClicked" prefHeight="51.0" prefWidth="260.0"
+                 style="-fx-background-radius: 0;" styleClass="accountButtons" text="Account details"/>
+         <Pane fx:id="mainPane" layoutY="68.0" prefHeight="616.0" prefWidth="1050.0"/>
+      </children>
+   </Pane>
+   <Pane fx:id="startPane" layoutX="5.0" layoutY="75.0" prefHeight="609.0" prefWidth="1050.0"
+         style="-fx-border-color: #fc766a; -fx-border-width: 0px;" AnchorPane.bottomAnchor="0.0"
+         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+      <children>
+         <Button graphicTextGap="10.0" layoutX="148.0" layoutY="32.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#allOrdersButtonClicked"
+                 prefHeight="150.0" prefWidth="750.0" styleClass="CategoryPickingButtons" text="All orders"/>
+         <Button id="button" layoutX="148.0" layoutY="232.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#favouritesButtonClicked"
+                 prefHeight="150.0" prefWidth="750.0" styleClass="CategoryPickingButtons" text="Favourites">
+            <effect>
+               <Blend mode="SRC_ATOP"/>
+            </effect>
+         </Button>
+         <Button layoutX="148.0" layoutY="432.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                 minWidth="-Infinity" mnemonicParsing="false" onAction="#accountSettingsButtonClicked"
+                 prefHeight="150.0" prefWidth="750.0" styleClass="CategoryPickingButtons" text="Account details"
+                 textAlignment="CENTER" textFill="#fc766a">
+            <font>
+               <Font name="System Bold Italic" size="75.0"/>
+            </font>
+            <effect>
+               <Blend mode="SRC_ATOP"/>
+            </effect>
+         </Button>
+      </children>
+   </Pane>
+</AnchorPane>

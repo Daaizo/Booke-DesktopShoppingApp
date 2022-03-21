@@ -1,5 +1,7 @@
-package application.Controllers;
+package application.Controllers.Client.Account;
 
+import application.Controllers.ButtonInsideTableColumn;
+import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -98,7 +100,7 @@ public class ShoppingCartController extends Controller {
             fillShoppingCartColumnsWithData(listOfProducts);
             cartTableView.setItems(listOfProducts);
             showOnlyRowsWithData(cartTableView);
-
+            setSoringTypeToColumns(cartPriceColumn, deleteButtonColumn, minusButtonColumn);
         }
 
     }
@@ -136,8 +138,8 @@ public class ShoppingCartController extends Controller {
     }
 
 
-    private ClientController.ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
-        ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("plus.png", "");
+    private ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("plus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
@@ -159,8 +161,8 @@ public class ShoppingCartController extends Controller {
     }
 
 
-    private ClientController.ButtonInsideTableColumn<ProductTable, String> minusButtonClicked() {
-        ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("minus.png", "");
+    private ButtonInsideTableColumn<ProductTable, String> minusButtonClicked() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("minus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
@@ -182,8 +184,8 @@ public class ShoppingCartController extends Controller {
         return button;
     }
 
-    private ClientController.ButtonInsideTableColumn<ProductTable, String> deleteButtonClicked() {
-        ClientController.ButtonInsideTableColumn<ProductTable, String> button = new ClientController().new ButtonInsideTableColumn<>("delete.png", "delete from cart");
+    private ButtonInsideTableColumn<ProductTable, String> deleteButtonClicked() {
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("delete.png", "delete from cart");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {

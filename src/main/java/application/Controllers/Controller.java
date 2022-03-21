@@ -20,10 +20,7 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -35,26 +32,40 @@ import java.util.Objects;
 import java.util.Optional;
 
 public abstract class Controller {
-    public static String CURRENT_USER_LOGIN;
     public static final String CURRENCY = " $";
-    public static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
+    protected static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
+    public static String CURRENT_USER_LOGIN;
     //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
     //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
-    public final String loginScene = "/application/FXML/loginGUI.fxml";
-    public final String registrationScene = "/application/FXML/registerGUI.fxml";
-    public final String adminScene = "/application/FXML/adminGUI.fxml";
-    public final String clientScene = "/application/FXML/clientGUI.fxml";
-    public final String shoppingCartScene = "/application/FXML/shoppingCartGUI.fxml";
-    public final String clientAccountScene = "/application/FXML/clientAccountGUI.fxml";
-    public final URL iconsUrl = getClass().getResource("/application/Icons/");
-    public final URL cssUrl = getClass().getResource("/application/style.css");
-    private SqlConnection instance;
+    protected final String loginScene = "/application/FXML/loginGUI.fxml";
+    protected final String registrationScene = "/application/FXML/registerGUI.fxml";
+    protected final String adminScene = "/application/FXML/AdminSceneFXML/adminStartingSceneGUI.fxml";
+    protected final String clientScene = "/application/FXML/ClientSceneFXML/clientStartingSceneGUI.fxml";
+    protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/shoppingCartGUI.fxml";
+    protected final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountStartSceneGUI.fxml";
+    protected final URL iconsUrl = getClass().getResource("/application/Icons/");
     protected String password;
+    protected final URL cssUrl = getClass().getResource("/application/style.css");
+    private SqlConnection instance;
     @FXML
-    protected AnchorPane anchor;
+    public AnchorPane anchor;
 
+    public void clearPane(Pane pane) {
+        pane.getChildren().removeAll();
+        pane.getChildren().clear();
+    }
 
-    public void prepareScene() {
+    public void loadFXMLAndInitializeController(String fxmlPathFromFXMLFolder, Pane pane) {
+        clearPane(pane);
+        try {
+            pane.getChildren().add(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/application/FXML" + fxmlPathFromFXMLFolder))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    protected void prepareScene() {
         AnchorPane mainAnchor = setAnchorSizeAndColors();
         mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
@@ -126,26 +137,26 @@ public abstract class Controller {
         closeButton.setOnAction(actionEvent -> Platform.exit());
     }
 
-    private void createLogoutButton() {
+    protected void createLogoutButton() {
         Button logoutButton = createButton("logout.png", 948, 2);
         logoutButton.setOnAction(actionEvent -> switchScene(actionEvent, loginScene));
     }
 
 
-    AnchorPane setAnchorSizeAndColors() {
+    protected AnchorPane setAnchorSizeAndColors() {
         anchor.setStyle("-fx-border-color :  #fc766a; -fx-border-width : 2px;-fx-background-color : #5B84B1FF ");
         anchor.setMinSize(1050, 694);
         anchor.setMaxSize(1050, 694);
         return anchor;
     }
 
-    public ImageView setImageFromIconsFolder(String iconName) {
+    protected ImageView setImageFromIconsFolder(String iconName) {
         return new ImageView(iconsUrl + iconName);
     }
 
 
     @FXML
-    void Dragging() {
+    public void Dragging() {
         Stage stage = (Stage) anchor.getScene().getWindow();
         anchor.setOnMousePressed(pressEvent -> anchor.setOnMouseDragged(dragEvent -> {
             stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
@@ -174,17 +185,16 @@ public abstract class Controller {
         }
     }
 
-    public void checkConnectionWithDb() {
+    protected void checkConnectionWithDb() {
         instance = SqlConnection.createInstance();
         if (instance == null) showConnectionAlertAndWait();
     }
 
-    public Connection getConnection() {
+    protected Connection getConnection() {
         return this.instance.getConnection();
     }
 
     protected void colorField(TextField field, Label label, Color color) {
-
         DropShadow shadow = new DropShadow();
         shadow.setBlurType(BlurType.THREE_PASS_BOX);
         shadow.setSpread(0.60);
@@ -197,8 +207,6 @@ public abstract class Controller {
             basicTheme(field);
             label.setVisible(false);
         });
-
-
     }
 
 
@@ -208,14 +216,12 @@ public abstract class Controller {
     }
 
     protected void basicTheme(TextField field, Label label) {
-        //resetting theme, used to undo red border on registration and login
         Glow glow = new Glow();
         field.setEffect(glow);
         label.setVisible(false);
     }
 
     protected void basicTheme(TextField field) {
-        //resetting theme, used to undo red border on registration and login
         Glow glow = new Glow();
         field.setEffect(glow);
     }
