@@ -1,5 +1,6 @@
 package application.Controllers;
 
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -29,65 +30,35 @@ public class RegisterController extends Controller {
     private Label passwordLabel, loginLabel, repeatPasswordLabel, nameLabel, lastnameLabel;
     @FXML
     private CheckBox checkbox;
-    String password;
     @FXML
     private Button showPasswordButton, showRepeatPasswordButton;
+    private ChangeListener<String> passwordFieldListener;
 
     @FXML
-    public void initialize() {
-        AnchorPane mainAnchor = setAnchorSizeAndColors();
-        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
-        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
-        createExitButton();
-        createGoBackButton(event -> switchScene(event, loginScene));
-        setAllPasswordRequirementImages(false);
-        setPasswordVisibilityButtons();
-        setPasswordFieldListener();
-        seTextFieldListeners();
+    private void initialize() {
+        createSceneLook();
+        createButtons();
+        setTextFieldListeners();
+        preparePasswordFields();
     }
 
-    private void setPasswordFieldListener() {
-        tfPassword.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            if (!newValue.isEmpty()) {
-                if (Pattern.matches(PASSWORDS_REGEX, newValue)) {
-                    setAllPasswordRequirementImages(true);
-                } else {
-                    checkPasswordRequirementAndSetProperImage(passUppercaseLetterImage, "(.*[A-Z].*)");  // if string contains at least one : // uppercase latter
-                    checkPasswordRequirementAndSetProperImage(passSpecialSignImage, "(.*[!@#$&%^&*()_+].*)"); // special sign
-                    checkPasswordRequirementAndSetProperImage(passLengthImage, "^.{6,20}$"); // 6-20 characters
-                    checkPasswordRequirementAndSetProperImage(passNumberImage, "(.*[0-9].*)"); // number
-                    checkPasswordRequirementAndSetProperImage(passLowercaseLetterImage, "(.*[a-z].*)"); //lowercase
-                }
+
+    @FXML
+    private void registerButtonClicked(ActionEvent event) {
+
+        try {
+            if (areFieldsFilledCorrectlyAndLoginIsUnique()) {
+                Client newUser = newUser();
+                newUser.addUserToDatabase(getConnection());
+                createAndShowAlert(Alert.AlertType.INFORMATION, "Your account has been successfully created", "Success", "");
+                switchScene(event, loginScene);
+            } else {
+                anchor.requestFocus();
             }
-            basicTheme(tfPassword, passwordLabel);
-            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
-        });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-
-    private void seTextFieldListeners() {
-        tfLogin.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfLogin, loginLabel));
-        tfName.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfName, nameLabel));
-        tfLastName.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfLastName, lastnameLabel));
-        tfPasswordRepeat.textProperty().addListener((observableValue, s, t1) -> {
-            basicTheme(tfPassword, passwordLabel);
-            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
-        });
-    }
-
-    private void setPasswordVisibilityButtons() {
-        String hiddenPassIconName = "hiddenPassword.png";
-        String showPassIconName = "showPassword.png";
-        showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
-        showRepeatPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
-        showPasswordButton.setBackground(Background.EMPTY);
-        showRepeatPasswordButton.setBackground(Background.EMPTY);
-        showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(tfPassword, showPasswordButton, setImageFromIconsFolder(showPassIconName)));
-        showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(tfPassword, showPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
-        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(showPassIconName)));
-        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
-    }
-
-
 
     @FXML
     void goBackButtonClicked(ActionEvent event) {
@@ -97,7 +68,7 @@ public class RegisterController extends Controller {
     private boolean isPasswordEmpty() {
         if (tfPassword.getText().isEmpty()) {
             displayLabelWithGivenText(passwordLabel, "Password required");
-            colorField(tfPassword, passwordLabel, Color.RED);
+            makeFieldsBorderRed(tfPassword, passwordLabel);
             return true;
         } else {
             basicTheme(tfPassword, passwordLabel);
@@ -105,7 +76,7 @@ public class RegisterController extends Controller {
         }
         if (tfPasswordRepeat.getText().isEmpty()) {
             displayLabelWithGivenText(repeatPasswordLabel, "Password required.");
-            colorField(tfPasswordRepeat, repeatPasswordLabel, Color.RED);
+            makeFieldsBorderRed(tfPasswordRepeat, repeatPasswordLabel);
             return true;
         } else {
             basicTheme(tfPasswordRepeat, repeatPasswordLabel);
@@ -114,10 +85,82 @@ public class RegisterController extends Controller {
         return false;
     }
 
+    private void createSceneLook() {
+        AnchorPane mainAnchor = setAnchorSizeAndColors();
+        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
+    }
+
+    private void createButtons() {
+        createExitButton();
+        createGoBackButton(event -> switchScene(event, loginScene));
+    }
+
+    private void preparePasswordFields() {
+        setAllPasswordRequirementImages(false);
+        setPasswordVisibilityButtons();
+        passwordFieldListener = passwordFieldListener();
+        tfPassword.textProperty().addListener(passwordFieldListener);
+    }
+
+    private void setTextFieldListeners() {
+        tfLogin.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfLogin, loginLabel));
+        tfName.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfName, nameLabel));
+        tfLastName.textProperty().addListener((observableValue, s, t1) -> basicTheme(tfLastName, lastnameLabel));
+        tfPasswordRepeat.textProperty().addListener((observableValue, s, t1) -> {
+            basicTheme(tfPassword, passwordLabel);
+            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
+        });
+    }
+
+    private ChangeListener<String> passwordFieldListener() {
+        return (observableValue, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                if (Pattern.matches(PASSWORDS_REGEX, newValue)) {
+                    setAllPasswordRequirementImages(true);
+                } else {
+                    checkPasswordRequirementAndSetProperImage(passUppercaseLetterImage, "(.*[A-Z].*)");  // if string contains at least one : // uppercase latter
+                    checkPasswordRequirementAndSetProperImage(passSpecialSignImage, "(.*[!@#$&%^&*()._+].*)"); // special sign
+                    checkPasswordRequirementAndSetProperImage(passLengthImage, "^.{6,20}$"); // 6-20 characters
+                    checkPasswordRequirementAndSetProperImage(passNumberImage, "(.*[0-9].*)"); // number
+                    checkPasswordRequirementAndSetProperImage(passLowercaseLetterImage, "(.*[a-z].*)"); //lowercase
+                }
+            } else {
+                setAllPasswordRequirementImages(false);
+            }
+            basicTheme(tfPassword, passwordLabel);
+            basicTheme(tfPasswordRepeat, repeatPasswordLabel);
+        };
+    }
+
+    private void setPasswordVisibilityButtons() {
+        String hiddenPassIconName = "hiddenPassword.png";
+        String showPassIconName = "showPassword.png";
+        showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
+        showRepeatPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
+        showPasswordButton.setBackground(Background.EMPTY);
+        showRepeatPasswordButton.setBackground(Background.EMPTY);
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+            tfPassword.textProperty().removeListener(passwordFieldListener);
+            showPasswordButtonPressed(tfPassword, showPasswordButton, setImageFromIconsFolder(showPassIconName));
+        });
+
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
+            tfPassword.textProperty().addListener(passwordFieldListener);
+            showPasswordButtonReleased(tfPassword, showPasswordButton, setImageFromIconsFolder(hiddenPassIconName));
+        });
+        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(showPassIconName)));
+        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
+    }
+
+
+
+
+
     private boolean passFieldMatches() {
         if (tfPassword.getText().compareTo(tfPasswordRepeat.getText()) != 0) {
-            colorField(tfPassword, passwordLabel, Color.RED);
-            colorField(tfPasswordRepeat, repeatPasswordLabel, Color.RED);
+            makeFieldsBorderRed(tfPassword, passwordLabel);
+            makeFieldsBorderRed(tfPasswordRepeat, repeatPasswordLabel);
             displayLabelWithGivenText(passwordLabel, "Passwords are not identical");
             return false;
         } else {
@@ -130,7 +173,7 @@ public class RegisterController extends Controller {
 
     private boolean isLoginEmpty() {
         if (tfLogin.getText().isEmpty()) {
-            colorField(tfLogin, loginLabel, Color.RED);
+            makeFieldsBorderRed(tfLogin, loginLabel);
             displayLabelWithGivenText(loginLabel, "Login name required");
             return true;
         } else {
@@ -141,7 +184,7 @@ public class RegisterController extends Controller {
 
     private boolean isNameEmpty() {
         if (tfName.getText().isEmpty()) {
-            colorField(tfName, nameLabel, Color.RED);
+            makeFieldsBorderRed(tfName, nameLabel);
             displayLabelWithGivenText(nameLabel, "Name required");
             return true;
         } else {
@@ -152,7 +195,7 @@ public class RegisterController extends Controller {
 
     private boolean isLastNameEmpty() {
         if (tfLastName.getText().isEmpty()) {
-            colorField(tfLastName, lastnameLabel, Color.RED);
+            makeFieldsBorderRed(tfLastName, lastnameLabel);
             displayLabelWithGivenText(lastnameLabel, "Last name required");
             return true;
         } else {
@@ -192,29 +235,13 @@ public class RegisterController extends Controller {
     }
 
 
-    @FXML
-    void registerButtonClicked(ActionEvent event) {
-
-        try {
-            if (areFieldsFilledCorrectlyAndLoginIsUnique()) {
-                Client newUser = newUser();
-                newUser.addUserToDatabase(getConnection());
-                createAndShowAlert(Alert.AlertType.INFORMATION, "Your account has been successfully created", "Success", "");
-                switchScene(event, loginScene);
-            } else {
-                anchor.requestFocus();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     private boolean isLoginUnique() throws SQLException {
         checkConnectionWithDb();
         String login = tfLogin.getText().trim();
         if (Client.isClientInDataBase(getConnection(), login)) {
             displayLabelWithGivenText(loginLabel, "Account with that login already exists");
-            colorField(tfLogin, loginLabel, Color.RED);
+            makeFieldsBorderRed(tfLogin, loginLabel);
             return false;
         }
         basicTheme(tfLogin, loginLabel);
@@ -249,21 +276,12 @@ public class RegisterController extends Controller {
     }
 
     private boolean checkPasswordComplexity() {
-
         if (Pattern.matches(PASSWORDS_REGEX, tfPassword.getText())) {
             setAllPasswordRequirementImages(true);
-            colorField(tfPassword, passwordLabel, Color.GREEN);
-            colorField(tfPasswordRepeat, repeatPasswordLabel, Color.GREEN);
             return true;
         } else {
             displayLabelWithGivenText(passwordLabel, "Password is not strong enough!");
-            colorField(tfPassword, passwordLabel, Color.RED);
-            colorField(tfPasswordRepeat, repeatPasswordLabel, Color.RED);
-            checkPasswordRequirementAndSetProperImage(passUppercaseLetterImage, "(.*[A-Z].*)");  // if string contains at least one : // uppercase latter
-            checkPasswordRequirementAndSetProperImage(passSpecialSignImage, "(.*[!@#$&%^&*()_+].*)"); // special sign
-            checkPasswordRequirementAndSetProperImage(passLengthImage, "^.{6,20}$"); // 6-20 characters
-            checkPasswordRequirementAndSetProperImage(passNumberImage, "(.*[0-9].*)"); // number
-            checkPasswordRequirementAndSetProperImage(passLowercaseLetterImage, "(.*[a-z].*)"); //lowercase
+            makeFieldsBorderRed(tfPassword, passwordLabel);
         }
         return false;
     }

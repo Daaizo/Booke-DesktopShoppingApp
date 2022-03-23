@@ -194,11 +194,11 @@ public abstract class Controller {
         return this.instance.getConnection();
     }
 
-    protected void colorField(TextField field, Label label, Color color) {
+    protected void makeFieldsBorderRed(TextField field, Label label) {
         DropShadow shadow = new DropShadow();
         shadow.setBlurType(BlurType.THREE_PASS_BOX);
         shadow.setSpread(0.60);
-        shadow.setColor(color);
+        shadow.setColor(Color.RED);
         shadow.setWidth(25);
         shadow.setHeight(25);
         shadow.setRadius(10);
