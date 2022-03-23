@@ -6,11 +6,12 @@ import java.sql.*;
 
 public class Product {
     private int productId;
+    private int productInCartQuantity;
+    private int productNumberOfOrders;
     private String productName;
     private String productPrice;
     private String productSubcategory;
     private String productCategory;
-    private int productInCartQuantity;
     private String isFavourite;
 
     private String productTotalValue;
@@ -24,19 +25,23 @@ public class Product {
         this.productSubcategory = subcategory;
     }
 
-    public Product(String name, String price, String subcategory, String isFavourite) {
+    public Product(String name, String price, String subcategory, String isFavourite, int productNumberOfOrders) {
         this.productName = name;
         this.productPrice = price;
         this.productSubcategory = subcategory;
         this.isFavourite = isFavourite;
+        this.productNumberOfOrders = productNumberOfOrders;
+
     }
 
-    public Product(String name, String price, String subcategory, String category, String isFavourite) {
+    public Product(String name, String price, String subcategory, String category, String isFavourite, int productNumberOfOrders) {
         this.productName = name;
         this.productPrice = price;
         this.productSubcategory = subcategory;
         this.productCategory = category;
         this.isFavourite = isFavourite;
+        this.productNumberOfOrders = productNumberOfOrders;
+
     }
 
     public Product(String name, String price, int quantity, String total) {
@@ -52,21 +57,24 @@ public class Product {
         this.productSubcategory = subcategory;
     }
 
-    public Product(int id, String name, String price, String isFavourite) {
-        this.productId = id;
+    public Product(String name, String price, String isFavourite, int productNumberOfOrders) {
+        this.productNumberOfOrders = productNumberOfOrders;
         this.productName = name;
         this.productPrice = price;
         this.isFavourite = isFavourite;
     }
 
     public static ResultSet getAllProductsOrderedByUser(Connection connection, String currentUserLogin) throws SQLException {
+
         String allProducts = """
                 select distinct p.productname,p.catalogprice,sc.subcategoryname from orderheader oh
-                  inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
-                  inner join product p on p.productkey = od.productkey
-                  inner join subcategory sc on sc.subcategorykey = p.subcategorykey
-                  where oh.customerkey = ( select customerkey from customer where customerlogin = ?)
-                  order by 1
+                                inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
+                                inner join product p on p.productkey = od.productkey
+                                inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                                inner join orderstatus os on os.orderstatuskey = oh.orderstatuskey
+                                where oh.customerkey = ( select customerkey from customer where customerlogin = ?)
+                                      and os.orderstatusname != 'Canceled'
+                                order by 1
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(allProducts);
         preparedStatement.setString(1, currentUserLogin);
@@ -76,53 +84,64 @@ public class Product {
 
     public static ResultSet getAllProductsAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin) throws SQLException {
         String sql = """
-                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory", c.categoryname "Category",
-                case
-                    when (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
-                    else 'no'
-                end as "is favourite"
-                from product p
-                                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
-                                    inner join category c on c.categorykey = sc.categorykey
-                                    left join favourites f on f.productkey = p.productkey and f.customerkey = (select customerkey from customer where customerlogin  = ?)
+                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory", c.categoryname "Category",count(p.productkey) "Number of Orders",
+                                case
+                                    when cu.customerkey = f.customerkey  then 'yes'
+                                    else 'no'
+                                end as "is favourite"
+                                from product p
+                                                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                                                    inner join category c on c.categorykey = sc.categorykey
+                                                    inner join customer cu on cu.customerkey = (select customerkey from customer where customerlogin  = ?)
+                                                    left join favourites f on f.productkey = p.productkey and f.customerkey = cu.customerkey
+                                                    inner join orderdetail od on od.productkey = p.productkey
+                                                    group by p.productkey, p.productname, p.catalogprice, sc.subcategoryname, c.categoryname,
+                                                                case when cu.customerkey = f.customerkey then 'yes' else 'no' end
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);
-        preparedStatement.setString(2, currentUserLogin);
         return preparedStatement.executeQuery();
     }
 
     public static ResultSet getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin, String categoryName) throws SQLException {
         String sql = """
-                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory",
-                                                case
-                                                    when  (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
-                                                    else 'no'
-                                                end as "is favourite"
-                                from product p
-                                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
-                                    inner join category c on c.categorykey = sc.categorykey
-                                    full join favourites f on f.productkey = p.productkey and f.customerkey = (select customerkey from customer where customerlogin  = ?)
-                                    where c.categoryname = ?
+                                
+                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price", sc.subcategoryname "Subcategory",count(p.productkey) ,
+                                                                case
+                                                                    when  cu.customerkey = f.customerkey  then 'yes'
+                                                                    else 'no'
+                                                                end as "is favourite"
+                     from product p
+                         inner join customer cu on cu.customerkey = (select customerkey from customer where customerlogin  = ?)
+                         inner join orderdetail od on od.productkey = p.productkey
+                         inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                         inner join category c on c.categorykey = sc.categorykey
+                         left join favourites f on f.productkey = p.productkey and f.customerkey = cu.customerkey
+                         where c.categoryname = ?
+                         group by p.productkey, p.productname, p.catalogprice, sc.subcategoryname,
+                                                     case when cu.customerkey = f.customerkey then 'yes' else 'no' end;
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);
-        preparedStatement.setString(2, currentUserLogin);
-        preparedStatement.setString(3, categoryName);
+        preparedStatement.setString(2, categoryName);
         return preparedStatement.executeQuery();
     }
 
     public static ResultSet getProductsFromSubcategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(Connection connection, String currentUserLogin, String subcategory) throws SQLException {
         String sql = """
-                select p.productkey "Id", p.productname "Name", p.catalogprice  "Price",
-                                               case
-                                                   when (select customerkey from customer where customerlogin  = ?) = f.customerkey  then 'yes'
-                                                   else 'no'
-                                               end as "is favourite"
-                from product p
-                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
-                    full join favourites f on f.productkey = p.productkey
-                    where sc.subcategoryname = ?
+                select distinct p.productkey "Id", p.productname "Name", p.catalogprice  "Price",count(od.orderheaderkey),
+                                                               case
+                                                                   when cu.customerkey = f.customerkey  then 'yes'
+                                                                   else 'no'
+                                                               end as "is favourite"
+                                from product p
+                                    inner join customer cu on cu.customerkey = (select customerkey from customer where customerlogin  = ?)
+                                    inner join orderdetail od on od.productkey = p.productkey
+                                    inner join subcategory sc on sc.subcategorykey = p.subcategorykey
+                                    full join favourites f on f.productkey = p.productkey  and f.customerkey = cu.customerkey
+                                    where sc.subcategoryname = ?
+                                    group by p.productkey, p.productname, p.catalogprice,
+                                                                                case when cu.customerkey = f.customerkey then 'yes' else 'no' end
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);
@@ -176,6 +195,15 @@ public class Product {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int getProductNumberOfOrders() {
+        return productNumberOfOrders;
+    }
+
+    public Product setProductNumberOfOrders(int productNumberOfOrders) {
+        this.productNumberOfOrders = productNumberOfOrders;
+        return this;
     }
 
     public String getProductSubcategory() {
