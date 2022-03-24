@@ -6,8 +6,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -25,15 +24,19 @@ public class ClientStartSceneController extends Controller {
     private final int cartLabelXPosition = 60;
     private final int cartLabelYPosition = 2;
     private final double durationOfNotification = 3000;
-    @FXML
-    public static Label cartQuantityLabel;
-    @FXML
-    public static StackPane cartNotification, starNotification, yellowStartNotification;
+
     protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
     @FXML
     private Pane mainPane, categoryPickingPane;
     @FXML
     private Button goBackButton, shoppingCartButton;
+
+    @FXML
+    public static Label cartQuantityLabel;
+    @FXML
+    public static StackPane cartNotification, starNotification, yellowStartNotification;
+    @FXML
+    public static ComboBox<String> sortingButtonsBox;
 
     @FXML
     private void initialize() {
@@ -47,8 +50,42 @@ public class ClientStartSceneController extends Controller {
             e.printStackTrace();
         }
         goBackButton.setVisible(false);
+        createSortingButtons();
     }
 
+    private void createSortingButtons() {
+        sortingButtonsBox = new ComboBox<>();
+        sortingButtonsBox.getItems().addAll("Price (High -> Low)", "Price (Low -> High)", "Number of orders", "Name");
+        sortingButtonsBox.setLayoutX(820);
+        sortingButtonsBox.setLayoutY(155);
+        sortingButtonsBox.getStyleClass().add("OrangeButtons");
+        sortingButtonsBox.setId("sortingButtons");
+        anchor.getChildren().add(sortingButtonsBox);
+        sortingButtonsBox.setVisible(false);
+    }
+
+    protected void prepareSortingButtons(TableView<ProductTable> tableView, TableColumn<ProductTable, String> numberOfOrdersColumn) {
+        sortingButtonsBox.setValue("Choose soring type :");
+        sortingButtonsBox.setVisible(true);
+        sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
+            tableView.getSortOrder().clear();
+            if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(0))) {
+                tableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                tableView.getSortOrder().add(tableView.getColumns().get(1));
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(1))) {
+                tableView.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
+                tableView.getSortOrder().add(tableView.getColumns().get(1));
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(2))) {
+                numberOfOrdersColumn.setSortType(TableColumn.SortType.DESCENDING);
+                tableView.getSortOrder().add(numberOfOrdersColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(3))) {
+                tableView.getColumns().get(0).setSortType(TableColumn.SortType.ASCENDING);
+                tableView.getSortOrder().add(tableView.getColumns().get(0));
+            }
+            tableView.requestFocus();
+        });
+
+    }
 
     @FXML
     private void allProductsButtonClicked() {
@@ -100,6 +137,7 @@ public class ClientStartSceneController extends Controller {
             mainPane.getChildren().removeAll();
             mainPane.getChildren().clear();
             goBackButton.setVisible(false);
+            sortingButtonsBox.setVisible(false);
         });
 
 

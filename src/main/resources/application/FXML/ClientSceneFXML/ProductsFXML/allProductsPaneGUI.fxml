@@ -9,16 +9,13 @@
       <TableView id="ebooksTableView" fx:id="allProductsTableView" layoutX="14.0" layoutY="90.0" prefHeight="537.0"
                  prefWidth="1004.0">
          <columns>
-            <TableColumn id="ebooksNameColumn" fx:id="allProductsNameColumn" editable="false" prefWidth="244.0"
-                         resizable="false" text="Name"/>
-            <TableColumn fx:id="allProductsPriceColumn" editable="false" prefWidth="91.0" resizable="false"
-                         text="Price"/>
-            <TableColumn fx:id="allProductsCategoryColumn" editable="false" prefWidth="122.0" resizable="false"
-                         text="Category"/>
-            <TableColumn fx:id="allProductsSubcategoryColumn" editable="false" prefWidth="154.0" resizable="false"
-                         text="Subcategory"/>
-            <TableColumn fx:id="allProductsCartButtonColumn" editable="false" prefWidth="167.0" resizable="false"/>
-            <TableColumn fx:id="allProductsStarButtonColumn" editable="false" prefWidth="225.0" resizable="false"/>
+            <TableColumn id="ebooksNameColumn" fx:id="allProductsNameColumn" prefWidth="244.0" text="Name"/>
+            <TableColumn fx:id="allProductsPriceColumn" prefWidth="91.0" text="Price"/>
+            <TableColumn fx:id="allProductsCategoryColumn" prefWidth="122.0" text="Category"/>
+            <TableColumn fx:id="allProductsSubcategoryColumn" prefWidth="154.0" text="Subcategory"/>
+            <TableColumn fx:id="allProductsCartButtonColumn" prefWidth="167.0"/>
+            <TableColumn fx:id="allProductsStarButtonColumn" prefWidth="223.0"/>
+            <TableColumn fx:id="numberOfOrdersColumn" prefWidth="0" visible="false"/>
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

@@ -15,9 +15,8 @@ import java.sql.SQLException;
 
 public final class AllEbooksTableController extends ClientStartSceneController {
     @FXML
-    private TableColumn<ProductTable, String> ebooksNameColumn, ebooksSubcategoryColumn, ebooksPriceColumn;
-    @FXML
-    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn;
+    private TableColumn<ProductTable, String> ebooksNameColumn, ebooksSubcategoryColumn, ebooksPriceColumn,
+            ebooksStarButtonColumn, ebooksCartButtonColumn, ebooksNumberOfOrdersColumn;
     @FXML
     private TableView<ProductTable> ebooksTableView;
 
@@ -29,7 +28,7 @@ public final class AllEbooksTableController extends ClientStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        setSoringTypeToColumns(ebooksPriceColumn, ebooksCartButtonColumn, ebooksStarButtonColumn);
+        prepareSortingButtons(ebooksTableView, ebooksNumberOfOrdersColumn);
     }
 
 
@@ -40,8 +39,9 @@ public final class AllEbooksTableController extends ClientStartSceneController {
         ebooksStarButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
         ebooksStarButtonColumn.setCellFactory(buttonInsideCell -> createStarButtonInsideTableView());
         ebooksCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
+        ebooksNumberOfOrdersColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfOrdersPerProduct"));
         ebooksTableView.setItems(list);
-        showOnlyRowsWithData(ebooksTableView);
+        prepareTableView(ebooksTableView, ebooksPriceColumn);
 
     }
 
