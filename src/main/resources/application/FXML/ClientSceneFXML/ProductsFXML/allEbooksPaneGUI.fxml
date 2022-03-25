@@ -8,8 +8,7 @@
       <TableView id="ebooksTableView" fx:id="ebooksTableView" layoutX="14.0" layoutY="90.0" prefHeight="537.0"
                  prefWidth="1004.0">
          <columns>
-            <TableColumn id="ebooksNameColumn" fx:id="ebooksNameColumn" prefWidth="252.0"
-                         text="Name"/>
+            <TableColumn fx:id="ebooksNameColumn" prefWidth="252.0" text="Name"/>
             <TableColumn fx:id="ebooksPriceColumn" prefWidth="72.0" text="Price"/>
             <TableColumn fx:id="ebooksSubcategoryColumn" prefWidth="184.0"
                          text="Subcategory"/>

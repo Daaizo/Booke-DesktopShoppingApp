@@ -28,7 +28,7 @@ public final class AllEbooksTableController extends ClientStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        prepareSortingButtons(ebooksTableView, ebooksNumberOfOrdersColumn);
+        prepareSortingButtons(ebooksTableView, ebooksNumberOfOrdersColumn, ebooksStarButtonColumn);
     }
 
 

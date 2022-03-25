@@ -28,7 +28,8 @@ public class AllGamesTableController extends ClientStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        prepareSortingButtons(gamesTableView, gamesNumberOfOrdersColumn);
+        createSortingButtons();
+        prepareSortingButtons(gamesTableView, gamesNumberOfOrdersColumn, gamesStarButtonColumn);
     }
 
     private void fillGamesColumnsWithData(ObservableList<ProductTable> list) {
@@ -43,7 +44,7 @@ public class AllGamesTableController extends ClientStartSceneController {
         prepareTableView(gamesTableView, gamesPriceColumn);
     }
 
-    void displayGames() throws SQLException {
+    private void displayGames() throws SQLException {
 
         checkConnectionWithDb();
         ResultSet products = Product.getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), Controller.CURRENT_USER_LOGIN, "games");
@@ -51,6 +52,5 @@ public class AllGamesTableController extends ClientStartSceneController {
         ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategoryWithInformationIfTheyAreInUsersFavourite(products);
         fillGamesColumnsWithData(listOfGames);
     }
-
 
 }

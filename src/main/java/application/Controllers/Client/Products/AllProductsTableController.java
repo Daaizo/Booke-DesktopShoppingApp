@@ -30,7 +30,8 @@ public class AllProductsTableController extends ClientStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        prepareSortingButtons(allProductsTableView, numberOfOrdersColumn);
+        createSortingButtons();
+        prepareSortingButtons(allProductsTableView, numberOfOrdersColumn, allProductsStarButtonColumn);
     }
 
 
