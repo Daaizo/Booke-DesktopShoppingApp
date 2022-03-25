@@ -24,7 +24,7 @@ public class ClientStartSceneController extends Controller {
     private final int cartLabelXPosition = 60;
     private final int cartLabelYPosition = 2;
     private final double durationOfNotification = 3000;
-
+    protected final String sortingBoxDefaultText = "Choose sorting type :";
     protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
     @FXML
     private Pane mainPane, categoryPickingPane;
@@ -36,7 +36,7 @@ public class ClientStartSceneController extends Controller {
     @FXML
     public static StackPane cartNotification, starNotification, yellowStartNotification;
     @FXML
-    public static ComboBox<String> sortingButtonsBox;
+    protected ComboBox<String> sortingButtonsBox;
 
     @FXML
     private void initialize() {
@@ -53,19 +53,19 @@ public class ClientStartSceneController extends Controller {
         createSortingButtons();
     }
 
-    private void createSortingButtons() {
+    protected void createSortingButtons() {
         sortingButtonsBox = new ComboBox<>();
-        sortingButtonsBox.getItems().addAll("Price (High -> Low)", "Price (Low -> High)", "Number of orders", "Name");
-        sortingButtonsBox.setLayoutX(820);
-        sortingButtonsBox.setLayoutY(155);
+        sortingButtonsBox.getItems().addAll("Price (High -> Low)", "Price (Low -> High)", "Number of orders", "Name", "Favourites first");
+        sortingButtonsBox.setLayoutX(815);
+        sortingButtonsBox.setLayoutY(82);
         sortingButtonsBox.getStyleClass().add("OrangeButtons");
         sortingButtonsBox.setId("sortingButtons");
         anchor.getChildren().add(sortingButtonsBox);
         sortingButtonsBox.setVisible(false);
     }
 
-    protected void prepareSortingButtons(TableView<ProductTable> tableView, TableColumn<ProductTable, String> numberOfOrdersColumn) {
-        sortingButtonsBox.setValue("Choose soring type :");
+    protected void prepareSortingButtons(TableView<ProductTable> tableView, TableColumn<ProductTable, String> numberOfOrdersColumn, TableColumn<ProductTable, String> columnWithStar) {
+        sortingButtonsBox.setValue(sortingBoxDefaultText);
         sortingButtonsBox.setVisible(true);
         sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
             tableView.getSortOrder().clear();
@@ -81,6 +81,9 @@ public class ClientStartSceneController extends Controller {
             } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(3))) {
                 tableView.getColumns().get(0).setSortType(TableColumn.SortType.ASCENDING);
                 tableView.getSortOrder().add(tableView.getColumns().get(0));
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(4))) {
+                columnWithStar.setSortType(TableColumn.SortType.DESCENDING);
+                tableView.getSortOrder().add(columnWithStar);
             }
             tableView.requestFocus();
         });
@@ -89,7 +92,9 @@ public class ClientStartSceneController extends Controller {
 
     @FXML
     private void allProductsButtonClicked() {
+        sortingButtonsBox.setValue(sortingBoxDefaultText);
         loadPane("allProductsPaneGUI.fxml");
+
     }
 
     @FXML
@@ -110,6 +115,7 @@ public class ClientStartSceneController extends Controller {
         }
         goBackButton.setVisible(true);
         categoryPickingPane.setVisible(false);
+
     }
 
 
@@ -138,6 +144,8 @@ public class ClientStartSceneController extends Controller {
             mainPane.getChildren().clear();
             goBackButton.setVisible(false);
             sortingButtonsBox.setVisible(false);
+            sortingButtonsBox.setValue(sortingBoxDefaultText);
+
         });
 
 
@@ -176,7 +184,6 @@ public class ClientStartSceneController extends Controller {
     protected EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideProductTableView button, StackPane notificationName) {
         return mouseEvent -> {
             String productName = button.getRowId().getProductName();
-
             checkConnectionWithDb();
             try {
                 if (notificationName.equals(cartNotification)) {
