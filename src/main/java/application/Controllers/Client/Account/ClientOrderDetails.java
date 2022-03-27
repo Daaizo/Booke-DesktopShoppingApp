@@ -35,10 +35,16 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     //all fields are assigned in FXML but controller is set on run time
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    private OrderTable rowId;
 
-    public void setSpecificRowId(OrderTable rowId) {
-        this.rowId = rowId;
+    private int orderNumber;
+    private OrderTable orderTable;
+
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public void setOrder(OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
     public void setAllOrdersPane(Pane pane) {
@@ -48,15 +54,42 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     public void initialize() {
         detailsPane.requestFocus();
         setButtons();
-        displayOrderDetails(rowId.getOrderNumber());
-        fillOrderDetailLabels(rowId);
+        displayOrderDetails(orderNumber);
+        if (orderTable == null) {
+            orderTable = getOrdersInformationFromDataBase();
+            goBackButton.setVisible(false);
+        }
+        if (notification == null) {
+            notificationLabel = new Label("");
+            notification = createNotification(notificationLabel);
+            notification.setLayoutY(0);
+            allOrdersPane.getChildren().add(notification);
+        }
+        fillOrderDetailLabels(orderTable);
         makeProperButtonsVisible(orderStatusLabel.getText());
         createInformationImageAndAttachItToLabel();
         setInformationAboutOrderStatus(orderStatusHashMap);
 
     }
 
+    private OrderTable getOrdersInformationFromDataBase() {
+        try {
+            Order order = new Order(currentUser.getLogin());
+            ResultSet orderInformation = order.getOrderDetailedInformation(getConnection(), orderNumber);
+            ObservableList<OrderTable> listOfOrders = OrderTable.getOrder(orderInformation);
+            orderInformation.close();
+            return listOfOrders.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     private void changeGoBuckButtonAction() {
+        if (goBackButton == null) {
+            goBackButton = createGoBackButton(null);
+        }
         EventHandler<ActionEvent> oldEvent = goBackButton.getOnAction();
         goBackButton.setOnAction(event -> {
             detailsPane.getChildren().clear();
@@ -64,6 +97,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
             allOrdersPane.setVisible(true);
             goBackButton.setOnAction(oldEvent);
         });
+
 
     }
 
@@ -130,7 +164,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         orderDetailsTotalValueColumn.setCellValueFactory(new PropertyValueFactory<>("orderTotalValue"));
         orderDetailsValueColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         orderDetailsTableView.setItems(list);
-        showOnlyRowsWithData(orderDetailsTableView);
+        prepareTableView(orderDetailsTableView, orderDetailsTotalValueColumn);
         orderDetailsTableView.setMaxHeight(230);
     }
 
@@ -155,7 +189,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         checkConnectionWithDb();
         Order order = new Order(CURRENT_USER_LOGIN);
         try {
-            ResultSet orders = order.getOrderDetailedInformation(getConnection(), orderNumber);
+            ResultSet orders = order.getOrderProducts(getConnection(), orderNumber);
             ObservableList<OrderTable> listOfOrders = OrderTable.getProductsFromOrder(orders);
             fillOrderDetailColumnsWithData(listOfOrders);
             orders.close();
@@ -164,11 +198,11 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         }
     }
 
-    private void fillOrderDetailLabels(OrderTable rowId) {
-        orderIdLabel.setText(rowId.getOrderNumber() + "");
-        totalValueLabel.setText(rowId.getOrderTotalValue() + "");
-        paymentMethodLabel.setText(rowId.getOrderPaymentMethodName());
-        orderStatusLabel.setText(rowId.getOrderStatusName());
+    private void fillOrderDetailLabels(OrderTable order) {
+        orderIdLabel.setText(order.getOrderNumber() + "");
+        totalValueLabel.setText(order.getOrderTotalValue() + "");
+        paymentMethodLabel.setText(order.getOrderPaymentMethodName());
+        orderStatusLabel.setText(order.getOrderStatusName());
         setDisableToAllLabels(orderStatusLabel.getText().equals("Canceled"));
     }
 
