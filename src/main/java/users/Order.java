@@ -35,6 +35,13 @@ public class Order {
         this.orderTotalValue = totalValue;
     }
 
+    public Order(int orderNumber, String totalValue, String paymentMethodName, String orderStatusName) {
+        this.orderNumber = orderNumber;
+        this.orderTotalValue = totalValue;
+        this.paymentMethodName = paymentMethodName;
+        this.orderStatusName = orderStatusName;
+    }
+
     public Order(String paymentMethod, String orderStatus, String customerLogin) {
         this.orderStatusName = orderStatus;
         this.paymentMethodName = paymentMethod;
@@ -71,6 +78,7 @@ public class Order {
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         orderNumber = resultSet.getInt(1);
+        resultSet.close();
     }
 
     public void setOrderProducts(Connection connection) throws SQLException {
@@ -94,7 +102,7 @@ public class Order {
                     where oh.customerkey =
                                             (select customerkey from customer where customerlogin = ?)
                     group by oh.orderheaderkey ,oh.orderdate ,oh.deliverydate,pm.paymentmethodname , os.orderstatusname
-                    order by 1
+                    order by 1 desc
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(getOrders);
         preparedStatement.setString(1, customerLogin);
@@ -102,6 +110,26 @@ public class Order {
     }
 
     public ResultSet getOrderDetailedInformation(Connection connection, int orderNumber) throws SQLException {
+        String getOrders = """
+                select oh.orderheaderkey "Order number",sum(p.catalogprice * od.quantity) "Total value",
+                                   pm.paymentmethodname "Payment method", os.orderstatusname "Order status"
+                                    from orderheader oh
+                                   inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
+                                   inner join product p on p.productkey = od.productkey
+                                   inner join paymentmethod pm on pm.paymentmethodkey = oh.paymentmethodkey
+                                   inner join orderstatus os on os.orderstatuskey = oh.orderstatuskey
+                                   where oh.customerkey =
+                                                           (select customerkey from customer where customerlogin = ?)
+                                                           and oh.orderheaderkey = ?
+                                   group by oh.orderheaderkey ,oh.orderdate ,oh.deliverydate,pm.paymentmethodname , os.orderstatusname
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(getOrders);
+        preparedStatement.setString(1, customerLogin);
+        preparedStatement.setInt(2, orderNumber);
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getOrderProducts(Connection connection, int orderNumber) throws SQLException {
         String getOrder = """
                 select  p.productname "Product",p.catalogprice "Price", od.quantity "Quantity",(p.catalogprice * od.quantity) "Total value"
                     from orderheader oh

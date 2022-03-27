@@ -58,6 +58,23 @@ public class OrderTable {
         return listOfProducts;
     }
 
+    public static ObservableList<OrderTable> getOrder(ResultSet order) {
+        ObservableList<OrderTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (order.next()) {
+                int id = order.getInt(1);
+                String totalValue = order.getDouble(2) + Controller.CURRENCY;
+                String paymentMethod = order.getString(3);
+                String orderStatus = order.getString(4);
+                listOfProducts.add(new OrderTable(new Order(id, totalValue, paymentMethod, orderStatus)));
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
+    }
+
     public static ObservableList<OrderTable> getProductsFromOrder(ResultSet order) {
         ObservableList<OrderTable> listOfProducts = FXCollections.observableArrayList();
         try {
