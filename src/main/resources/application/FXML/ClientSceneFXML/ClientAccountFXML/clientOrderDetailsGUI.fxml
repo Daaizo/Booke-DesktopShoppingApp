@@ -3,8 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" xmlns="http://javafx.com/javafx/17">
-   <Pane fx:id="detailsPane" layoutY="-24.0" prefHeight="646.0" prefWidth="991.0" AnchorPane.bottomAnchor="44.0"
-         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-24.0">
+   <Pane fx:id="detailsPane" layoutX="14.0" layoutY="-24.0" prefHeight="646.0" prefWidth="991.0"
+         AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-14.0"
+         AnchorPane.topAnchor="-24.0">
       <TableView fx:id="orderDetailsTableView" layoutX="113.0" layoutY="226.0" prefHeight="243.0" prefWidth="790.0">
          <columns>
             <TableColumn fx:id="orderDetailsProductColumn" prefWidth="270.0" text="Name "/>

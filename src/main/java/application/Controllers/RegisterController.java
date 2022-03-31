@@ -10,13 +10,11 @@ import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import users.Client;
 
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class RegisterController extends Controller {
@@ -36,7 +34,7 @@ public class RegisterController extends Controller {
 
     @FXML
     private void initialize() {
-        createSceneLook();
+        prepareSceneWithoutLogoutButton();
         createButtons();
         setTextFieldListeners();
         preparePasswordFields();
@@ -85,14 +83,8 @@ public class RegisterController extends Controller {
         return false;
     }
 
-    private void createSceneLook() {
-        AnchorPane mainAnchor = setAnchorSizeAndColors();
-        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
-        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
-    }
 
     private void createButtons() {
-        createExitButton();
         createGoBackButton(event -> switchScene(event, loginScene));
     }
 

@@ -119,7 +119,7 @@ public class Product {
                          left join favourites f on f.productkey = p.productkey and f.customerkey = cu.customerkey
                          where c.categoryname = ?
                          group by p.productkey, p.productname, p.catalogprice, sc.subcategoryname,
-                                                     case when cu.customerkey = f.customerkey then 'yes' else 'no' end;
+                                                     case when cu.customerkey = f.customerkey then 'yes' else 'no' end
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, currentUserLogin);

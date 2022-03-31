@@ -59,12 +59,6 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
             orderTable = getOrdersInformationFromDataBase();
             goBackButton.setVisible(false);
         }
-        if (notification == null) {
-            notificationLabel = new Label("");
-            notification = createNotification(notificationLabel);
-            notification.setLayoutY(0);
-            allOrdersPane.getChildren().add(notification);
-        }
         fillOrderDetailLabels(orderTable);
         makeProperButtonsVisible(orderStatusLabel.getText());
         createInformationImageAndAttachItToLabel();

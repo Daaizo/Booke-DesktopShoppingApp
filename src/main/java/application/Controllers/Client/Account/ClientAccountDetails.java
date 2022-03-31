@@ -10,7 +10,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import users.Client;
 import users.Product;
 import users.ProductTable;
@@ -41,7 +40,6 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
             e.printStackTrace();
         }
         setAccountDetailsLabels();
-
     }
 
     @FXML
@@ -157,7 +155,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         ResultSet products = Product.getAllProductsOrderedByUser(getConnection(), CURRENT_USER_LOGIN);
         ObservableList<ProductTable> listOfProducts = ProductTable.getProductsBasicInfo(products);
         tableView.setItems(listOfProducts);
-        showOnlyRowsWithData(tableView);
+        prepareTableView(tableView, (TableColumn<?, String>) tableView.getColumns().get(1));
         tableView.setMaxHeight(250);
     }
 
@@ -293,7 +291,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
 
     private boolean isTextFieldEmpty(TextField tf, Label label) {
         if (tf.getText().trim().isEmpty()) {
-            colorField(tf, label, Color.RED);
+            makeFieldsBorderRed(tf, label);
             label.setVisible(true);
             return true;
         } else {

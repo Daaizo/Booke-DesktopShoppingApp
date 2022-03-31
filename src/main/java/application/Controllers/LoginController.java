@@ -7,7 +7,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import users.Client;
 
 import java.sql.ResultSet;
@@ -107,11 +106,11 @@ public class LoginController extends Controller {
             }
 
         } else if (isLoginEmpty()) {
-            colorField(tfLogin, loginLabel, Color.RED);
+            makeFieldsBorderRed(tfLogin, loginLabel);
             displayLabelWithGivenText(loginLabel, "Filed is empty");
 
         } else if (isPasswordEmpty()) {
-            colorField(tfPassword, passwordLabel, Color.RED);
+            makeFieldsBorderRed(tfPassword, passwordLabel);
             displayLabelWithGivenText(passwordLabel, "Filed is empty");
         }
         anchor.requestFocus();
