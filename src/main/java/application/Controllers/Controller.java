@@ -32,8 +32,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 public abstract class Controller {
+
     @FXML
     protected AnchorPane anchor;
+
     public static final String CURRENCY = " $";
     protected static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
     public static String CURRENT_USER_LOGIN;
@@ -43,12 +45,13 @@ public abstract class Controller {
     protected final String registrationScene = "/application/FXML/registerGUI.fxml";
     protected final String adminScene = "/application/FXML/AdminSceneFXML/adminStartingSceneGUI.fxml";
     protected final String clientScene = "/application/FXML/ClientSceneFXML/clientStartingSceneGUI.fxml";
-    protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/shoppingCartGUI.fxml";
+    protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/shoppingCartGUI.fxml";
     protected final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountStartSceneGUI.fxml";
     protected final URL iconsUrl = getClass().getResource("/application/Icons/");
     protected String password;
     protected final URL cssUrl = getClass().getResource("/application/style.css");
     private SqlConnection instance;
+    protected StackPane notification;
 
     @FXML
     private void enableDraggingWholeWindow() {
@@ -245,22 +248,40 @@ public abstract class Controller {
     }
 
 
-    protected StackPane createNotification(Label label) {
-        StackPane pane = new StackPane();
+    protected void createNotification() {
+        notification = new StackPane();
+        Label notificationLabel = new Label();
         ImageView image = setImageFromIconsFolder("check.png");
-        pane.setId("notification");
-        label.setId("notificationLabel");
-        label.setPadding(new Insets(0, 0, 0, 47));
-        pane.getChildren().addAll(label, image);
-        label.setWrapText(true);
-        StackPane.setAlignment(label, Pos.CENTER);
+        notification.setId("notification");
+        notificationLabel.setId("notificationLabel");
+        notificationLabel.setPadding(new Insets(0, 0, 0, 47));
+        notification.getChildren().addAll(notificationLabel, image);
+        notificationLabel.setWrapText(true);
+        StackPane.setAlignment(notificationLabel, Pos.CENTER);
         StackPane.setAlignment(image, Pos.CENTER_LEFT);
-        pane.setLayoutX(720);
-        pane.setLayoutY(75);
-        pane.setVisible(false);
-        anchor.getChildren().add(pane);
-        return pane;
+        notification.setMinWidth(305);
 
+        notification.setLayoutX(720);
+        notification.setLayoutY(7);
+        notification.setVisible(false);
+        anchor.getChildren().add(notification);
+    }
+
+    protected void showNotification(String notificationText) {
+        if (notification == null) {
+            createNotification();
+        }
+        double timeDuration = 3000;
+        Label notificationLabel = (Label) notification.getChildren().get(0);
+        notificationLabel.setText(notificationText);
+        notification.setVisible(false);
+        notification.setVisible(true);
+        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), notification);
+        fade.setFromValue(1000);
+        fade.setToValue(0);
+        fade.setCycleCount(1);
+        fade.setAutoReverse(true);
+        fade.play();
     }
 
     protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, String headerText, String title, String contextText) {
@@ -300,17 +321,7 @@ public abstract class Controller {
         return buttonClicked;
     }
 
-    protected void showNotification(StackPane notification, double timeDuration) {
-        notification.setVisible(false);
-        notification.setVisible(true);
-        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), notification);
-        fade.setFromValue(1000);
-        fade.setToValue(0);
-        fade.setCycleCount(1);
-        fade.setAutoReverse(true);
-        fade.play();
 
-    }
 
     protected void setPasswordVisibilityButton(Button showPasswordButton, TextField passwordTextField) {
         String hiddenPassIconName = "hiddenPassword.png";

@@ -1,6 +1,7 @@
-package application.Controllers.Client.Account;
+package application.Controllers.Client;
 
 import application.Controllers.ButtonInsideTableColumn;
+import application.Controllers.Client.Account.ClientOrderDetails;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -51,7 +52,6 @@ public class ShoppingCartController extends Controller {
         prepareScene();
         createGoBackButton(event -> switchScene(event, clientScene));
         createClearCartButton();
-
         try {
             displayProducts();
             setTotalValueLabel();
@@ -59,14 +59,19 @@ public class ShoppingCartController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        fixNotificationPlacement();
     }
 
     @FXML
-    void detailsOfJustPlaceOrderButtonClicked() {
+    private void detailsOfJustPlaceOrderButtonClicked() {
         displayPostPlacingOrderInformation(order.getOrderNumber());
         orderJustPlaceButton.setVisible(false);
     }
 
+    private void fixNotificationPlacement() {
+        createNotification();
+        notification.setLayoutY(notification.getLayoutY() + 70);
+    }
 
     private void createClearCartButton() {
         clearCartButton = createButton("", 800, 80);
@@ -145,6 +150,8 @@ public class ShoppingCartController extends Controller {
         if (alertButtonClicked(buttonClicked, ButtonType.OK)) {
             currentUser.setQuantityOfProductInCart(productName, "-quantity", getConnection());
             // there is a trigger in database which deletes products from cart when quantity is equal 0
+            showNotification("Item successfully deleted");
+
         }
     }
 
@@ -202,6 +209,7 @@ public class ShoppingCartController extends Controller {
             try {
                 confirmationAlert(productName, currentUser.getQuantityOfProductInCart(productName, getConnection()) + "");
                 reloadTableView(cartTableView);
+
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
@@ -214,7 +222,7 @@ public class ShoppingCartController extends Controller {
     }
 
     private void setPaymentMethods() throws SQLException {
-        int numberOfButtonsInLine = 2;
+        int numberOfButtonsInLine = 4;
         double buttonPadding = 20;
         ResultSet paymentMethods = Product.getPaymentMethods(getConnection());
         ToggleGroup groupOfRadioButtons = new ToggleGroup();
@@ -264,7 +272,7 @@ public class ShoppingCartController extends Controller {
                 } else if (alertButtonClicked(buttonTypeClicked, later)) {
                     placeOrder("Waiting for payment");
                 }
-                showNotification(createNotification(new Label("Order successfully placed")), 3500);
+                showNotification("Order successfully placed");
                 clearShoppingCart();
                 reloadTableView(cartTableView);
             }
