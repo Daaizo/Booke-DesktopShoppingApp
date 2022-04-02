@@ -34,7 +34,6 @@ public class AllProductsTableController extends ClientStartSceneController {
         prepareSortingButtons(allProductsTableView, numberOfOrdersColumn, allProductsStarButtonColumn);
     }
 
-
     private void fillAllProductsColumnsWithData(ObservableList<ProductTable> list) {
         allProductsNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         allProductsPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
@@ -46,8 +45,7 @@ public class AllProductsTableController extends ClientStartSceneController {
         numberOfOrdersColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfOrdersPerProduct"));
         allProductsTableView.setItems(list);
         prepareTableView(allProductsTableView, allProductsPriceColumn);
-
-    }
+   }
 
     private void displayAllProducts() throws SQLException {
         checkConnectionWithDb();

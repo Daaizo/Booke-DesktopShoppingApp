@@ -7,12 +7,12 @@
             fx:controller="application.Controllers.Client.Products.AllProductsTableController">
    <TableView fx:id="allProductsTableView" layoutX="14.0" layoutY="90.0" prefHeight="537.0" prefWidth="1004.0">
       <columns>
-         <TableColumn id="ebooksNameColumn" fx:id="allProductsNameColumn" prefWidth="244.0" text="Name"/>
-         <TableColumn fx:id="allProductsPriceColumn" prefWidth="91.0" text="Price"/>
-         <TableColumn fx:id="allProductsCategoryColumn" prefWidth="120.0" text="Category"/>
-         <TableColumn fx:id="allProductsSubcategoryColumn" prefWidth="140.0" text="Subcategory"/>
-         <TableColumn fx:id="allProductsCartButtonColumn" prefWidth="165.0"/>
-         <TableColumn fx:id="allProductsStarButtonColumn" prefWidth="243.0"/>
+         <TableColumn fx:id="allProductsNameColumn" prefWidth="253.0" text="Name"/>
+         <TableColumn fx:id="allProductsPriceColumn" prefWidth="100.0" text="Price"/>
+         <TableColumn fx:id="allProductsCategoryColumn" prefWidth="123.0" text="Category" visible="false"/>
+         <TableColumn fx:id="allProductsSubcategoryColumn" prefWidth="227.0" text="Subcategory"/>
+         <TableColumn fx:id="allProductsCartButtonColumn" prefWidth="176.0"/>
+         <TableColumn fx:id="allProductsStarButtonColumn" prefWidth="246.0"/>
          <TableColumn fx:id="numberOfOrdersColumn" prefWidth="0" visible="false"/>
       </columns>
       <columnResizePolicy>

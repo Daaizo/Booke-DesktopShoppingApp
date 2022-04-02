@@ -29,9 +29,11 @@ public class ClientStartSceneController extends Controller {
     @FXML
     private Pane mainPane, categoryPickingPane;
     @FXML
-    private Button goBackButton, shoppingCartButton;
+    public static Button goBackButton;
     @FXML
     public static Label cartQuantityLabel;
+    @FXML
+    private Button shoppingCartButton;
     @FXML
     protected ComboBox<String> sortingButtonsBox;
 
@@ -88,14 +90,12 @@ public class ClientStartSceneController extends Controller {
 
     @FXML
     private void allProductsButtonClicked() {
-        sortingButtonsBox.setValue(sortingBoxDefaultText);
         loadPane("allProductsPaneGUI.fxml");
-
     }
 
     @FXML
     private void gamesButtonClicked() {
-        loadPane("allGamesPaneGUI.fxml");
+        loadPane("gamesCategoriesGUI.fxml");
     }
 
     @FXML
@@ -112,7 +112,6 @@ public class ClientStartSceneController extends Controller {
         }
         goBackButton.setVisible(true);
         categoryPickingPane.setVisible(false);
-
     }
 
 

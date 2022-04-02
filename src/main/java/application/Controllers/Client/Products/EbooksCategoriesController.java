@@ -4,6 +4,7 @@ import application.Controllers.Client.ClientStartSceneController;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -11,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.TextAlignment;
 import users.Product;
 import users.ProductTable;
 
@@ -19,19 +21,19 @@ import java.sql.SQLException;
 
 public class EbooksCategoriesController extends ClientStartSceneController {
     @FXML
-    private Pane ebooksCategoryPane;
-
+    private Pane ebooksCategoryPane, chosenCategoryPane;
     @FXML
     private Button fantasy, science, sciFi, crime, allEbooks;
     @FXML
     private TableView<ProductTable> productsTableView;
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         initializeButtons();
         prepareAllImages();
         setButtonsActions();
         getCategoryButtonsAndPlaceThemInGrid();
+        displayPane("ebooksCategoryPane");
     }
 
     private void prepareAllImages() {
@@ -39,7 +41,6 @@ public class EbooksCategoriesController extends ClientStartSceneController {
         science.setGraphic(setImageFromIconsFolder("/CategoryIcons/science.png"));
         sciFi.setGraphic(setImageFromIconsFolder("/CategoryIcons/sci-fi.png"));
         crime.setGraphic(setImageFromIconsFolder("/CategoryIcons/crime.png"));
-
     }
 
     private void initializeButtons() {
@@ -62,12 +63,31 @@ public class EbooksCategoriesController extends ClientStartSceneController {
         allEbooks.setPrefHeight(100);
     }
 
-    private void setButtonsActions() {
-        allEbooks.setOnAction(event -> loadPane("allEbooksPaneGUI.fxml"));
-        fantasy.setOnMouseClicked(mouseEvent -> {
-            prepareNewPane("fantasy books");
+    private void prepareNewPane(String subcategoryName, String sceneTitle) {
+        clearPane(chosenCategoryPane);
+        displayPane("chosenCategoryPane");
+        goBackButton.setOnAction(event -> {
+            displayPane("ebooksCategoryPane");
+            sortingButtonsBox.setVisible(false);
         });
+        getProductsFromDbIntoTableView(subcategoryName);
+        createSubSceneTitle(sceneTitle);
+        createSortingButtons();
+        prepareSortingButtons(productsTableView, (TableColumn<ProductTable, String>) productsTableView.getColumns().get(4),
+                (TableColumn<ProductTable, String>) productsTableView.getColumns().get(3));
+        fixSortingButtonPosition();
+    }
 
+    private void setButtonsActions() {
+        allEbooks.setOnAction(event -> {
+            loadFXMLAndInitializeController("/ClientSceneFXML/ProductsFXML/allEbooksPaneGUI.fxml", chosenCategoryPane);
+            displayPane("chosenCategoryPane");
+            goBackButton.setOnAction(e -> displayPane("ebooksCategoryPane"));
+        });
+        fantasy.setOnMouseClicked(mouseEvent -> prepareNewPane("fantasy e-books", "FANTASY E-BOOKS"));
+        crime.setOnMouseClicked(mouseEvent -> prepareNewPane("crime e-books", "CRIME E-BOOKS"));
+        sciFi.setOnMouseClicked(mouseEvent -> prepareNewPane("sc-fi e-books", "SC-FI E-BOOKS"));
+        science.setOnMouseClicked(mouseEvent -> prepareNewPane("science e-books", "SCIENCE E-BOOKS"));
     }
 
     private void getCategoryButtonsAndPlaceThemInGrid() {
@@ -85,36 +105,44 @@ public class EbooksCategoriesController extends ClientStartSceneController {
         grid.setLayoutX(20);
         ebooksCategoryPane.getChildren().add(grid);
         GridPane.setFillWidth(allEbooks, true);
-
     }
 
     private void createSubSceneTitle(String text) {
         Label title = new Label();
+        title.setLayoutY(14);
+        title.setLayoutX(0);
+        title.setAlignment(Pos.CENTER);
+        title.setTextAlignment(TextAlignment.CENTER);
+        title.setPrefHeight(68);
+        title.setPrefWidth(1000);
         title.setId("titleLabel");
         title.setText(text);
-        title.setLayoutY(anchor.getWidth() / 2);
-        title.setLayoutX(10);
+        chosenCategoryPane.getChildren().add(title);
     }
 
     private void createTableView() {
         productsTableView = new TableView<>();
-        productsTableView.setPlaceholder(new Label("There are no ordered products "));
-        productsTableView.setPrefWidth(900);
+        productsTableView.setLayoutX(100);
+        productsTableView.setLayoutY(150);
+        productsTableView.setPlaceholder(new Label("There are no products in this category"));
         TableColumn<ProductTable, String> productName = new TableColumn<>("name");
-        productName.setMinWidth(200);
+        productName.setPrefWidth(244);
         TableColumn<ProductTable, String> productPrice = new TableColumn<>("price");
-        productPrice.setPrefWidth(200);
+        productPrice.setPrefWidth(91);
         TableColumn<ProductTable, String> cartButtonColumn = new TableColumn<>();
         TableColumn<ProductTable, String> starButtonColumn = new TableColumn<>();
-        starButtonColumn.setPrefWidth(230);
+        TableColumn<ProductTable, String> numberOfOrdersColumn = new TableColumn<>();
+        numberOfOrdersColumn.setVisible(false);
+        starButtonColumn.setPrefWidth(243);
         cartButtonColumn.setPrefWidth(230);
-        productsTableView.getColumns().addAll(productName, productPrice, cartButtonColumn, starButtonColumn);
+        productsTableView.getColumns().addAll(productName, productPrice, cartButtonColumn, starButtonColumn, numberOfOrdersColumn);
         productName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         productPrice.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
         starButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
         starButtonColumn.setCellFactory(buttonInsideCell -> createStarButtonInsideTableView());
         cartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
-        ebooksCategoryPane.getChildren().add(productsTableView);
+        numberOfOrdersColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfOrdersPerProduct"));
+        chosenCategoryPane.getChildren().add(productsTableView);
     }
 
     private void displayProductsFromCategory(String subcategoryName) throws SQLException {
@@ -125,19 +153,30 @@ public class EbooksCategoriesController extends ClientStartSceneController {
         productsTableView.setMaxHeight(250);
     }
 
-    private void prepareNewPane(String subcategoryName) {
-        clearPane(ebooksCategoryPane);
-        goBackButton.setOnAction(event -> loadPane("ebooksCategoriesGUI.fxml"));
-        getProductsFromDbIntoTableView(subcategoryName);
+
+    private void fixSortingButtonPosition() {
+        sortingButtonsBox.setLayoutY(142);
+        sortingButtonsBox.setLayoutX(715);
     }
 
     private void getProductsFromDbIntoTableView(String subcategoryName) {
         checkConnectionWithDb();
         createTableView();
         try {
-            displayProductsFromCategory("fantasy books");
+            displayProductsFromCategory(subcategoryName);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void displayPane(String paneName) {
+        if (paneName.equals("chosenCategoryPane")) {
+            chosenCategoryPane.setVisible(true);
+            ebooksCategoryPane.setVisible(false);
+        } else {
+            goBackButton.setOnAction(event -> switchScene(event, clientScene));
+            chosenCategoryPane.setVisible(false);
+            ebooksCategoryPane.setVisible(true);
         }
     }
 }

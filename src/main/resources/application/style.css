@@ -60,8 +60,7 @@
 }
 .categoryImages:hover{
    -fx-background-color :#7498be;
-   -fx-border-color : white;
-   -fx-border-width : 2px;
+
 }
 #informationLabel{
     -fx-background-color: white;
