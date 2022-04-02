@@ -17,7 +17,6 @@ import users.ProductTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 public class ClientAccountDetails extends ClientAccountStartSceneController {
     @FXML
@@ -85,7 +84,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
             if (result.get().equals(currentUser.getPassword())) {
                 Optional<String> newAlert = enterNewPasswordAlert();
                 newAlert.ifPresent(newPassword -> {
-                    if (Pattern.matches(PASSWORDS_REGEX, newPassword)) {
+                    if (checkPasswordRegex(newPassword)) {
                         try {
                             currentUser.updateClientPassword(getConnection(), newPassword);
                             showNotification("Password changed");
@@ -194,7 +193,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
             }
             return null;
         });
-        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> savaPasswordButton.setDisable(!Pattern.matches(PASSWORDS_REGEX, newValue)));
+        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> savaPasswordButton.setDisable(!checkPasswordRegex(newValue)));
         return dialog.showAndWait();
     }
 
@@ -212,7 +211,6 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         setLogoAndCssToCustomDialog(dialog);
         dialog.getDialogPane().setMinWidth(650);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
         return dialog;
     }
 
@@ -254,19 +252,19 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         } else return true;
 
     }
-
     private boolean updateChangesInDatabase() throws SQLException {
-
         String login = tfLogin.getText();
         String name = tfName.getText();
         String lastName = tfLastName.getText();
+        if (!checkRegex(login, name, lastName)) {
+            return false;
+        }
         if (!login.equals(currentUser.getLogin())) {
             if (isLoginUnique(login)) {
                 currentUser.updateClientLogin(getConnection(), login);
                 CURRENT_USER_LOGIN = login;
                 return true;
             }
-
         }
         if (!name.equals(currentUser.getName())) {
             currentUser.updateClientName(getConnection(), name);

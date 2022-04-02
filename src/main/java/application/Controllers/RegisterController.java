@@ -108,7 +108,7 @@ public class RegisterController extends Controller {
     private ChangeListener<String> passwordFieldListener() {
         return (observableValue, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
-                if (Pattern.matches(PASSWORDS_REGEX, newValue)) {
+                if (checkPasswordRegex(newValue)) {
                     setAllPasswordRequirementImages(true);
                 } else {
                     checkPasswordRequirementAndSetProperImage(passUppercaseLetterImage, "(.*[A-Z].*)");  // if string contains at least one : // uppercase latter
@@ -215,14 +215,15 @@ public class RegisterController extends Controller {
     }
 
     private boolean areFieldsFilledCorrectlyAndLoginIsUnique() throws SQLException {
-        return !isLoginEmpty() && !isNameEmpty() && !isLastNameEmpty() && !isPasswordEmpty() && checkPasswordComplexity() && passFieldMatches() && isLoginUnique() && isCheckboxChecked();
+        return !isLoginEmpty() && !isNameEmpty() && !isLastNameEmpty() && !isPasswordEmpty() && checkPasswordComplexity() && passFieldMatches() && isLoginUnique()
+                && isCheckboxChecked() && checkRegex(tfLogin.getText(), tfName.getText(), tfLastName.getText());
     }
 
     private Client newUser() {
-        String login = tfLogin.getText().trim();
-        String name = tfName.getText().trim();
-        String lastName = tfLastName.getText().trim();
-        String password = tfPassword.getText().trim();
+        String login = tfLogin.getText();
+        String name = tfName.getText();
+        String lastName = tfLastName.getText();
+        String password = tfPassword.getText();
         return new Client(login, name, lastName, password);
     }
 
@@ -268,7 +269,7 @@ public class RegisterController extends Controller {
     }
 
     private boolean checkPasswordComplexity() {
-        if (Pattern.matches(PASSWORDS_REGEX, tfPassword.getText())) {
+        if (checkPasswordRegex(tfPassword.getText())) {
             setAllPasswordRequirementImages(true);
             return true;
         } else {

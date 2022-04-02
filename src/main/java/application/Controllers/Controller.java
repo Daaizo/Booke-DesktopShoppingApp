@@ -30,17 +30,17 @@ import java.net.URL;
 import java.sql.Connection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public abstract class Controller {
 
     @FXML
     protected AnchorPane anchor;
+    private String password;
 
     public static final String CURRENCY = " $";
-    protected static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
     public static String CURRENT_USER_LOGIN;
-    //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
-    //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
+    private SqlConnection instance;
     protected final String loginScene = "/application/FXML/loginGUI.fxml";
     protected final String registrationScene = "/application/FXML/registerGUI.fxml";
     protected final String adminScene = "/application/FXML/AdminSceneFXML/adminStartingSceneGUI.fxml";
@@ -48,9 +48,7 @@ public abstract class Controller {
     protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/shoppingCartGUI.fxml";
     protected final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountStartSceneGUI.fxml";
     protected final URL iconsUrl = getClass().getResource("/application/Icons/");
-    protected String password;
     protected final URL cssUrl = getClass().getResource("/application/style.css");
-    private SqlConnection instance;
     protected StackPane notification;
 
     @FXML
@@ -108,6 +106,55 @@ public abstract class Controller {
             instance = SqlConnection.createInstance();
         }
     }
+
+    private boolean checkLoginRegex(String login) {
+        String loginRegex = "^[^ ]{2,20}$";
+        // all characters except space, 2-20 characters
+        return Pattern.matches(loginRegex, login);
+    }
+
+    private boolean checkNameRegex(String name) {
+        String nameRegex = "^[A-Z][a-z]{1,20}$";
+        //First letter - capital, others only small letters, without spaces, 2-21 characters
+        return Pattern.matches(nameRegex, name);
+    }
+
+    private boolean checkLastNameRegex(String lastName) {
+        String lastNameRegex = "^([A-Z][a-z]{1,20}(-[A-Z][a-z]{1,20})?)$|^([A-Z]'[a-z]{1,30})$|^([A-Z][a-z]{1,20}( [A-Z][a-z]{1,20})?)$";
+        //First letter - capital, others only small letters, without spaces, 2-21 normal last name without nothing more, 2-45 special ones
+        // optional last name with "-" like Kowalski-Jablkowsy, with "'" like D’Arco and with ONE space between like De Boo
+        //Rubular link to check it: https://rubular.com/r/6diS4a60Bvnguk   <- regex checker
+        return Pattern.matches(lastNameRegex, lastName);
+    }
+
+    private void regexAlert() {
+        createAndShowAlert(Alert.AlertType.WARNING, "There is something wrong with data entered !", "REGEX ALERT",
+                """
+                        Check if the data entered :
+                            -has no spaces at the beginning or end
+                            -the first name and last name start with a capital letter
+                            -it is not shorter than 2 and longer than 22 characters     (login and first name), 40 characters (last name)
+                                     
+                        The last names like :
+                            D'Arco, De Boo, Kowalski-Jablkowsy are allowed.
+                        """);
+    }
+
+    protected boolean checkRegex(String login, String name, String lastName) {
+        if (!checkLastNameRegex(lastName) || !checkLoginRegex(login) || !checkNameRegex(name)) {
+            regexAlert();
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean checkPasswordRegex(String password) {
+        String passwordRegex = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
+        //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
+        //Rubular link to check it: https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
+        return Pattern.matches(passwordRegex, password);
+    }
+
 
     protected void clearPane(Pane pane) {
         pane.getChildren().removeAll();
