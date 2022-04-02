@@ -76,8 +76,9 @@ public class ProductTable {
             while (products.next()) {
                 String name = products.getString(2);
                 String price = products.getString(3) + Controller.CURRENCY;
-                String isFavourite = products.getString(6);
-                int numberOfProducts = products.getInt(6);
+                int numberOfProducts = products.getInt(4);
+                String isFavourite = products.getString(5);
+
                 listOfProducts.add(new ProductTable(new Product(name, price, isFavourite, numberOfProducts)));
             }
         } catch (SQLException exception) {
