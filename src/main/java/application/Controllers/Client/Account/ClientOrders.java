@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -16,16 +17,18 @@ import users.OrderTable;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class ClientOrders extends ClientAccountStartSceneController {
     @FXML
     private Pane ordersPane, orderDetailsPane;
     @FXML
-    private TableColumn<OrderTable, String> ordersDateColumn, ordersDeliveryDateColumn, ordersPaymentColumn, ordersStatusColumn, ordersIdColumn, ordersButtonColumn;
-    @FXML
-    private TableColumn<OrderTable, Double> ordersTotalValueColumn;
+    private TableColumn<OrderTable, String> ordersDateColumn, ordersDeliveryDateColumn, ordersPaymentColumn, ordersStatusColumn, ordersIdColumn,
+            ordersButtonColumn, ordersTotalValueColumn;
     @FXML
     private TableView<OrderTable> ordersTableView;
+    @FXML
+    private ComboBox<String> sortingButtonsBox;
 
     @FXML
     private void initialize() {
@@ -34,6 +37,46 @@ public class ClientOrders extends ClientAccountStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        createSortingButtons();
+        prepareSortingButtons();
+    }
+
+    private void createSortingButtons() {
+        sortingButtonsBox = new ComboBox<>();
+        sortingButtonsBox.getItems().addAll(
+                "Total value (High -> Low)", "Total value (Low -> High)", "ID", "Order date", "Delivery date", "Order status");
+        sortingButtonsBox.setLayoutX(800);
+        sortingButtonsBox.setLayoutY(50);
+        sortingButtonsBox.getStyleClass().add("OrangeButtons");
+        sortingButtonsBox.setId("sortingButtons");
+        ordersPane.getChildren().add(sortingButtonsBox);
+    }
+
+    private void prepareSortingButtons() {
+        sortingButtonsBox.setValue("Choose sorting type :");
+        sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
+            ordersTableView.getSortOrder().clear();
+            if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(0))) {
+                ordersTotalValueColumn.setSortType(TableColumn.SortType.DESCENDING);
+                ordersTableView.getSortOrder().add(ordersTotalValueColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(1))) {
+                ordersTotalValueColumn.setSortType(TableColumn.SortType.ASCENDING);
+                ordersTableView.getSortOrder().add(ordersTotalValueColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(2))) {
+                ordersIdColumn.setSortType(TableColumn.SortType.ASCENDING);
+                ordersTableView.getSortOrder().add(ordersIdColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(3))) {
+                ordersDateColumn.setSortType(TableColumn.SortType.DESCENDING);
+                ordersTableView.getSortOrder().add(ordersDateColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(4))) {
+                ordersDeliveryDateColumn.setSortType(TableColumn.SortType.DESCENDING);
+                ordersTableView.getSortOrder().add(ordersDeliveryDateColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(5))) {
+                ordersStatusColumn.setSortType(TableColumn.SortType.DESCENDING);
+                ordersTableView.getSortOrder().add(ordersStatusColumn);
+            }
+            ordersTableView.requestFocus();
+        });
 
     }
 
@@ -64,7 +107,7 @@ public class ClientOrders extends ClientAccountStartSceneController {
     }
 
     private void showOnlyRowsWithData() {
-        showOnlyRowsWithData(ordersTableView);
+        prepareTableView(ordersTableView, ordersTotalValueColumn);
         ordersTableView.setMaxHeight(530);
     }
 
@@ -99,7 +142,8 @@ public class ClientOrders extends ClientAccountStartSceneController {
     private FXMLLoader createLoaderWithCustomController(ButtonInsideTableColumn<OrderTable, String> button) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
         ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
-        clientOrderDetailsController.setSpecificRowId(button.getRowId());
+        clientOrderDetailsController.setOrder(button.getRowId());
+        clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
         clientOrderDetailsController.setAllOrdersPane(ordersPane);
         loader.setController(clientOrderDetailsController);
         return loader;
@@ -108,7 +152,6 @@ public class ClientOrders extends ClientAccountStartSceneController {
     private void displayOrderDetails(FXMLLoader loader) throws IOException {
         ordersPane.getChildren().clear();
         ordersPane.setVisible(false);
-
         orderDetailsPane.getChildren().add(loader.load());
     }
 }

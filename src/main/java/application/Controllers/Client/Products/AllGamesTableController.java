@@ -16,9 +16,8 @@ import java.sql.SQLException;
 
 public class AllGamesTableController extends ClientStartSceneController {
     @FXML
-    private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, gamesPriceColumn;
-    @FXML
-    private TableColumn<ProductTable, String> gamesCartButtonColumn, gamesStarButtonColumn;
+    private TableColumn<ProductTable, String> gamesNameColumn, gamesSubcategoryColumn, gamesPriceColumn, gamesNumberOfOrdersColumn, gamesCartButtonColumn, gamesStarButtonColumn;
+
     @FXML
     private TableView<ProductTable> gamesTableView;
 
@@ -29,7 +28,8 @@ public class AllGamesTableController extends ClientStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        setSoringTypeToColumns(gamesPriceColumn, gamesCartButtonColumn, gamesStarButtonColumn);
+        createSortingButtons();
+        prepareSortingButtons(gamesTableView, gamesNumberOfOrdersColumn, gamesStarButtonColumn);
     }
 
     private void fillGamesColumnsWithData(ObservableList<ProductTable> list) {
@@ -39,11 +39,12 @@ public class AllGamesTableController extends ClientStartSceneController {
         gamesStarButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
         gamesStarButtonColumn.setCellFactory(productTableStringTableColumn -> createStarButtonInsideTableView());
         gamesCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
+        gamesNumberOfOrdersColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfOrdersPerProduct"));
         gamesTableView.setItems(list);
-        showOnlyRowsWithData(gamesTableView);
+        prepareTableView(gamesTableView, gamesPriceColumn);
     }
 
-    void displayGames() throws SQLException, IOException {
+    private void displayGames() throws SQLException {
 
         checkConnectionWithDb();
         ResultSet products = Product.getProductsFromCategoryAndInformationIfProductIsInUsersFavouriteFromDatabase(getConnection(), Controller.CURRENT_USER_LOGIN, "games");
@@ -51,6 +52,5 @@ public class AllGamesTableController extends ClientStartSceneController {
         ObservableList<ProductTable> listOfGames = ProductTable.getProductsFromCategoryWithInformationIfTheyAreInUsersFavourite(products);
         fillGamesColumnsWithData(listOfGames);
     }
-
 
 }

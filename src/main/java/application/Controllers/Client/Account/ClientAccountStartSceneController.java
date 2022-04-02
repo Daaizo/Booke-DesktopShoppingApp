@@ -10,7 +10,6 @@ import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -21,12 +20,7 @@ import java.util.Objects;
 public class ClientAccountStartSceneController extends Controller {
 
     private final Lighting lighting = new Lighting();
-    @FXML
-    public static StackPane notification;
-
     protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
-    @FXML
-    public static Label notificationLabel;
 
     @FXML
     private Pane menuPane, mainPane, startPane;
@@ -36,22 +30,20 @@ public class ClientAccountStartSceneController extends Controller {
     public static Button goBackButton;
     @FXML
     public static Label emptyTableViewLabel;
-    protected final String pathToFxml = "/ClientSceneFXML/ClientAccountFXML/";
-    private final double durationOfNotification = 2500;
 
-    //TODO database DIAGRAMS update needed !
+    protected final String pathToFxml = "/ClientSceneFXML/ClientAccountFXML/";
+
 
     @FXML
     private void initialize() {
         prepareScene();
         goBackButton = createGoBackButton(event -> {
-            switchScene(event, clientScene);
             clearPane(mainPane);
+            switchScene(event, clientScene);
+
         });
         createLightingEffect();
         createEmptyTableViewLabel();
-        notificationLabel = new Label();
-        notification = createNotification(notificationLabel);
     }
 
 
@@ -101,11 +93,6 @@ public class ClientAccountStartSceneController extends Controller {
         if (button == ordersButton) ordersButton.setEffect(lighting);
         else if (button == favouritesButton) favouritesButton.setEffect(lighting);
         else if (button == accountSettingsButton) accountSettingsButton.setEffect(lighting);
-    }
-
-    protected void showNotification(String text) {
-        notificationLabel.setText(text);
-        super.showNotification(notification, durationOfNotification);
     }
 
     protected void makePaneVisible(Pane pane) {

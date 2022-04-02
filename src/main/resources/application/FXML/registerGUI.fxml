@@ -4,7 +4,8 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#Dragging" prefHeight="694.0"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" onMousePressed="#enableDraggingWholeWindow"
+            prefHeight="694.0"
             prefWidth="1050.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
             fx:controller="application.Controllers.RegisterController">
     <AnchorPane focusTraversable="true" layoutX="14.0" layoutY="147.0" prefHeight="547.0" prefWidth="1050.0"

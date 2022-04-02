@@ -29,7 +29,6 @@ public class ClientFavourites extends ClientAccountStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     @FXML
@@ -71,7 +70,7 @@ public class ClientFavourites extends ClientAccountStartSceneController {
     }
 
     private void showOnlyRowsWithData() {
-        showOnlyRowsWithData(favouritesTableView);
+        prepareTableView(favouritesTableView, favouritesPriceColumn);
         favouritesTableView.setMaxHeight(340);//365
     }
 

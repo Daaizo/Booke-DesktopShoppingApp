@@ -53,6 +53,15 @@
     -fx-background-radius :10px;
     -fx-background-insets: 0;
 }
+.categoryImages{
+    -fx-background-color : transparent;
+    -fx-content-display: center;
+
+}
+.categoryImages:hover{
+   -fx-background-color :#7498be;
+
+}
 #informationLabel{
     -fx-background-color: white;
     -fx-border-color : black;
@@ -120,7 +129,9 @@
     -fx-background : -backgroundColorA;
     -fx-border-color : -backgroundColorA;
     -fx-font-size : 15px;
+    -fx-font-weight: bolder;
 }
+
 .shoppingCartLabels{
     -fx-font-size :20px;
     -fx-font-weight: bolder  ;
@@ -197,7 +208,10 @@
     -fx-font-weight	: bolder  ;
 
 }
-
+#sortingButtons{
+    -fx-font-weight: lighter;
+    -fx-font-size : 15px;
+}
  .text-field:focused,
  .check-box:determinate .box .mark: focused,
  #inputField:focused{
@@ -270,6 +284,8 @@
     -fx-font-size : 19px;
     -fx-font-alignment: center;
     -fx-alignment : center;
+    -fx-font-weight	: bold   ;
+    -fx-text-background-color: black;
  }
 
 .table-view .show-hide-columns-button{

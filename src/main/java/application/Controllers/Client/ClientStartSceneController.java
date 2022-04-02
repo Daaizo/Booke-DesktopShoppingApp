@@ -6,13 +6,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import users.Client;
 import users.ProductTable;
 
@@ -24,21 +22,24 @@ public class ClientStartSceneController extends Controller {
 
     private final int cartLabelXPosition = 60;
     private final int cartLabelYPosition = 2;
-    private final double durationOfNotification = 3000;
-    @FXML
-    public static Label cartQuantityLabel;
-    @FXML
-    public static StackPane cartNotification, starNotification, yellowStartNotification;
+    private final String[] notificationText = {"Item added to favourites", "Item added to cart", "Item removed from favourites"};
+
+    protected final String sortingBoxDefaultText = "Choose sorting type :";
     protected final Client currentUser = new Client(CURRENT_USER_LOGIN);
     @FXML
     private Pane mainPane, categoryPickingPane;
     @FXML
-    private Button goBackButton, shoppingCartButton;
+    public static Button goBackButton;
+    @FXML
+    public static Label cartQuantityLabel;
+    @FXML
+    private Button shoppingCartButton;
+    @FXML
+    protected ComboBox<String> sortingButtonsBox;
 
     @FXML
     private void initialize() {
         prepareScene();
-        createNotifications();
         createButtons();
         createQuantityLabel();
         try {
@@ -47,8 +48,45 @@ public class ClientStartSceneController extends Controller {
             e.printStackTrace();
         }
         goBackButton.setVisible(false);
+        createSortingButtons();
     }
 
+    protected void createSortingButtons() {
+        sortingButtonsBox = new ComboBox<>();
+        sortingButtonsBox.getItems().addAll("Price (High -> Low)", "Price (Low -> High)", "Number of orders", "Name", "Favourites first");
+        sortingButtonsBox.setLayoutX(815);
+        sortingButtonsBox.setLayoutY(82);
+        sortingButtonsBox.getStyleClass().add("OrangeButtons");
+        sortingButtonsBox.setId("sortingButtons");
+        anchor.getChildren().add(sortingButtonsBox);
+        sortingButtonsBox.setVisible(false);
+    }
+
+    protected void prepareSortingButtons(TableView<ProductTable> tableView, TableColumn<ProductTable, String> numberOfOrdersColumn, TableColumn<ProductTable, String> columnWithStar) {
+        sortingButtonsBox.setValue(sortingBoxDefaultText);
+        sortingButtonsBox.setVisible(true);
+        sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
+            tableView.getSortOrder().clear();
+            if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(0))) {
+                tableView.getColumns().get(1).setSortType(TableColumn.SortType.DESCENDING);
+                tableView.getSortOrder().add(tableView.getColumns().get(1));
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(1))) {
+                tableView.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
+                tableView.getSortOrder().add(tableView.getColumns().get(1));
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(2))) {
+                numberOfOrdersColumn.setSortType(TableColumn.SortType.DESCENDING);
+                tableView.getSortOrder().add(numberOfOrdersColumn);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(3))) {
+                tableView.getColumns().get(0).setSortType(TableColumn.SortType.ASCENDING);
+                tableView.getSortOrder().add(tableView.getColumns().get(0));
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(4))) {
+                columnWithStar.setSortType(TableColumn.SortType.DESCENDING);
+                tableView.getSortOrder().add(columnWithStar);
+            }
+            tableView.requestFocus();
+        });
+
+    }
 
     @FXML
     private void allProductsButtonClicked() {
@@ -57,13 +95,14 @@ public class ClientStartSceneController extends Controller {
 
     @FXML
     private void gamesButtonClicked() {
-        loadPane("allGamesPaneGUI.fxml");
+        loadPane("gamesCategoriesGUI.fxml");
     }
 
     @FXML
     private void ebooksButtonClicked() {
         loadPane("ebooksCategoriesGUI.fxml");
     }
+
 
     private void loadPane(String fxmlName) {
         try {
@@ -100,6 +139,9 @@ public class ClientStartSceneController extends Controller {
             mainPane.getChildren().removeAll();
             mainPane.getChildren().clear();
             goBackButton.setVisible(false);
+            sortingButtonsBox.setVisible(false);
+            sortingButtonsBox.setValue(sortingBoxDefaultText);
+
         });
 
 
@@ -123,37 +165,27 @@ public class ClientStartSceneController extends Controller {
 
     }
 
-    private void createNotifications() {
-        starNotification = createNotification(new Label("Item added to favourites"));
-        cartNotification = createNotification(new Label("Item added to cart"));
-        yellowStartNotification = createNotification(new Label("Item removed from favourites"));
-    }
 
-    private void turnOfNotifications() {
-        starNotification.setVisible(false);
-        cartNotification.setVisible(false);
-        yellowStartNotification.setVisible(false);
-    }
-
-    protected EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideProductTableView button, StackPane notificationName) {
+    protected EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideProductTableView button) {
         return mouseEvent -> {
             String productName = button.getRowId().getProductName();
-
             checkConnectionWithDb();
             try {
-                if (notificationName.equals(cartNotification)) {
+                if (button.getButtonName().equals("cartButton")) {
                     currentUser.addItemToUsersCart(productName, getConnection());
                     setQuantityLabel(cartQuantityLabel);
-                } else {
+                    showNotification(notificationText[1]);
+
+                } else if (button.getButtonName().equals("favouritesButton")) {
                     currentUser.addItemToUsersFavourite(productName, getConnection());
                     button.getRowId().setIsProductFavourite("yes");
                     button.getTableView().refresh();
+                    showNotification(notificationText[0]);
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            turnOfNotifications();
-            showNotification(notificationName, durationOfNotification);
         };
     }
 
@@ -163,8 +195,7 @@ public class ClientStartSceneController extends Controller {
                 ProductTable productTableCellId = (ProductTable) rowId;
                 String clickedProductName = productTableCellId.getProductName();
                 currentUser.deleteItemFromUsersFavourite(clickedProductName, getConnection());
-                turnOfNotifications();
-                showNotification(yellowStartNotification, durationOfNotification);
+                showNotification(notificationText[2]);
                 ((ProductTable) rowId).setIsProductFavourite("no");
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -174,25 +205,32 @@ public class ClientStartSceneController extends Controller {
     }
 
     protected ButtonInsideProductTableView createStarButtonInsideTableView() {
-        ButtonInsideProductTableView starButton = new ButtonInsideProductTableView("star.png", "add to favourites");
-        starButton.setEventHandler(buttonInsideTableViewClicked(starButton, starNotification));
+        ButtonInsideProductTableView starButton = new ButtonInsideProductTableView("star.png", "add to favourites", "favouritesButton");
+        starButton.setEventHandler(buttonInsideTableViewClicked(starButton));
         starButton.setCssClassId("clientTableviewButtons");
 
         return starButton;
     }
 
     protected ButtonInsideProductTableView createCartButtonInsideTableView() {
-        ButtonInsideProductTableView button = new ButtonInsideProductTableView("add_cart.png", "add to cart");
-        button.setCssClassId("clientTableviewButtons");
-        button.setEventHandler(buttonInsideTableViewClicked(button, cartNotification));
-        return button;
+        ButtonInsideProductTableView cartButton = new ButtonInsideProductTableView("add_cart.png", "add to cart", "cartButton");
+        cartButton.setCssClassId("clientTableviewButtons");
+        cartButton.setEventHandler(buttonInsideTableViewClicked(cartButton));
+        return cartButton;
     }
 
 
     class ButtonInsideProductTableView extends ButtonInsideTableColumn<ProductTable, String> {
 
-        public ButtonInsideProductTableView(String iconNameWithExtension, String buttonText) {
+        private final String buttonName;
+
+        public ButtonInsideProductTableView(String iconNameWithExtension, String buttonText, String buttonName) {
             super(iconNameWithExtension, buttonText);
+            this.buttonName = buttonName;
+        }
+
+        public String getButtonName() {
+            return buttonName;
         }
 
         @Override

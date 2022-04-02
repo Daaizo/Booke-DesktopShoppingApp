@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import users.Product;
 import users.ProductTable;
 
@@ -14,10 +15,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class AllEbooksTableController extends ClientStartSceneController {
+    public Pane ebooksPane;
     @FXML
-    private TableColumn<ProductTable, String> ebooksNameColumn, ebooksSubcategoryColumn, ebooksPriceColumn;
-    @FXML
-    private TableColumn<ProductTable, String> ebooksStarButtonColumn, ebooksCartButtonColumn;
+    private TableColumn<ProductTable, String> ebooksNameColumn, ebooksSubcategoryColumn, ebooksPriceColumn,
+            ebooksStarButtonColumn, ebooksCartButtonColumn, ebooksNumberOfOrdersColumn;
     @FXML
     private TableView<ProductTable> ebooksTableView;
 
@@ -29,7 +30,8 @@ public final class AllEbooksTableController extends ClientStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        setSoringTypeToColumns(ebooksPriceColumn, ebooksCartButtonColumn, ebooksStarButtonColumn);
+        createSortingButtons();
+        prepareSortingButtons(ebooksTableView, ebooksNumberOfOrdersColumn, ebooksStarButtonColumn);
     }
 
 
@@ -40,9 +42,9 @@ public final class AllEbooksTableController extends ClientStartSceneController {
         ebooksStarButtonColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().isProductFavouriteProperty());
         ebooksStarButtonColumn.setCellFactory(buttonInsideCell -> createStarButtonInsideTableView());
         ebooksCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
+        ebooksNumberOfOrdersColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfOrdersPerProduct"));
         ebooksTableView.setItems(list);
-        showOnlyRowsWithData(ebooksTableView);
-
+        prepareTableView(ebooksTableView, ebooksPriceColumn);
     }
 
 

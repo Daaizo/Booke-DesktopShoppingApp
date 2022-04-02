@@ -30,32 +30,138 @@ import java.net.URL;
 import java.sql.Connection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public abstract class Controller {
+
+    @FXML
+    protected AnchorPane anchor;
+    private String password;
+
     public static final String CURRENCY = " $";
-    protected static final String PASSWORDS_REGEX = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
     public static String CURRENT_USER_LOGIN;
-    //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
-    //Rubular link : https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
+    private SqlConnection instance;
     protected final String loginScene = "/application/FXML/loginGUI.fxml";
     protected final String registrationScene = "/application/FXML/registerGUI.fxml";
     protected final String adminScene = "/application/FXML/AdminSceneFXML/adminStartingSceneGUI.fxml";
     protected final String clientScene = "/application/FXML/ClientSceneFXML/clientStartingSceneGUI.fxml";
-    protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/shoppingCartGUI.fxml";
+    protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/shoppingCartGUI.fxml";
     protected final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountStartSceneGUI.fxml";
     protected final URL iconsUrl = getClass().getResource("/application/Icons/");
-    protected String password;
     protected final URL cssUrl = getClass().getResource("/application/style.css");
-    private SqlConnection instance;
-    @FXML
-    public AnchorPane anchor;
+    protected StackPane notification;
 
-    public void clearPane(Pane pane) {
+    @FXML
+    private void enableDraggingWholeWindow() {
+        Stage stage = (Stage) anchor.getScene().getWindow();
+        anchor.setOnMousePressed(pressEvent -> anchor.setOnMouseDragged(dragEvent -> {
+            stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+            stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+        }));
+    }
+
+    private ImageView setSmallLogoInCorner() {
+        ImageView logo = setImageFromIconsFolder("transparentLogo.png");
+        logo.setY(5);
+        logo.setX(5);
+        return logo;
+    }
+
+    private void disableAllActionOnTableViewColumns(TableView<?> tableView) {
+        tableView.getColumns().forEach(tableColumn -> {
+            tableColumn.setReorderable(false);
+            tableColumn.setResizable(false);
+            tableColumn.setEditable(false);
+        });
+    }
+
+    private void showOnlyRowsWithData(TableView<?> tableView) {
+        tableView.setMaxHeight(480);
+        tableView.setFixedCellSize(55);
+        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(40));
+    }
+
+
+    private int comparatorForPriceColumn(String a, String b) {
+        String onlyNumberA = a.replace(CURRENCY, "").trim();
+        String onlyNumberB = b.replace(CURRENCY, "").trim();
+        double numberA = Double.parseDouble(onlyNumberA);
+        double numberB = Double.parseDouble(onlyNumberB);
+        return Double.compare(numberA, numberB);
+    }
+
+    private AnchorPane createHorizontalLine() {
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setMinSize(1050, 3);
+        anchorPane.setLayoutX(0);
+        anchorPane.setLayoutY(52);
+        anchorPane.setStyle("-fx-background-color :  #fc766a");
+        return anchorPane;
+    }
+
+    private void showConnectionAlertAndWait() {
+        while (instance.getConnection() == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
+            alert.showAndWait();
+            instance = SqlConnection.createInstance();
+        }
+    }
+
+    private boolean checkLoginRegex(String login) {
+        String loginRegex = "^[^ ]{2,20}$";
+        // all characters except space, 2-20 characters
+        return Pattern.matches(loginRegex, login);
+    }
+
+    private boolean checkNameRegex(String name) {
+        String nameRegex = "^[A-Z][a-z]{1,20}$";
+        //First letter - capital, others only small letters, without spaces, 2-21 characters
+        return Pattern.matches(nameRegex, name);
+    }
+
+    private boolean checkLastNameRegex(String lastName) {
+        String lastNameRegex = "^([A-Z][a-z]{1,20}(-[A-Z][a-z]{1,20})?)$|^([A-Z]'[a-z]{1,30})$|^([A-Z][a-z]{1,20}( [A-Z][a-z]{1,20})?)$";
+        //First letter - capital, others only small letters, without spaces, 2-21 normal last name without nothing more, 2-45 special ones
+        // optional last name with "-" like Kowalski-Jablkowsy, with "'" like D’Arco and with ONE space between like De Boo
+        //Rubular link to check it: https://rubular.com/r/6diS4a60Bvnguk   <- regex checker
+        return Pattern.matches(lastNameRegex, lastName);
+    }
+
+    private void regexAlert() {
+        createAndShowAlert(Alert.AlertType.WARNING, "There is something wrong with data entered !", "REGEX ALERT",
+                """
+                        Check if the data entered :
+                            -has no spaces at the beginning or end
+                            -the first name and last name start with a capital letter
+                            -it is not shorter than 2 and longer than 22 characters     (login and first name), 40 characters (last name)
+                                     
+                        The last names like :
+                            D'Arco, De Boo, Kowalski-Jablkowsy are allowed.
+                        """);
+    }
+
+    protected boolean checkRegex(String login, String name, String lastName) {
+        if (!checkLastNameRegex(lastName) || !checkLoginRegex(login) || !checkNameRegex(name)) {
+            regexAlert();
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean checkPasswordRegex(String password) {
+        String passwordRegex = "^(?=.*[A-Z])(?=.*[!@#$&%^*()_+])(?=.*[0-9])(?=.*[a-z]).{6,20}$";
+        //Regex meaning/  at least: 1 uppercase letter,  one special sign ( basically all numbers + shift ), 1 number,1 lowercase letter, 6-20 characters
+        //Rubular link to check it: https://rubular.com/r/gEmHAEm9wKr1Tj    <- regex checker
+        return Pattern.matches(passwordRegex, password);
+    }
+
+
+    protected void clearPane(Pane pane) {
         pane.getChildren().removeAll();
         pane.getChildren().clear();
     }
 
-    public void loadFXMLAndInitializeController(String fxmlPathFromFXMLFolder, Pane pane) {
+    protected void loadFXMLAndInitializeController(String fxmlPathFromFXMLFolder, Pane pane) {
         clearPane(pane);
         try {
             pane.getChildren().add(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/application/FXML" + fxmlPathFromFXMLFolder))));
@@ -71,43 +177,21 @@ public abstract class Controller {
         mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
         createExitButton();
         createLogoutButton();
-
     }
 
-    protected ImageView setSmallLogoInCorner() {
-        ImageView logo = setImageFromIconsFolder("transparentLogo.png");
-        logo.setY(5);
-        logo.setX(5);
-        return logo;
+    protected void prepareSceneWithoutLogoutButton() {
+        AnchorPane mainAnchor = setAnchorSizeAndColors();
+        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
+        createExitButton();
     }
 
-    protected void showOnlyRowsWithData(TableView<?> tableView) {
-        tableView.setMaxHeight(480);
-        tableView.setFixedCellSize(55);
-        tableView.prefHeightProperty().bind(Bindings.size(tableView.getItems()).multiply(tableView.getFixedCellSize()).add(40));
-    }
 
-    protected int comparePriceWithCurrency(String a, String b) {
-        String onlyNumberA = a.replace(CURRENCY, "").trim();
-        String onlyNumberB = b.replace(CURRENCY, "").trim();
-        double numberA = Double.parseDouble(onlyNumberA);
-        double numberB = Double.parseDouble(onlyNumberB);
-        return Double.compare(numberA, numberB);
-    }
+    protected void prepareTableView(TableView<?> tableView, TableColumn<?, String> columnWithPrice) {
+        showOnlyRowsWithData(tableView);
+        disableAllActionOnTableViewColumns(tableView);
+        columnWithPrice.setComparator(this::comparatorForPriceColumn);
 
-    protected void setSoringTypeToColumns(TableColumn<?, String> priceColumn, TableColumn<?, ?> buttonColumnA, TableColumn<?, ?> buttonColumnB) {
-        priceColumn.setComparator(this::comparePriceWithCurrency);
-        buttonColumnA.setSortable(false);
-        buttonColumnB.setSortable(false);
-    }
-
-    protected AnchorPane createHorizontalLine() {
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setMinSize(1050, 3);
-        anchorPane.setLayoutX(0);
-        anchorPane.setLayoutY(52);
-        anchorPane.setStyle("-fx-background-color :  #fc766a");
-        return anchorPane;
     }
 
     protected Button createButton(String imageName, int x, int y) {
@@ -155,16 +239,7 @@ public abstract class Controller {
     }
 
 
-    @FXML
-    public void Dragging() {
-        Stage stage = (Stage) anchor.getScene().getWindow();
-        anchor.setOnMousePressed(pressEvent -> anchor.setOnMouseDragged(dragEvent -> {
-            stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
-            stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
-        }));
-    }
-
-    public void switchScene(ActionEvent event, String url) {
+    protected void switchScene(ActionEvent event, String url) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(url)));
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -177,13 +252,6 @@ public abstract class Controller {
         }
     }
 
-    private void showConnectionAlertAndWait() {
-        while (instance.getConnection() == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Connection to data base failed. Reconnect and try again.");
-            alert.showAndWait();
-            instance = SqlConnection.createInstance();
-        }
-    }
 
     protected void checkConnectionWithDb() {
         instance = SqlConnection.createInstance();
@@ -194,11 +262,11 @@ public abstract class Controller {
         return this.instance.getConnection();
     }
 
-    protected void colorField(TextField field, Label label, Color color) {
+    protected void makeFieldsBorderRed(TextField field, Label label) {
         DropShadow shadow = new DropShadow();
         shadow.setBlurType(BlurType.THREE_PASS_BOX);
         shadow.setSpread(0.60);
-        shadow.setColor(color);
+        shadow.setColor(Color.RED);
         shadow.setWidth(25);
         shadow.setHeight(25);
         shadow.setRadius(10);
@@ -227,22 +295,40 @@ public abstract class Controller {
     }
 
 
-    protected StackPane createNotification(Label label) {
-        StackPane pane = new StackPane();
+    protected void createNotification() {
+        notification = new StackPane();
+        Label notificationLabel = new Label();
         ImageView image = setImageFromIconsFolder("check.png");
-        pane.setId("notification");
-        label.setId("notificationLabel");
-        label.setPadding(new Insets(0, 0, 0, 47));
-        pane.getChildren().addAll(label, image);
-        label.setWrapText(true);
-        StackPane.setAlignment(label, Pos.CENTER);
+        notification.setId("notification");
+        notificationLabel.setId("notificationLabel");
+        notificationLabel.setPadding(new Insets(0, 0, 0, 47));
+        notification.getChildren().addAll(notificationLabel, image);
+        notificationLabel.setWrapText(true);
+        StackPane.setAlignment(notificationLabel, Pos.CENTER);
         StackPane.setAlignment(image, Pos.CENTER_LEFT);
-        pane.setLayoutX(720);
-        pane.setLayoutY(75);
-        pane.setVisible(false);
-        anchor.getChildren().add(pane);
-        return pane;
+        notification.setMinWidth(305);
 
+        notification.setLayoutX(720);
+        notification.setLayoutY(7);
+        notification.setVisible(false);
+        anchor.getChildren().add(notification);
+    }
+
+    protected void showNotification(String notificationText) {
+        if (notification == null) {
+            createNotification();
+        }
+        double timeDuration = 3000;
+        Label notificationLabel = (Label) notification.getChildren().get(0);
+        notificationLabel.setText(notificationText);
+        notification.setVisible(false);
+        notification.setVisible(true);
+        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), notification);
+        fade.setFromValue(1000);
+        fade.setToValue(0);
+        fade.setCycleCount(1);
+        fade.setAutoReverse(true);
+        fade.play();
     }
 
     protected Optional<ButtonType> createAndShowAlert(Alert.AlertType type, String headerText, String title, String contextText) {
@@ -282,17 +368,7 @@ public abstract class Controller {
         return buttonClicked;
     }
 
-    protected void showNotification(StackPane notification, double timeDuration) {
-        notification.setVisible(false);
-        notification.setVisible(true);
-        FadeTransition fade = new FadeTransition(Duration.millis(timeDuration), notification);
-        fade.setFromValue(1000);
-        fade.setToValue(0);
-        fade.setCycleCount(1);
-        fade.setAutoReverse(true);
-        fade.play();
 
-    }
 
     protected void setPasswordVisibilityButton(Button showPasswordButton, TextField passwordTextField) {
         String hiddenPassIconName = "hiddenPassword.png";

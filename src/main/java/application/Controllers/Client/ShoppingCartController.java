@@ -1,20 +1,24 @@
-package application.Controllers.Client.Account;
+package application.Controllers.Client;
 
 import application.Controllers.ButtonInsideTableColumn;
+import application.Controllers.Client.Account.ClientOrderDetails;
 import application.Controllers.Controller;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import users.Client;
 import users.Order;
 import users.Product;
 import users.ProductTable;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +30,7 @@ public class ShoppingCartController extends Controller {
     private String paymentMethod = null;
     private double totalOrderValue;
     private final Client currentUser = new Client(CURRENT_USER_LOGIN);
+    private Order order = null;
     @FXML
     private TableColumn<ProductTable, String> cartNameColumn, cartPriceColumn, cartValueColumn, plusButtonColumn, minusButtonColumn, deleteButtonColumn;
     @FXML
@@ -37,15 +42,16 @@ public class ShoppingCartController extends Controller {
     @FXML
     private ScrollPane paymentMethodsPane;
     @FXML
-    private Button clearCartButton;
-
+    private Button clearCartButton, orderJustPlaceButton;
+    @FXML
+    private Pane orderPlacedPane;
 
     @FXML
-    public void initialize() {
+    private void initialize() {
+        orderPlacedPane.setVisible(false);
         prepareScene();
         createGoBackButton(event -> switchScene(event, clientScene));
         createClearCartButton();
-
         try {
             displayProducts();
             setTotalValueLabel();
@@ -53,6 +59,18 @@ public class ShoppingCartController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        fixNotificationPlacement();
+    }
+
+    @FXML
+    private void detailsOfJustPlaceOrderButtonClicked() {
+        displayPostPlacingOrderInformation(order.getOrderNumber());
+        orderJustPlaceButton.setVisible(false);
+    }
+
+    private void fixNotificationPlacement() {
+        createNotification();
+        notification.setLayoutY(notification.getLayoutY() + 70);
     }
 
     private void createClearCartButton() {
@@ -69,21 +87,19 @@ public class ShoppingCartController extends Controller {
         });
     }
 
-    @Override
-    protected void showOnlyRowsWithData(TableView<?> tableView) {
-        super.showOnlyRowsWithData(tableView);
-        tableView.setMaxHeight(320);
-
+    private void prepareTableView() {
+        super.prepareTableView(cartTableView, cartPriceColumn);
+        cartTableView.setMaxHeight(320);
     }
 
-    void setTotalValueLabel() throws SQLException {
+    private void setTotalValueLabel() throws SQLException {
         checkConnectionWithDb();
         this.totalOrderValue = currentUser.getTotalValueOfShoppingCart(getConnection());
         totalValueLabel.setText(totalOrderValue + CURRENCY);
         totalValueLabel.setId("displayLabel");
     }
 
-    void displayProducts() throws SQLException {
+    private void displayProducts() throws SQLException {
         checkConnectionWithDb();
         ResultSet products = Product.getProductFromCartAndSetValueBasedOnQuantity(getConnection(), CURRENT_USER_LOGIN);
         assert products != null;
@@ -99,8 +115,8 @@ public class ShoppingCartController extends Controller {
             clearCartButton.setVisible(true);
             fillShoppingCartColumnsWithData(listOfProducts);
             cartTableView.setItems(listOfProducts);
-            showOnlyRowsWithData(cartTableView);
-            setSoringTypeToColumns(cartPriceColumn, deleteButtonColumn, minusButtonColumn);
+            prepareTableView();
+            cartValueColumn.setSortType(cartPriceColumn.getSortType());
         }
 
     }
@@ -134,6 +150,8 @@ public class ShoppingCartController extends Controller {
         if (alertButtonClicked(buttonClicked, ButtonType.OK)) {
             currentUser.setQuantityOfProductInCart(productName, "-quantity", getConnection());
             // there is a trigger in database which deletes products from cart when quantity is equal 0
+            showNotification("Item successfully deleted");
+
         }
     }
 
@@ -191,6 +209,7 @@ public class ShoppingCartController extends Controller {
             try {
                 confirmationAlert(productName, currentUser.getQuantityOfProductInCart(productName, getConnection()) + "");
                 reloadTableView(cartTableView);
+
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
@@ -203,7 +222,7 @@ public class ShoppingCartController extends Controller {
     }
 
     private void setPaymentMethods() throws SQLException {
-        int numberOfButtonsInLine = 2;
+        int numberOfButtonsInLine = 4;
         double buttonPadding = 20;
         ResultSet paymentMethods = Product.getPaymentMethods(getConnection());
         ToggleGroup groupOfRadioButtons = new ToggleGroup();
@@ -229,9 +248,8 @@ public class ShoppingCartController extends Controller {
     }
 
 
-
     @FXML
-    void placeOrderButtonClicked() {
+    private void placeOrderButtonClicked() {
         if (paymentMethod == null) {
             createAndShowAlert(Alert.AlertType.WARNING,
                     "Payment method required",
@@ -254,7 +272,7 @@ public class ShoppingCartController extends Controller {
                 } else if (alertButtonClicked(buttonTypeClicked, later)) {
                     placeOrder("Waiting for payment");
                 }
-                showNotification(createNotification(new Label("Order successfully placed")), 3500);
+                showNotification("Order successfully placed");
                 clearShoppingCart();
                 reloadTableView(cartTableView);
             }
@@ -277,6 +295,25 @@ public class ShoppingCartController extends Controller {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        this.order = order;
+        orderPlacedPane.setVisible(true);
+        orderJustPlaceButton.setVisible(true);
+
+    }
+
+    private void displayPostPlacingOrderInformation(int orderNumber) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
+            ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
+            clientOrderDetailsController.setOrderNumber(orderNumber);
+            clientOrderDetailsController.setAllOrdersPane(orderPlacedPane);
+            loader.setController(clientOrderDetailsController);
+
+            orderPlacedPane.getChildren().add(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void clearShoppingCart() {

@@ -19,16 +19,19 @@ public class AllProductsTableController extends ClientStartSceneController {
     @FXML
     private TableColumn<ProductTable, String> allProductsCartButtonColumn, allProductsStarButtonColumn;
     @FXML
+    private TableColumn<ProductTable, String> numberOfOrdersColumn;
+    @FXML
     private TableView<ProductTable> allProductsTableView;
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         try {
             displayAllProducts();
-            setSoringTypeToColumns(allProductsPriceColumn, allProductsCartButtonColumn, allProductsStarButtonColumn);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        createSortingButtons();
+        prepareSortingButtons(allProductsTableView, numberOfOrdersColumn, allProductsStarButtonColumn);
     }
 
     private void fillAllProductsColumnsWithData(ObservableList<ProductTable> list) {
@@ -39,9 +42,10 @@ public class AllProductsTableController extends ClientStartSceneController {
         allProductsStarButtonColumn.setCellFactory(buttonInsideCell -> createStarButtonInsideTableView());
         allProductsCartButtonColumn.setCellFactory(buttonInsideCell -> createCartButtonInsideTableView());
         allProductsCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productCategory"));
+        numberOfOrdersColumn.setCellValueFactory(new PropertyValueFactory<>("numberOfOrdersPerProduct"));
         allProductsTableView.setItems(list);
-        showOnlyRowsWithData(allProductsTableView);
-    }
+        prepareTableView(allProductsTableView, allProductsPriceColumn);
+   }
 
     private void displayAllProducts() throws SQLException {
         checkConnectionWithDb();

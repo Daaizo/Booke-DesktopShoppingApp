@@ -19,11 +19,11 @@ import users.ProductTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EbooksCategoriesController extends ClientStartSceneController {
+public class GamesCategoriesController extends ClientStartSceneController {
     @FXML
-    private Pane ebooksCategoryPane, chosenCategoryPane;
+    private Pane gamesCategoryPane, chosenCategoryPane;
     @FXML
-    private Button fantasy, science, sciFi, crime, allEbooks;
+    private Button adventure, shooters, sport, mmorpg, allGames;
     @FXML
     private TableView<ProductTable> productsTableView;
 
@@ -33,41 +33,41 @@ public class EbooksCategoriesController extends ClientStartSceneController {
         prepareAllImages();
         setButtonsActions();
         getCategoryButtonsAndPlaceThemInGrid();
-        displayPane("ebooksCategoryPane");
+        displayPane("gamesCategoryPane");
     }
 
     private void prepareAllImages() {
-        fantasy.setGraphic(setImageFromIconsFolder("/CategoryIcons/fantasy.png"));
-        science.setGraphic(setImageFromIconsFolder("/CategoryIcons/science.png"));
-        sciFi.setGraphic(setImageFromIconsFolder("/CategoryIcons/sci-fi.png"));
-        crime.setGraphic(setImageFromIconsFolder("/CategoryIcons/crime.png"));
+        adventure.setGraphic(setImageFromIconsFolder("/CategoryIcons/adventure.png"));
+        shooters.setGraphic(setImageFromIconsFolder("/CategoryIcons/shooters.png"));
+        sport.setGraphic(setImageFromIconsFolder("/CategoryIcons/sport.png"));
+        mmorpg.setGraphic(setImageFromIconsFolder("/CategoryIcons/mmorpg.png"));
     }
 
     private void initializeButtons() {
         String cssClassName = "categoryImages";
-        fantasy = new Button();
-        science = new Button();
-        sciFi = new Button();
-        crime = new Button();
-        fantasy.getStyleClass().add(cssClassName);
-        science.getStyleClass().add(cssClassName);
-        sciFi.getStyleClass().add(cssClassName);
-        crime.getStyleClass().add(cssClassName);
+        adventure = new Button();
+        shooters = new Button();
+        sport = new Button();
+        mmorpg = new Button();
+        adventure.getStyleClass().add(cssClassName);
+        shooters.getStyleClass().add(cssClassName);
+        sport.getStyleClass().add(cssClassName);
+        mmorpg.getStyleClass().add(cssClassName);
         createAllEbooksButton();
     }
 
     private void createAllEbooksButton() {
-        allEbooks = new Button("All e-books");
-        allEbooks.getStyleClass().add("CategoryPickingButtons");
-        allEbooks.setMaxWidth(1000);
-        allEbooks.setPrefHeight(100);
+        allGames = new Button("All games");
+        allGames.getStyleClass().add("CategoryPickingButtons");
+        allGames.setMaxWidth(1000);
+        allGames.setPrefHeight(100);
     }
 
     private void prepareNewPane(String subcategoryName, String sceneTitle) {
         clearPane(chosenCategoryPane);
         displayPane("chosenCategoryPane");
         goBackButton.setOnAction(event -> {
-            displayPane("ebooksCategoryPane");
+            displayPane("gamesCategoryPane");
             sortingButtonsBox.setVisible(false);
         });
         getProductsFromDbIntoTableView(subcategoryName);
@@ -79,15 +79,15 @@ public class EbooksCategoriesController extends ClientStartSceneController {
     }
 
     private void setButtonsActions() {
-        allEbooks.setOnAction(event -> {
-            loadFXMLAndInitializeController("/ClientSceneFXML/ProductsFXML/allEbooksPaneGUI.fxml", chosenCategoryPane);
+        allGames.setOnAction(event -> {
+            loadFXMLAndInitializeController("/ClientSceneFXML/ProductsFXML/allGamesPaneGUI.fxml", chosenCategoryPane);
             displayPane("chosenCategoryPane");
-            goBackButton.setOnAction(e -> displayPane("ebooksCategoryPane"));
+            goBackButton.setOnAction(e -> displayPane("gamesCategoryPane"));
         });
-        fantasy.setOnMouseClicked(mouseEvent -> prepareNewPane("fantasy e-books", "FANTASY E-BOOKS"));
-        crime.setOnMouseClicked(mouseEvent -> prepareNewPane("crime e-books", "CRIME E-BOOKS"));
-        sciFi.setOnMouseClicked(mouseEvent -> prepareNewPane("sc-fi e-books", "SC-FI E-BOOKS"));
-        science.setOnMouseClicked(mouseEvent -> prepareNewPane("science e-books", "SCIENCE E-BOOKS"));
+        adventure.setOnMouseClicked(mouseEvent -> prepareNewPane("adventure games", "ADVENTURE GAMES"));
+        sport.setOnMouseClicked(mouseEvent -> prepareNewPane("sport games", "SPORT GAMES"));
+        mmorpg.setOnMouseClicked(mouseEvent -> prepareNewPane("mmorpg games", "MMORPG GAMES"));
+        shooters.setOnMouseClicked(mouseEvent -> prepareNewPane("fps games", "FPS GAMES"));
     }
 
     private void getCategoryButtonsAndPlaceThemInGrid() {
@@ -96,15 +96,15 @@ public class EbooksCategoriesController extends ClientStartSceneController {
         grid.setPadding(new Insets(padding));
         grid.setHgap(padding);
         grid.setVgap(padding);
-        grid.add(fantasy, 0, 0);
-        grid.add(science, 1, 0);
-        grid.add(sciFi, 2, 0);
-        grid.add(crime, 3, 0);
-        grid.add(allEbooks, 0, 1, 4, 1);
+        grid.add(adventure, 0, 0);
+        grid.add(shooters, 1, 0);
+        grid.add(sport, 2, 0);
+        grid.add(mmorpg, 3, 0);
+        grid.add(allGames, 0, 1, 4, 1);
         grid.setLayoutY(30);
         grid.setLayoutX(20);
-        ebooksCategoryPane.getChildren().add(grid);
-        GridPane.setFillWidth(allEbooks, true);
+        gamesCategoryPane.getChildren().add(grid);
+        GridPane.setFillWidth(allGames, true);
     }
 
     private void createSubSceneTitle(String text) {
@@ -172,11 +172,11 @@ public class EbooksCategoriesController extends ClientStartSceneController {
     private void displayPane(String paneName) {
         if (paneName.equals("chosenCategoryPane")) {
             chosenCategoryPane.setVisible(true);
-            ebooksCategoryPane.setVisible(false);
+            gamesCategoryPane.setVisible(false);
         } else {
             goBackButton.setOnAction(event -> switchScene(event, clientScene));
             chosenCategoryPane.setVisible(false);
-            ebooksCategoryPane.setVisible(true);
+            gamesCategoryPane.setVisible(true);
         }
     }
 }
