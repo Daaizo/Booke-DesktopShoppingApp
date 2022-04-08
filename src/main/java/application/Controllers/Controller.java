@@ -190,7 +190,7 @@ public abstract class Controller {
     protected void prepareTableView(TableView<?> tableView, TableColumn<?, String> columnWithPrice) {
         showOnlyRowsWithData(tableView);
         disableAllActionOnTableViewColumns(tableView);
-        columnWithPrice.setComparator(this::comparatorForPriceColumn);
+        if (columnWithPrice != null) columnWithPrice.setComparator(this::comparatorForPriceColumn);
 
     }
 
