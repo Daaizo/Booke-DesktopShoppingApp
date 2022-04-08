@@ -1,82 +1,97 @@
 package application.Controllers.Admin;
 
 import application.Controllers.Controller;
-import application.Main;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import users.Client;
-import users.ClientTable;
-import users.Product;
-import users.ProductTable;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 
 public class AdminStartSceneController extends Controller {
+
+    private final Lighting lighting = new Lighting();
     @FXML
-    private TableColumn<ClientTable, String> userFirstNameColumn, userIDColumn, userLoginColumn, userLastNameColumn, userPasswordColumn;
+    private Button ordersButton;
     @FXML
-    private TableView<ClientTable> userTableView;
+    private Button productsButton;
+    @FXML
+    private Button usersButton;
+    @FXML
+    private Pane mainPane;
+    @FXML
+    private Pane startPane;
+    @FXML
+    private Pane topMenuPane;
+    private Label title;
 
     @FXML
-    private TableColumn<ProductTable, String> productCategoryColumn, productNameColumn, productSubcategoryColumn;
-    @FXML
-    private TableColumn<ProductTable, Integer> productIdColumn;
-    @FXML
-    private TableColumn<ProductTable, Double> productPriceColumn;
-
-    @FXML
-    private TableView<ProductTable> productTableView;
-
-
-    @FXML
-    public void initialize() {
+    private void initialize() {
         prepareScene();
-        try {
-            displayUsers();
-            displayProducts();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        createLightingEffect();
+        createTitle();
+
     }
 
-    private void fillUserColumnsWithData(ObservableList<ClientTable> list) {
-        userIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        userLoginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
-        userLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
-        userTableView.setItems(list);
+    @FXML
+    private void ordersButtonClicked() {
+        loadScene("allOrdersGUI.fxml");
+        title.setText("All orders");
+        setButtonLightingEffect(ordersButton);
     }
 
-    void displayUsers() throws SQLException {
-        Connection con = Main.connectToDatabase();
-        ResultSet users = Client.getUsersFromDataBase(con);
-        assert users != null;
-        ObservableList<ClientTable> listOfUsers = ClientTable.getUsers(users);
-        fillUserColumnsWithData(listOfUsers);
+    @FXML
+    private void productsButtonClicked() {
+        loadScene("allProductsGUI.fxml");
+        title.setText("All products");
+        setButtonLightingEffect(productsButton);
     }
 
-    private void fillProductColumnsWithData(ObservableList<ProductTable> list) {
-        productIdColumn.setCellValueFactory(new PropertyValueFactory<>("productId"));
-        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        productPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
-        productCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productCategory"));
-        productSubcategoryColumn.setCellValueFactory(new PropertyValueFactory<>("productSubcategory"));
-        productTableView.setItems(list);
+    @FXML
+    private void usersButtonClicked() {
+        loadScene("allUsersGUI.fxml");
+        title.setText("All users");
+        setButtonLightingEffect(usersButton);
     }
 
-    void displayProducts() throws SQLException {
-        Connection con = Main.connectToDatabase();
-        ResultSet products = Product.getProductsFromDatabase(con);
-        assert products != null;
-        ObservableList<ProductTable> listOfProducts = ProductTable.getProducts(products);
-        fillProductColumnsWithData(listOfProducts);
+    private void createLightingEffect() {
+        Light.Distant light = new Light.Distant();
+        light.setColor(Color.LIGHTPINK);
+        lighting.setLight(light);
     }
 
+    private void setButtonLightingEffect(Button button) {
+        ordersButton.setEffect(null);
+        usersButton.setEffect(null);
+        productsButton.setEffect(null);
+        if (button == ordersButton) ordersButton.setEffect(lighting);
+        else if (button == usersButton) usersButton.setEffect(lighting);
+        else if (button == productsButton) productsButton.setEffect(lighting);
+    }
 
+    private void loadScene(String fxmlName) {
+        String pathToFxml = "/AdminSceneFXML/";
+        loadFXMLAndInitializeController(pathToFxml + fxmlName, mainPane);
+        topMenuPane.setVisible(true);
+        startPane.setVisible(false);
+    }
+
+    private void createTitle() {
+        title = new Label();
+        setTittlePosition();
+        title.setId("titleLabel");
+        topMenuPane.getChildren().add(title);
+    }
+
+    private void setTittlePosition() {
+        title.setLayoutY(65);
+        title.setLayoutX(0);
+        title.setAlignment(Pos.CENTER);
+        title.setTextAlignment(TextAlignment.CENTER);
+        title.setPrefHeight(68);
+        title.setPrefWidth(1000);
+    }
 }
