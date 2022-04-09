@@ -17,7 +17,17 @@ public class Order {
     private String productPrice;
     private int productQuantity;
     private int orderNumber;
+    private int customerId;
 
+    public Order(int id, int customerId, String date, String deliveryDate, String totalValue, String paymentMethod, String status) {
+        this.orderNumber = id;
+        this.customerId = customerId;
+        this.orderDeliveryDate = deliveryDate;
+        this.orderDate = date;
+        this.orderTotalValue = totalValue;
+        this.paymentMethodName = paymentMethod;
+        this.orderStatusName = status;
+    }
 
     public Order(int id, String date, String deliveryDate, String totalValue, String paymentMethod, String status) {
         this.orderNumber = id;
@@ -54,6 +64,20 @@ public class Order {
 
     public Order(int orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public static ResultSet getAllOrders(Connection connection) throws SQLException {
+        String getAllOrdersBasicInformation = """
+                SELECT oh.orderheaderkey, customerkey, orderdate, deliverydate,os.orderstatusname,p.paymentmethodname,sum(od.quantity * pr.catalogprice)from orderheader oh
+                    inner join orderstatus os on os.orderstatuskey = oh.orderstatuskey
+                    inner join paymentmethod p on p.paymentmethodkey = oh.paymentmethodkey
+                    inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey
+                    inner join product pr on pr.productkey = od.productkey
+                    group by oh.orderheaderkey,customerkey, orderdate, deliverydate,os.orderstatusname,p.paymentmethodname
+                """;
+        Statement sqlStatement = connection.createStatement();
+        return sqlStatement.executeQuery(getAllOrdersBasicInformation);
+
     }
 
     public void createOrder(Connection connection) throws SQLException {
@@ -253,6 +277,13 @@ public class Order {
         return productName;
     }
 
+    public int getCustomerId() {
+        return customerId;
+    }
 
+    public Order setCustomerId(int customerId) {
+        this.customerId = customerId;
+        return this;
+    }
 }
 

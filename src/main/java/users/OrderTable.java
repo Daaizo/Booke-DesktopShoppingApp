@@ -20,9 +20,11 @@ public class OrderTable {
     private final SimpleStringProperty productName;
     private final SimpleIntegerProperty productQuantity;
     private final SimpleIntegerProperty orderNumber;
+    private final SimpleIntegerProperty customerId;
 
     public OrderTable(Order order) {
         this.orderNumber = new SimpleIntegerProperty(order.getOrderNumber());
+        this.customerId = new SimpleIntegerProperty(order.getCustomerId());
         this.orderDate = new SimpleStringProperty(order.getOrderDate());
         this.orderPaymentMethodName = new SimpleStringProperty(order.getPaymentMethodName());
         this.orderStatusName = new SimpleStringProperty(order.getOrderStatusName());
@@ -32,6 +34,31 @@ public class OrderTable {
         this.productQuantity = new SimpleIntegerProperty(order.getProductQuantity());
         this.orderTotalValue = new SimpleStringProperty(order.getOrderTotalValue());
         this.productName = new SimpleStringProperty(order.getProductName());
+    }
+
+    public static ObservableList<OrderTable> getAllOrdersFromDb(ResultSet order) {
+        ObservableList<OrderTable> listOfProducts = FXCollections.observableArrayList();
+        try {
+            while (order.next()) {
+                int id = order.getInt(1);
+                int customerId = order.getInt(2);
+                String date = order.getString(3);
+                String deliveryDate;
+                if (order.getString(4) == null) {
+                    deliveryDate = "-";
+                } else {
+                    deliveryDate = order.getString(4);
+                }
+                String orderStatus = order.getString(5);
+                String paymentMethod = order.getString(6);
+                String totalValue = order.getDouble(7) + Controller.CURRENCY;
+                listOfProducts.add(new OrderTable(new Order(id, customerId, date, deliveryDate, totalValue, paymentMethod, orderStatus)));
+            }
+        } catch (SQLException exception) {
+            System.out.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+        return listOfProducts;
     }
 
     public static ObservableList<OrderTable> getOrders(ResultSet order) {
@@ -58,7 +85,7 @@ public class OrderTable {
         return listOfProducts;
     }
 
-    public static ObservableList<OrderTable> getOrder(ResultSet order) {
+    public static ObservableList<OrderTable> getOrderBasicInformation(ResultSet order) {
         ObservableList<OrderTable> listOfProducts = FXCollections.observableArrayList();
         try {
             while (order.next()) {
@@ -90,6 +117,14 @@ public class OrderTable {
             exception.printStackTrace();
         }
         return listOfProducts;
+    }
+
+    public int getCustomerId() {
+        return customerId.get();
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId.set(customerId);
     }
 
     public String getOrderPaymentMethodName() {
