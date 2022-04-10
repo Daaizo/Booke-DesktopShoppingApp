@@ -44,9 +44,11 @@ public class AllOrdersController extends AdminStartSceneController {
         ordersPaymentMethodColumn.setCellValueFactory(new PropertyValueFactory<>("orderPaymentMethodName"));
         ordersStatusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatusName"));
 
-        ordersAcceptColumn.setCellValueFactory(new PropertyValueFactory<>(""));
+        ordersAcceptColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().orderStatusNameProperty());
+        ordersAcceptColumn.setCellFactory(orderTableStringTableColumn -> createStatusButtons());
         ordersDetailButtonColumn.setCellValueFactory(new PropertyValueFactory<>(""));
         ordersTableView.setItems(list);
         prepareTableView(ordersTableView, ordersPriceColumn);
     }
+
 }
