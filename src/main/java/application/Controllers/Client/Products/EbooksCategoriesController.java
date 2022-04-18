@@ -37,10 +37,11 @@ public class EbooksCategoriesController extends ClientStartSceneController {
     }
 
     private void prepareAllImages() {
-        fantasy.setGraphic(setImageFromIconsFolder("/CategoryIcons/fantasy.png"));
-        science.setGraphic(setImageFromIconsFolder("/CategoryIcons/science.png"));
-        sciFi.setGraphic(setImageFromIconsFolder("/CategoryIcons/sci-fi.png"));
-        crime.setGraphic(setImageFromIconsFolder("/CategoryIcons/crime.png"));
+        String iconFolderName = "ClientIcons/CategoryIcons";
+        fantasy.setGraphic(setImageFromIconsFolder(iconFolderName, "fantasy"));
+        science.setGraphic(setImageFromIconsFolder(iconFolderName, "science"));
+        sciFi.setGraphic(setImageFromIconsFolder(iconFolderName, "sci-fi"));
+        crime.setGraphic(setImageFromIconsFolder(iconFolderName, "crime"));
     }
 
     private void initializeButtons() {

@@ -74,7 +74,7 @@ public class ShoppingCartController extends Controller {
     }
 
     private void createClearCartButton() {
-        clearCartButton = createButton("", 800, 80);
+        clearCartButton = createButton(800, 80);
         clearCartButton.setText("Delete whole cart");
         clearCartButton.getStyleClass().add("DeleteButtons");
         clearCartButton.setMinWidth(200);

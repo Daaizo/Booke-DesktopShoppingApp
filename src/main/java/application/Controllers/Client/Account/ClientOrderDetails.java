@@ -70,7 +70,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         try {
             Order order = new Order(currentUser.getLogin());
             ResultSet orderInformation = order.getOrderDetailedInformation(getConnection(), orderNumber);
-            ObservableList<OrderTable> listOfOrders = OrderTable.getOrder(orderInformation);
+            ObservableList<OrderTable> listOfOrders = OrderTable.getOrderBasicInformation(orderInformation);
             orderInformation.close();
             return listOfOrders.get(0);
         } catch (SQLException e) {
@@ -211,7 +211,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         HashMap<String, String> orderStatus = new HashMap<>();
         orderStatus.put("Canceled", "Your order has been cancelled and your payment will be refunded");
         orderStatus.put("In progress", "Your order has been paid and is awaiting approval");
-        orderStatus.put("Finished", "Order has been sent to the email assigned to your account");
+        orderStatus.put("Sent", "Order has been sent to the email assigned to your account");
         orderStatus.put("Waiting for payment", "The order has not been paid");
         return orderStatus;
     }
@@ -247,7 +247,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
 
     private void createInformationImageAndAttachItToLabel() {
-        ImageView informationImage = setImageFromIconsFolder("information.png");
+        ImageView informationImage = setImageFromIconsFolder("Others", "information");
         informationImage.setLayoutX(725);
         informationImage.setLayoutY(91);
         orderStatusLabel.setGraphic(informationImage);

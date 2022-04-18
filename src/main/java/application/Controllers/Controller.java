@@ -47,7 +47,7 @@ public abstract class Controller {
     protected final String clientScene = "/application/FXML/ClientSceneFXML/clientStartingSceneGUI.fxml";
     protected final String shoppingCartScene = "/application/FXML/ClientSceneFXML/shoppingCartGUI.fxml";
     protected final String clientAccountScene = "/application/FXML/ClientSceneFXML/ClientAccountFXML/clientAccountStartSceneGUI.fxml";
-    protected final URL iconsUrl = getClass().getResource("/application/Icons/");
+
     protected final URL cssUrl = getClass().getResource("/application/style.css");
     protected StackPane notification;
 
@@ -61,7 +61,7 @@ public abstract class Controller {
     }
 
     private ImageView setSmallLogoInCorner() {
-        ImageView logo = setImageFromIconsFolder("transparentLogo.png");
+        ImageView logo = setImageFromIconsFolder("Logo", "transparentLogo");
         logo.setY(5);
         logo.setX(5);
         return logo;
@@ -194,7 +194,7 @@ public abstract class Controller {
 
     }
 
-    protected Button createButton(String imageName, int x, int y) {
+    protected Button createButton(int x, int y) {
         int sideLength = 49;
         Button button = new Button();
         button.getStyleClass().add("topButtons");
@@ -202,7 +202,6 @@ public abstract class Controller {
         button.setLayoutY(y);
         button.setMaxSize(sideLength + 2, sideLength);
         button.setPrefSize(sideLength + 2, sideLength);
-        button.setGraphic(setImageFromIconsFolder(imageName));
         button.setOnMouseClicked(mouseEvent -> anchor.requestFocus());
         button.setOnAction(event -> anchor.requestFocus());
         anchor.getChildren().add(button);
@@ -210,19 +209,22 @@ public abstract class Controller {
     }
 
     protected Button createGoBackButton(EventHandler<ActionEvent> event) {
-        Button goBackButton = createButton("back-button.png", 5, 65);
+        Button goBackButton = createButton(5, 65);
+        goBackButton.setGraphic(setImageFromIconsFolder("Others", "back-button"));
         goBackButton.setOnAction(event);
         return goBackButton;
     }
 
     protected void createExitButton() {
-        Button closeButton = createButton("close.png", 1000, 2);
+        Button closeButton = createButton(1000, 2);
+        closeButton.setGraphic(setImageFromIconsFolder("TopPaneIcons", "exit"));
         closeButton.setId("exitButton");
         closeButton.setOnAction(actionEvent -> Platform.exit());
     }
 
     protected void createLogoutButton() {
-        Button logoutButton = createButton("logout.png", 948, 2);
+        Button logoutButton = createButton(948, 2);
+        logoutButton.setGraphic(setImageFromIconsFolder("TopPaneIcons", "logout"));
         logoutButton.setOnAction(actionEvent -> switchScene(actionEvent, loginScene));
     }
 
@@ -234,8 +236,16 @@ public abstract class Controller {
         return anchor;
     }
 
-    protected ImageView setImageFromIconsFolder(String iconName) {
-        return new ImageView(iconsUrl + iconName);
+    protected ImageView setImageFromIconsFolder(String folderName, String iconName) {
+        final URL iconsUrl = getClass().getResource("/application/Icons/");
+
+        return new ImageView(iconsUrl + folderName + "/" + iconName + ".png");
+    }
+
+    protected Image setImage(String folderName, String iconName) {
+        final URL iconsUrl = getClass().getResource("/application/Icons/");
+
+        return new Image(iconsUrl + folderName + "/" + iconName + ".png");
     }
 
 
@@ -298,7 +308,7 @@ public abstract class Controller {
     protected void createNotification() {
         notification = new StackPane();
         Label notificationLabel = new Label();
-        ImageView image = setImageFromIconsFolder("check.png");
+        ImageView image = setImageFromIconsFolder("PasswordIcons", "check");
         notification.setId("notification");
         notificationLabel.setId("notificationLabel");
         notificationLabel.setPadding(new Insets(0, 0, 0, 47));
@@ -335,7 +345,7 @@ public abstract class Controller {
         Alert alert = new Alert(type, contextText);
         alert.setHeaderText(headerText);
         alert.setTitle(title);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(setImage("Logo", "transparentLogo"));
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
@@ -347,7 +357,7 @@ public abstract class Controller {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", buttonType1, buttonType2);
         alert.setHeaderText(headerText);
         alert.setTitle(title);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(setImage("Logo", "transparentLogo"));
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         dialogPane.getStyleClass().add("alert");
@@ -371,12 +381,13 @@ public abstract class Controller {
 
 
     protected void setPasswordVisibilityButton(Button showPasswordButton, TextField passwordTextField) {
-        String hiddenPassIconName = "hiddenPassword.png";
-        String showPassIconName = "showPassword.png";
-        showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
+        String hiddenPassIconName = "hiddenPassword";
+        String showPassIconName = "showPassword";
+        String folderName = "PasswordIcons";
+        showPasswordButton.setGraphic(setImageFromIconsFolder(folderName, hiddenPassIconName));
         showPasswordButton.setBackground(Background.EMPTY);
-        showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(passwordTextField, showPasswordButton, setImageFromIconsFolder(showPassIconName)));
-        showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(passwordTextField, showPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(passwordTextField, showPasswordButton, setImageFromIconsFolder(folderName, showPassIconName)));
+        showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(passwordTextField, showPasswordButton, setImageFromIconsFolder(folderName, hiddenPassIconName)));
     }
 
     protected void showPasswordButtonPressed(TextField field, Button button, ImageView graphic) {

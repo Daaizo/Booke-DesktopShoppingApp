@@ -123,12 +123,14 @@ public class ClientStartSceneController extends Controller {
 
 
     private void createAccountButton() {
-        Button userAccountInformationButton = createButton("user.png", cartLabelXPosition + 60, cartLabelYPosition);
+        Button userAccountInformationButton = createButton(cartLabelXPosition + 60, cartLabelYPosition);
+        userAccountInformationButton.setGraphic(setImageFromIconsFolder("ClientIcons", "user"));
         userAccountInformationButton.setOnAction(event -> switchScene(event, clientAccountScene));
     }
 
     private void createCartButton() {
-        shoppingCartButton = createButton("cart.png", cartLabelXPosition, cartLabelYPosition);
+        shoppingCartButton = createButton(cartLabelXPosition, cartLabelYPosition);
+        shoppingCartButton.setGraphic(setImageFromIconsFolder("ClientIcons", "cart"));
         shoppingCartButton.setOnAction(event -> switchScene(event, shoppingCartScene));
 
     }
@@ -249,7 +251,7 @@ public class ClientStartSceneController extends Controller {
 
                 if (item != null) {
                     if (item.equals("yes")) {
-                        setGraphic(setImageFromIconsFolder("yellowStar.png"));
+                        setGraphic(setImageFromIconsFolder("TableViewIcons", "yellowStar"));
                         setText("");
                         button.fire();
                         setOnMouseClicked(deleteFromFavouriteClicked(getRowId()));
