@@ -51,6 +51,10 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         this.allOrdersPane = pane;
     }
 
+    public void setGoBackButton(Button button) {
+        goBackButton = button;
+    }
+
     public void initialize() {
         detailsPane.requestFocus();
         setButtons();
@@ -80,26 +84,24 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     }
 
 
-    private void changeGoBuckButtonAction() {
+    public void changeGoBackButtonAction(String fxmlPath, String fxmlNameToDisplay) {
         if (goBackButton == null) {
             goBackButton = createGoBackButton(null);
         }
         EventHandler<ActionEvent> oldEvent = goBackButton.getOnAction();
         goBackButton.setOnAction(event -> {
             detailsPane.getChildren().clear();
-            loadFXMLAndInitializeController(pathToFxml + "clientOrdersGUI.fxml", allOrdersPane);
+            loadFXMLAndInitializeController(fxmlPath + fxmlNameToDisplay, allOrdersPane);
             allOrdersPane.setVisible(true);
             goBackButton.setOnAction(oldEvent);
         });
-
-
     }
 
     private void setButtons() {
         setCancelOrderButtonAction();
         setPayOrderButtonAction();
         setChangePaymentMethodButtonAction();
-        changeGoBuckButtonAction();
+
 
     }
 
@@ -209,9 +211,9 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private HashMap<String, String> createHashMapWithOrderStatuses() {
         HashMap<String, String> orderStatus = new HashMap<>();
-        orderStatus.put("Canceled", "Your order has been cancelled and your payment will be refunded");
-        orderStatus.put("In progress", "Your order has been paid and is awaiting approval");
-        orderStatus.put("Sent", "Order has been sent to the email assigned to your account");
+        orderStatus.put("Canceled", "This order has been cancelled and the payment will be refunded");
+        orderStatus.put("In progress", "This order has been paid and is awaiting approval");
+        orderStatus.put("Sent", "Order has been sent to the email assigned to this account");
         orderStatus.put("Waiting for payment", "The order has not been paid");
         return orderStatus;
     }

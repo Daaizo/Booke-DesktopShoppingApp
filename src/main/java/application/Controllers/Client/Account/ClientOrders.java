@@ -145,6 +145,7 @@ public class ClientOrders extends ClientAccountStartSceneController {
         clientOrderDetailsController.setOrder(button.getRowId());
         clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
         clientOrderDetailsController.setAllOrdersPane(ordersPane);
+        clientOrderDetailsController.changeGoBackButtonAction(pathToFxml, "clientOrdersGUI.fxml");
         loader.setController(clientOrderDetailsController);
         return loader;
     }
