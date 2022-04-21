@@ -353,5 +353,15 @@ public class Client {
         }
     }
 
+    public static ResultSet getUserInformationById(Connection connection, int userId) throws SQLException {
+        String totalValue = """
+                    select * from customer
+                        where customerkey =?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(totalValue);
+        preparedStatement.setInt(1, userId);
+        return preparedStatement.executeQuery();
+    }
+
 
 }
