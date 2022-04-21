@@ -4,10 +4,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import users.Client;
 import users.Order;
 import users.OrderTable;
 import users.Product;
@@ -38,6 +41,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private int orderNumber;
     private OrderTable orderTable;
+    private boolean isLunchedByAdmin = false;
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
@@ -55,18 +59,76 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         goBackButton = button;
     }
 
+    public void isLunchedByAdmin(boolean isLunchedByAdmin) {
+        this.isLunchedByAdmin = isLunchedByAdmin;
+    }
+
     public void initialize() {
+        System.out.println(orderTable.getCustomerId());
         detailsPane.requestFocus();
-        setButtons();
         displayOrderDetails(orderNumber);
         if (orderTable == null) {
             orderTable = getOrdersInformationFromDataBase();
-            goBackButton.setVisible(false);
+            if (goBackButton != null) goBackButton.setVisible(false);
+        }
+        if (isLunchedByAdmin) {
+            hideAllButtons();
+            setClientDataToGridPane();
+        } else {
+            setButtons();
+            makeProperButtonsVisible(orderStatusLabel.getText());
         }
         fillOrderDetailLabels(orderTable);
-        makeProperButtonsVisible(orderStatusLabel.getText());
         createInformationImageAndAttachItToLabel();
         setInformationAboutOrderStatus(orderStatusHashMap);
+    }
+
+    private void hideAllButtons() {
+        payOrderButton.setVisible(false);
+        cancelOrderButton.setVisible(false);
+        changePaymentMethodButton.setVisible(false);
+    }
+
+    private ResultSet getClientData() throws SQLException {
+        return Client.getUserInformationById(getConnection(), orderTable.getCustomerId());
+    }
+
+    private void setClientDataToGridPane() {
+        GridPane gridPane = createGridPane();
+        try {
+            fillGridPaneWithData(getClientData(), gridPane);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private GridPane createGridPane() {
+        GridPane grid = new GridPane();
+        double padding = 10;
+        grid.setPadding(new Insets(padding));
+        grid.setHgap(padding);
+        grid.setVgap(padding);
+        grid.setLayoutY(400);
+        grid.setLayoutX(20);
+        grid.setId("adminSceneUserInformationGridPane");
+        detailsPane.getChildren().add(grid);
+        return grid;
+    }
+
+    private void fillGridPaneWithData(ResultSet data, GridPane gridPane) throws SQLException {
+        if (data.next()) {
+            System.out.println(data.getString(1) + data.getString(2) + data.getString(3));
+            gridPane.add(new Label("Customer login :"), 0, 0);
+            gridPane.add(new Label(data.getString(1)), 1, 0);
+            gridPane.add(new Label("Customer Name :"), 0, 1);
+            gridPane.add(new Label(data.getString(2)), 1, 0);
+            gridPane.add(new Label("Customer Last Name :"), 0, 2);
+            gridPane.add(new Label(data.getString(3)), 0, 3);
+            gridPane.setGridLinesVisible(true);
+            data.close();
+        }
+
 
     }
 
@@ -101,8 +163,6 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         setCancelOrderButtonAction();
         setPayOrderButtonAction();
         setChangePaymentMethodButtonAction();
-
-
     }
 
     private void setPayOrderButtonAction() {
