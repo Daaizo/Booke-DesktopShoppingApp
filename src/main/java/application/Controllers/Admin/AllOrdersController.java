@@ -28,7 +28,7 @@ public class AllOrdersController extends AdminStartSceneController {
     private Pane ordersPane, orderDetailsPane;
     @FXML
     private TableColumn<OrderTable, String> ordersAcceptColumn, ordersDateColumn, ordersPriceColumn,
-            ordersDeliveryDateColumn, ordersDetailButtonColumn, orderDetails, ordersStatusColumn;
+            ordersDeliveryDateColumn, ordersDetailButtonColumn, deleteButtonColumn, ordersStatusColumn;
     @FXML
     private TableColumn<OrderTable, Integer> ordersIdColumn;
     @FXML
@@ -59,6 +59,11 @@ public class AllOrdersController extends AdminStartSceneController {
             goBackButton.setVisible(false);
         });
         goBackButton.fire();
+        fixGoBackButtonPosition();
+    }
+
+    private void fixGoBackButtonPosition() {
+        goBackButton.setLayoutY(goBackButton.getLayoutY() - 35);
     }
 
     private void fillOrdersColumnsWithData(ObservableList<OrderTable> list) {
@@ -67,9 +72,7 @@ public class AllOrdersController extends AdminStartSceneController {
         ordersDeliveryDateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDeliveryDate"));
         ordersPriceColumn.setCellValueFactory(new PropertyValueFactory<>("orderTotalValue"));
         ordersStatusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatusName"));
-
-        orderDetails.setCellFactory(orderTableStringTableColumn -> createOrderIdButton());
-
+        deleteButtonColumn.setCellValueFactory(new PropertyValueFactory<>(""));
         ordersAcceptColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().orderStatusNameProperty());
         ordersAcceptColumn.setCellFactory(orderTableStringTableColumn -> createStatusButtons());
         ordersDetailButtonColumn.setCellFactory(orderTableStringTableColumn -> createOrderIdButton());
@@ -91,7 +94,6 @@ public class AllOrdersController extends AdminStartSceneController {
         Button acceptButton = new Button("approve");
         Button cancelButton = new Button("cancel");
         cancelButton.setOnMouseClicked(mouseEvent -> System.out.println("tralala"));
-
         return new ButtonInsideOrdersTableView(acceptButton, cancelButton);
     }
 
@@ -115,13 +117,19 @@ public class AllOrdersController extends AdminStartSceneController {
 
     private FXMLLoader createLoaderWithCustomController(ButtonInsideTableColumn<OrderTable, String> button) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
+        ClientOrderDetails clientOrderDetailsController = initializeController(button);
+        loader.setController(clientOrderDetailsController);
+        return loader;
+    }
+
+    private ClientOrderDetails initializeController(ButtonInsideTableColumn<OrderTable, String> button) {
         ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
         clientOrderDetailsController.setOrder(button.getRowId());
         clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
         clientOrderDetailsController.setAllOrdersPane(ordersPane);
         clientOrderDetailsController.setGoBackButton(goBackButton);
-        loader.setController(clientOrderDetailsController);
-        return loader;
+        clientOrderDetailsController.isLunchedByAdmin(true);
+        return clientOrderDetailsController;
     }
 
     private void displayOrderDetails(FXMLLoader loader) throws IOException {

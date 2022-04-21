@@ -25,7 +25,6 @@ public class AdminStartSceneController extends Controller {
         prepareScene();
         createLightingEffect();
         createTitle();
-        title.toBack();
     }
 
     @FXML
@@ -76,6 +75,7 @@ public class AdminStartSceneController extends Controller {
         setTittlePosition();
         title.setId("titleLabel");
         topMenuPane.getChildren().add(title);
+        title.toBack();
     }
 
     private void setTittlePosition() {
