@@ -243,7 +243,7 @@ public class ClientStartSceneController extends Controller {
                 setText(null);
             } else {
                 button.setOnMouseClicked(eventHandler);
-                button.setGraphic(new ImageView(getClass().getResource("/application/Icons/") + iconName));
+                button.setGraphic(new ImageView(getClass().getResource("/application/Icons/TableViewIcons") + iconName));
                 button.setBackground(Background.EMPTY);
                 button.setId(cssId);
                 button.getStyleClass().add(cssClassId);

@@ -4,7 +4,11 @@
     -backgroundColorA: #5B84B1FF; 	// bluish
     -backgroundColorB: #fc766a; 		// orange
 }
-
+#adminSceneUserInformationGridPane{
+    -fx-font-size :20px;
+    -fx-font-weight: bolder  ;
+    -fx-text-fill: white;
+}
 .CategoryPickingButtons{
     -fx-background-color : -backgroundColorA;
     -fx-border-color : -backgroundColorB;

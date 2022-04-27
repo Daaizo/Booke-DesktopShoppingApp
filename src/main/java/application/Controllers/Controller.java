@@ -172,9 +172,9 @@ public abstract class Controller {
     }
 
     protected void prepareScene() {
-        AnchorPane mainAnchor = setAnchorSizeAndColors();
-        mainAnchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
-        mainAnchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
+        anchor = setAnchorSizeAndColors();
+        anchor.getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        anchor.getChildren().addAll(createHorizontalLine(), setSmallLogoInCorner());
         createExitButton();
         createLogoutButton();
     }
