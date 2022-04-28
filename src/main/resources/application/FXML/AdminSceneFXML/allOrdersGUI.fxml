@@ -7,21 +7,19 @@
     <Pane fx:id="ordersPane" layoutY="-3.0" prefHeight="640.0" prefWidth="1018.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <children>
-            <TableView fx:id="ordersTableView" layoutX="15.0" layoutY="98.0" prefHeight="518.0" prefWidth="989.0">
+            <TableView id="adminAllOrdersTableview" fx:id="ordersTableView" layoutX="15.0" layoutY="98.0"
+                       prefHeight="493.0" prefWidth="994.0">
                 <columns>
                     <TableColumn fx:id="ordersDetailButtonColumn" prefWidth="101.0" resizable="false"/>
-                    <TableColumn fx:id="ordersIdColumn" prefWidth="33.0" resizable="false" text="ID"/>
-                    <TableColumn fx:id="ordersDateColumn" prefWidth="237.0" resizable="false" text="Order Date"/>
+                    <TableColumn fx:id="ordersIdColumn" prefWidth="52.0" resizable="false" text="ID"/>
+                    <TableColumn fx:id="ordersDateColumn" prefWidth="218.0" resizable="false" text="Order Date"/>
                     <TableColumn fx:id="ordersDeliveryDateColumn" prefWidth="214.0" resizable="false"
                                  text="Delivery date"/>
                     <TableColumn fx:id="ordersPriceColumn" prefWidth="94.0" resizable="false" text="Total price"/>
-                    <TableColumn fx:id="ordersStatusColumn" prefWidth="63.0" resizable="false" text="Status"/>
-                    <TableColumn fx:id="deleteButtonColumn" minWidth="0.0" prefWidth="76.0" resizable="false"/>
-                    <TableColumn fx:id="ordersAcceptColumn" prefWidth="185.0" resizable="false"/>
+                    <TableColumn fx:id="ordersStatusColumn" prefWidth="89.0" resizable="false" text="Status"/>
+                    <TableColumn fx:id="ordersAcceptColumn" minWidth="0.0" prefWidth="232.0" resizable="false"/>
+                    <TableColumn fx:id="deleteButtonColumn" minWidth="0.0" prefWidth="120.0" resizable="false"/>
                 </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                </columnResizePolicy>
             </TableView>
         </children>
     </Pane>

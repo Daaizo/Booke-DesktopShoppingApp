@@ -78,14 +78,36 @@ public class AllOrdersController extends AdminStartSceneController {
         ordersDetailButtonColumn.setCellFactory(orderTableStringTableColumn -> createOrderIdButton());
         ordersTableView.setItems(list);
         prepareTableView(ordersTableView, ordersPriceColumn);
+
     }
 
 
-    EventHandler<MouseEvent> buttonInsideTableViewClicked(ButtonInsideOrdersTableView button) {
+    EventHandler<MouseEvent> cancelOrderButtonClicked(ButtonInsideOrdersTableView button) {
         return mouseEvent -> {
             int orderNumber = button.getRowId().getOrderNumber();
             checkConnectionWithDb();
-            System.out.println(orderNumber);
+            System.out.println(orderNumber + "do cancel");
+            Order order = new Order(orderNumber);
+            try {
+                order.setOrderStatus(getConnection(), "Canceled");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
+    EventHandler<MouseEvent> approveOrderButtonClicked(ButtonInsideOrdersTableView button) {
+        return mouseEvent -> {
+            int orderNumber = button.getRowId().getOrderNumber();
+            checkConnectionWithDb();
+            System.out.println(orderNumber + "do approve");
+            Order order = new Order(orderNumber);
+            try {
+                order.setOrderStatus(getConnection(), "Sent");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            //TODO insta icon change
 
         };
     }
@@ -93,8 +115,10 @@ public class AllOrdersController extends AdminStartSceneController {
     ButtonInsideOrdersTableView createStatusButtons() {
         Button acceptButton = new Button("approve");
         Button cancelButton = new Button("cancel");
-        cancelButton.setOnMouseClicked(mouseEvent -> System.out.println("tralala"));
-        return new ButtonInsideOrdersTableView(acceptButton, cancelButton);
+        ButtonInsideOrdersTableView button = new ButtonInsideOrdersTableView(acceptButton, cancelButton);
+        cancelButton.setOnMouseClicked(cancelOrderButtonClicked(button));
+        acceptButton.setOnMouseClicked(approveOrderButtonClicked(button));
+        return button;
     }
 
     ButtonInsideTableColumn<OrderTable, String> createOrderIdButton() {
@@ -141,19 +165,18 @@ public class AllOrdersController extends AdminStartSceneController {
     }
 
     static class ButtonInsideOrdersTableView extends ButtonInsideTableColumn<OrderTable, String> {
-        private Button approveButton;
-        private Button cancelButton;
+        private final Button approveButton;
+        private final Button cancelButton;
 
         public ButtonInsideOrdersTableView(Button approveButton, Button cancelButton) {
             this.cancelButton = cancelButton;
             this.approveButton = approveButton;
+            approveButton.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
+            cancelButton.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
+
         }
 
-        public ButtonInsideOrdersTableView(String buttonText) {
-            button.fire();
-            button.setText(buttonText);
-            setGraphic(button);
-        }
+
 
 
         protected ImageView setIconFromAdminIconsFolder(String iconName) {
@@ -186,7 +209,6 @@ public class AllOrdersController extends AdminStartSceneController {
                             setButtonImages();
                             HBox pane = new HBox(approveButton, cancelButton);
                             setGraphic(pane);
-                            //   setOnMouseClicked(deleteFromFavouriteClicked(getRowId()));
                             setOnMouseEntered(event -> setCursor(Cursor.HAND));
                             setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
 
