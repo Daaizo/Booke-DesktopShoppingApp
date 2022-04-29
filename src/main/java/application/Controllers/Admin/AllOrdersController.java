@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -76,6 +77,7 @@ public class AllOrdersController extends AdminStartSceneController {
         ordersAcceptColumn.setCellValueFactory(buttonInsideCell -> buttonInsideCell.getValue().orderStatusNameProperty());
         ordersAcceptColumn.setCellFactory(orderTableStringTableColumn -> createStatusButtons());
         ordersDetailButtonColumn.setCellFactory(orderTableStringTableColumn -> createOrderIdButton());
+        deleteButtonColumn.setCellFactory(orderTableStringCellDataFeatures -> createDeleteOrderButton());
         ordersTableView.setItems(list);
         prepareTableView(ordersTableView, ordersPriceColumn);
 
@@ -86,7 +88,6 @@ public class AllOrdersController extends AdminStartSceneController {
         return mouseEvent -> {
             int orderNumber = button.getRowId().getOrderNumber();
             checkConnectionWithDb();
-            System.out.println(orderNumber + "do cancel");
             Order order = new Order(orderNumber);
             try {
                 order.setOrderStatus(getConnection(), "Canceled");
@@ -100,7 +101,6 @@ public class AllOrdersController extends AdminStartSceneController {
         return mouseEvent -> {
             int orderNumber = button.getRowId().getOrderNumber();
             checkConnectionWithDb();
-            System.out.println(orderNumber + "do approve");
             Order order = new Order(orderNumber);
             try {
                 order.setOrderStatus(getConnection(), "Sent");
@@ -123,17 +123,37 @@ public class AllOrdersController extends AdminStartSceneController {
 
     ButtonInsideTableColumn<OrderTable, String> createOrderIdButton() {
         ButtonInsideTableColumn<OrderTable, String> button = new ButtonInsideTableColumn<>("", "details");
-        button.setEventHandler(createActionOnClick(button));
+        button.setEventHandler(openOrderDetails(button));
         button.setCssId("orderDetailsButton");
         return button;
     }
 
-    private EventHandler<MouseEvent> createActionOnClick(ButtonInsideTableColumn<OrderTable, String> button) {
+    ButtonInsideTableColumn<OrderTable, String> createDeleteOrderButton() {
+        ButtonInsideTableColumn<OrderTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete order");
+        button.setEventHandler(deleteOrder(button));
+        button.setId("adminSceneDeleteOrderButton");
+        return button;
+    }
+
+
+    private EventHandler<MouseEvent> openOrderDetails(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
             FXMLLoader loader = createLoaderWithCustomController(button);
             try {
                 displayOrderDetails(loader);
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
+    //TODO notification and alert to delete order
+    private EventHandler<MouseEvent> deleteOrder(ButtonInsideTableColumn<OrderTable, String> button) {
+        return mouseEvent -> {
+            try {
+                System.out.println("usuwanie zamówienia " + button.getRowId().getOrderNumber());
+                Order.deleteOrder(getConnection(), button.getRowId().getOrderNumber());
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         };
@@ -211,7 +231,8 @@ public class AllOrdersController extends AdminStartSceneController {
                             setGraphic(pane);
                             setOnMouseEntered(event -> setCursor(Cursor.HAND));
                             setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
-
+                            pane.setMaxHeight(30);
+                            pane.setAlignment(Pos.CENTER);
                         }
                         case "Canceled" -> {
                             setGraphic(setIconFromAdminIconsFolder("rejected.png"));

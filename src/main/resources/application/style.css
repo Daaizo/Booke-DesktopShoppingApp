@@ -41,7 +41,11 @@
     -fx-background-color :transparent;
 }
 
-
+#adminSceneDeleteOrderButton{
+      -fx-border-color : red;
+        -fx-border-width : 2px;
+        -fx-background-color : red;
+}
 .DeleteButtons{
     -fx-border-color : red;
     -fx-border-width : 2px;
@@ -52,7 +56,8 @@
     -fx-text-alignment : center ;
     -fx-background-color : transparent;
 }
-.DeleteButtons:hover{
+.DeleteButtons:hover,
+#adminSceneDeleteOrderButton:hover{
     -fx-background-color : #ff4d4d;
     -fx-background-radius :10px;
     -fx-background-insets: 0;
@@ -229,14 +234,11 @@
 //table view
 
 
-
-
-
 .table-view,
+.table-view .column-header-background, // right corner filler
 .table-view .column-header-background .filler,
 .tab-pane:top .tab-header-area .tab-header-background,
 .table-view .corner,
-.table-view:row-selection:unconstrained-resize .placeholder,
 .table-view:row-selection:unconstrained-resize .filler,
 .table-view:row-selection:unconstrained-resize .corner
 {
@@ -337,14 +339,14 @@
     -fx-background-color : transparent;
     -fx-padding: 2;
  }
- #adminAllOrdersTableview  .scroll-bar:horizontal .thumb{
+ .adminAllOrdersTableview  .scroll-bar:horizontal .thumb{
       -fx-background-color:  -backgroundColorB;
      -fx-border-color :-backgroundColorB;
-     -fx-border-width : 4px;
+     -fx-border-width : 3px;
      -fx-border-radius :3px;
  }
- #adminAllOrdersTableview *.scroll-bar:horizontal *.increment-arrow,
- #adminAllOrdersTableview *.scroll-bar:horizontal *.decrement-arrow {
+ .adminAllOrdersTableview *.scroll-bar:horizontal *.increment-arrow,
+ .adminAllOrdersTableview *.scroll-bar:horizontal *.decrement-arrow {
     -fx-background-color :white;
-    -fx-padding: 3;
+    -fx-padding: 2.5;
   }
