@@ -193,6 +193,16 @@ public class Order {
         preparedStatement.close();
     }
 
+    public static void deleteOrder(Connection connection, int orderNumber) throws SQLException {
+        String deleteOrder = """
+                delete orderheader where orderheaderkey = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(deleteOrder);
+        preparedStatement.setInt(1, orderNumber);
+        preparedStatement.execute();
+        preparedStatement.close();
+    }
+
     public String getPaymentMethodName() {
         return paymentMethodName;
     }

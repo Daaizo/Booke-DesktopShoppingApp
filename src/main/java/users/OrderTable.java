@@ -119,6 +119,10 @@ public class OrderTable {
         return listOfProducts;
     }
 
+    public SimpleStringProperty orderStatusNameProperty() {
+        return orderStatusName;
+    }
+
     public int getCustomerId() {
         return customerId.get();
     }
