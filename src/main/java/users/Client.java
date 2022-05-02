@@ -81,6 +81,17 @@ public class Client {
         this.login = login;
     }
 
+    public static String getClientPassword(Connection connection, String login) throws SQLException {
+        String data = """
+                select customerpassword from customer where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(data);
+        preparedStatement.setString(1, login);
+        ResultSet clientPass = preparedStatement.executeQuery();
+        clientPass.next();
+        return clientPass.getString(1);
+    }
+
     public static boolean isClientInDataBase(Connection connection, String login) throws SQLException {
         String query = """
                 select * from customer where customerlogin = ?
