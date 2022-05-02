@@ -90,7 +90,10 @@ public class AllOrdersController extends AdminStartSceneController {
             checkConnectionWithDb();
             Order order = new Order(orderNumber);
             try {
-                order.setOrderStatus(getConnection(), "Canceled");
+                String orderName = "Canceled";
+                order.setOrderStatus(getConnection(), orderName);
+                button.getRowId().setOrderStatusName(orderName);
+                showNotification("Order status changed");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -103,8 +106,11 @@ public class AllOrdersController extends AdminStartSceneController {
             checkConnectionWithDb();
             Order order = new Order(orderNumber);
             try {
-                order.setOrderStatus(getConnection(), "Sent");
-            } catch (SQLException e) {
+                String orderName = "Sent";
+                //order.setOrderStatus(getConnection(),orderName);
+                button.getRowId().setOrderStatusName(orderName);
+                showNotification("Order status changed");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             //TODO insta icon change
@@ -151,9 +157,11 @@ public class AllOrdersController extends AdminStartSceneController {
     private EventHandler<MouseEvent> deleteOrder(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
             try {
-                System.out.println("usuwanie zamówienia " + button.getRowId().getOrderNumber());
-                Order.deleteOrder(getConnection(), button.getRowId().getOrderNumber());
-            } catch (SQLException e) {
+                createAndShowConfirmAdminPasswordAlert("delete order", () -> {
+                    // Order.deleteOrder(getConnection(), button.getRowId().getOrderNumber());
+                    showNotification("Order " + button.getRowId().getOrderNumber() + " successfully deleted");
+                });
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         };
@@ -234,15 +242,9 @@ public class AllOrdersController extends AdminStartSceneController {
                             pane.setMaxHeight(30);
                             pane.setAlignment(Pos.CENTER);
                         }
-                        case "Canceled" -> {
-                            setGraphic(setIconFromAdminIconsFolder("rejected.png"));
-                        }
-                        case "Sent" -> {
-                            setGraphic(setIconFromAdminIconsFolder("approved.png"));
-                        }
-                        default -> {
-                            button.setText("-");
-                        }
+                        case "Canceled" -> setGraphic(setIconFromAdminIconsFolder("rejected.png"));
+                        case "Sent" -> setGraphic(setIconFromAdminIconsFolder("approved.png"));
+                        default -> button.setText("-");
                     }
                     approveButton.getStyleClass().add("clientTableviewButtons");
                     cancelButton.getStyleClass().add("clientTableviewButtons");

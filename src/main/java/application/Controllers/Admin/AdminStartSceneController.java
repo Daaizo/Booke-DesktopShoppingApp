@@ -1,17 +1,29 @@
 package application.Controllers.Admin;
 
-import application.Controllers.Controller;
+import application.Controllers.Client.Account.ClientAccountDetails;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import users.Client;
 
-public class AdminStartSceneController extends Controller {
+import java.sql.SQLException;
+import java.util.Optional;
+
+public class AdminStartSceneController extends ClientAccountDetails {
+    @FXML
+    private void initialize() {
+        prepareScene();
+        createLightingEffect();
+        createTitle();
+        createNotification();
+    }
 
     private final Lighting lighting = new Lighting();
     @FXML
@@ -20,11 +32,27 @@ public class AdminStartSceneController extends Controller {
     private Pane mainPane, startPane, topMenuPane;
     private Label title;
 
-    @FXML
-    private void initialize() {
-        prepareScene();
-        createLightingEffect();
-        createTitle();
+    void createAndShowConfirmAdminPasswordAlert(String alertText, InterfaceToRunMethod methodsInterface) throws SQLException {
+        Optional<String> result = createAndShowConfirmPasswordAlert("Re enter admin password to " + alertText);
+        String adminPassword = Client.getClientPassword(getConnection(), "admin");
+        result.ifPresent(s -> {
+            if (result.get().equals(adminPassword)) {
+                methodsInterface.myMethod();
+            } else {
+                ButtonType tryAgain = new ButtonType("Try again");
+                ButtonType cancel = new ButtonType("Cancel");
+                Optional<ButtonType> res = createAndShowAlert(tryAgain, cancel, "Incorrect password, please try again", "Wrong password");
+                res.ifPresent(buttonType -> {
+                    if (res.get() == tryAgain) {
+                        try {
+                            createAndShowConfirmAdminPasswordAlert(alertText, methodsInterface);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @FXML
@@ -46,6 +74,10 @@ public class AdminStartSceneController extends Controller {
         loadScene("allUsersGUI.fxml");
         title.setText("All users");
         setButtonLightingEffect(usersButton);
+    }
+
+    interface InterfaceToRunMethod {
+        void myMethod();
     }
 
     private void createLightingEffect() {
