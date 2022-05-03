@@ -64,7 +64,6 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     }
 
     public void initialize() {
-        System.out.println(orderTable.getCustomerId());
         detailsPane.requestFocus();
         displayOrderDetails(orderNumber);
         if (orderTable == null) {
@@ -109,7 +108,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         grid.setPadding(new Insets(padding));
         grid.setHgap(padding);
         grid.setVgap(padding);
-        grid.setLayoutY(400);
+        grid.setLayoutY(470);
         grid.setLayoutX(20);
         grid.setId("adminSceneUserInformationGridPane");
         detailsPane.getChildren().add(grid);
@@ -118,18 +117,19 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private void fillGridPaneWithData(ResultSet data, GridPane gridPane) throws SQLException {
         if (data.next()) {
-            System.out.println(data.getString(1) + data.getString(2) + data.getString(3));
-            gridPane.add(new Label("Customer login :"), 0, 0);
-            gridPane.add(new Label(data.getString(1)), 1, 0);
-            gridPane.add(new Label("Customer Name :"), 0, 1);
-            gridPane.add(new Label(data.getString(2)), 1, 0);
-            gridPane.add(new Label("Customer Last Name :"), 0, 2);
-            gridPane.add(new Label(data.getString(3)), 0, 3);
-            gridPane.setGridLinesVisible(true);
+            gridPane.add(new Label("Data of the orderer :"), 0, 0, 4, 1);
+            gridPane.add(new Label("Customer key :"), 1, 1);
+            gridPane.add(new Label(data.getString(1)), 2, 1);
+            gridPane.add(new Label("Login :"), 3, 1);
+            gridPane.add(new Label(data.getString(2)), 4, 1);
+            gridPane.add(new Label("Name :"), 1, 2);
+            gridPane.add(new Label(data.getString(3)), 2, 2);
+            gridPane.add(new Label("Last Name :"), 3, 2);
+            gridPane.add(new Label(data.getString(4)), 4, 2);
+            gridPane.setVgap(10);
+            gridPane.setHgap(30);
             data.close();
         }
-
-
     }
 
     private OrderTable getOrdersInformationFromDataBase() {
