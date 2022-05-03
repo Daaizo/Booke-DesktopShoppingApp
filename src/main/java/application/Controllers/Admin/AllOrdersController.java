@@ -83,38 +83,38 @@ public class AllOrdersController extends AdminStartSceneController {
 
     }
 
+    private void setOrderStatus(int orderNumber, String orderName) {
+        checkConnectionWithDb();
+        Order order = new Order(orderNumber);
+        try {
+            order.setOrderStatus(getConnection(), orderName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void changeButtonsIcon(ButtonInsideOrdersTableView button, String orderName) {
+        button.getRowId().setOrderStatusName(orderName);
+        showNotification("Order status changed");
+    }
 
     EventHandler<MouseEvent> cancelOrderButtonClicked(ButtonInsideOrdersTableView button) {
-        return mouseEvent -> {
+        return mouseEvent -> createAndShowConfirmAdminPasswordAlert("change order status", () -> {
             int orderNumber = button.getRowId().getOrderNumber();
-            checkConnectionWithDb();
-            Order order = new Order(orderNumber);
-            try {
-                String orderName = "Canceled";
-                order.setOrderStatus(getConnection(), orderName);
-                button.getRowId().setOrderStatusName(orderName);
-                showNotification("Order status changed");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        };
+            String orderName = "Canceled";
+            setOrderStatus(orderNumber, orderName);
+            changeButtonsIcon(button, orderName);
+        });
     }
 
     EventHandler<MouseEvent> approveOrderButtonClicked(ButtonInsideOrdersTableView button) {
         return mouseEvent -> {
             int orderNumber = button.getRowId().getOrderNumber();
-            checkConnectionWithDb();
-            Order order = new Order(orderNumber);
-            try {
+            createAndShowConfirmAdminPasswordAlert("change order status", () -> {
                 String orderName = "Sent";
-                //order.setOrderStatus(getConnection(),orderName);
-                button.getRowId().setOrderStatusName(orderName);
-                showNotification("Order status changed");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //TODO insta icon change
-
+                setOrderStatus(orderNumber, orderName);
+                changeButtonsIcon(button, orderName);
+            });
         };
     }
 
@@ -153,19 +153,22 @@ public class AllOrdersController extends AdminStartSceneController {
         };
     }
 
-    //TODO notification and alert to delete order
     private EventHandler<MouseEvent> deleteOrder(ButtonInsideTableColumn<OrderTable, String> button) {
-        return mouseEvent -> {
+        return mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete order", () -> {
             try {
-                createAndShowConfirmAdminPasswordAlert("delete order", () -> {
-                    // Order.deleteOrder(getConnection(), button.getRowId().getOrderNumber());
-                    showNotification("Order " + button.getRowId().getOrderNumber() + " successfully deleted");
-                });
-            } catch (Exception e) {
+                Order.deleteOrder(getConnection(), button.getRowId().getOrderNumber());
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
-        };
+            showNotification("Order " + button.getRowId().getOrderNumber() + " successfully deleted");
+            try {
+                displayOrders();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
+
 
     private FXMLLoader createLoaderWithCustomController(ButtonInsideTableColumn<OrderTable, String> button) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
@@ -203,9 +206,6 @@ public class AllOrdersController extends AdminStartSceneController {
             cancelButton.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
 
         }
-
-
-
 
         protected ImageView setIconFromAdminIconsFolder(String iconName) {
             return new ImageView(getClass().getResource("/application/Icons/AdminIcons/") + iconName);

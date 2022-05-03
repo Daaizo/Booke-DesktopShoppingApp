@@ -17,13 +17,6 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class AdminStartSceneController extends ClientAccountDetails {
-    @FXML
-    private void initialize() {
-        prepareScene();
-        createLightingEffect();
-        createTitle();
-        createNotification();
-    }
 
     private final Lighting lighting = new Lighting();
     @FXML
@@ -32,27 +25,13 @@ public class AdminStartSceneController extends ClientAccountDetails {
     private Pane mainPane, startPane, topMenuPane;
     private Label title;
 
-    void createAndShowConfirmAdminPasswordAlert(String alertText, InterfaceToRunMethod methodsInterface) throws SQLException {
-        Optional<String> result = createAndShowConfirmPasswordAlert("Re enter admin password to " + alertText);
-        String adminPassword = Client.getClientPassword(getConnection(), "admin");
-        result.ifPresent(s -> {
-            if (result.get().equals(adminPassword)) {
-                methodsInterface.myMethod();
-            } else {
-                ButtonType tryAgain = new ButtonType("Try again");
-                ButtonType cancel = new ButtonType("Cancel");
-                Optional<ButtonType> res = createAndShowAlert(tryAgain, cancel, "Incorrect password, please try again", "Wrong password");
-                res.ifPresent(buttonType -> {
-                    if (res.get() == tryAgain) {
-                        try {
-                            createAndShowConfirmAdminPasswordAlert(alertText, methodsInterface);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
+
+    @FXML
+    private void initialize() {
+        prepareScene();
+        createLightingEffect();
+        createTitle();
+        createNotification();
     }
 
     @FXML
@@ -78,6 +57,34 @@ public class AdminStartSceneController extends ClientAccountDetails {
 
     interface InterfaceToRunMethod {
         void myMethod();
+    }
+
+    private String getAdminPassword() {
+        String adminPassword = null;
+        try {
+            adminPassword = Client.getClientPassword(getConnection(), "admin");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return adminPassword;
+    }
+
+    void createAndShowConfirmAdminPasswordAlert(String alertText, InterfaceToRunMethod methodsInterface) {
+        Optional<String> result = createAndShowConfirmPasswordAlert("Re enter admin password to " + alertText);
+        result.ifPresent(s -> {
+            if (result.get().equals(getAdminPassword())) {
+                methodsInterface.myMethod();
+            } else {
+                ButtonType tryAgain = new ButtonType("Try again");
+                ButtonType cancel = new ButtonType("Cancel");
+                Optional<ButtonType> res = createAndShowAlert(tryAgain, cancel, "Incorrect password, please try again", "Wrong password");
+                res.ifPresent(buttonType -> {
+                    if (res.get() == tryAgain) {
+                        createAndShowConfirmAdminPasswordAlert(alertText, methodsInterface);
+                    }
+                });
+            }
+        });
     }
 
     private void createLightingEffect() {
