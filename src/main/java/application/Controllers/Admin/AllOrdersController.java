@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,6 +24,7 @@ import users.OrderTable;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class AllOrdersController extends AdminStartSceneController {
     @FXML
@@ -44,6 +46,48 @@ public class AllOrdersController extends AdminStartSceneController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        createSortingButtons();
+        prepareSortingButtons(ordersTableView);
+        ordersAcceptColumn.setComparator((o1, o2) -> {
+            if (o1.equals("In progress")) return 1;
+            else return 0;
+        });
+    }
+
+    protected void createSortingButtons() {
+        sortingButtonsBox = new ComboBox<>();
+        sortingButtonsBox.getItems().addAll("Id", "Total value (High -> Low)", "Total value (Low -> High)", "Status", "To approve first");
+        sortingButtonsBox.setLayoutX(795);
+        sortingButtonsBox.setLayoutY(65);
+        sortingButtonsBox.getStyleClass().add("OrangeButtons");
+        sortingButtonsBox.setId("sortingButtons");
+        anchor.getChildren().add(sortingButtonsBox);
+        sortingButtonsBox.setVisible(false);
+    }
+
+    protected void prepareSortingButtons(TableView<OrderTable> tableView) {
+        sortingButtonsBox.setValue("Choose sorting type :");
+        sortingButtonsBox.setVisible(true);
+        sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
+            tableView.getSortOrder().clear();
+            if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(0))) {
+                setSortingType(tableView, 1, TableColumn.SortType.ASCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(1))) {
+                setSortingType(tableView, 4, TableColumn.SortType.DESCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(2))) {
+                setSortingType(tableView, 4, TableColumn.SortType.ASCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(3))) {
+                setSortingType(tableView, 5, TableColumn.SortType.ASCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(4))) {
+                setSortingType(tableView, 6, TableColumn.SortType.DESCENDING);
+            }
+            tableView.requestFocus();
+        });
+    }
+
+    private void setSortingType(TableView<OrderTable> tableView, int columnNumber, TableColumn.SortType sortType) {
+        tableView.getColumns().get(columnNumber).setSortType(sortType);
+        tableView.getSortOrder().add(tableView.getColumns().get(columnNumber));
     }
 
     void displayOrders() throws SQLException {
