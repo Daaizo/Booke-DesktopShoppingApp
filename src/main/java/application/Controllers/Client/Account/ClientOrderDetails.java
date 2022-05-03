@@ -117,15 +117,24 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private void fillGridPaneWithData(ResultSet data, GridPane gridPane) throws SQLException {
         if (data.next()) {
+            Label key = new Label(data.getString(1));
+            Label login = new Label(data.getString(2));
+            Label name = new Label(data.getString(3));
+            Label lastName = new Label(data.getString(4));
+            key.getStyleClass().add("importantDataLabels");
+            login.getStyleClass().add("importantDataLabels");
+            name.getStyleClass().add("importantDataLabels");
+            lastName.getStyleClass().add("importantDataLabels");
+
             gridPane.add(new Label("Data of the orderer :"), 0, 0, 4, 1);
             gridPane.add(new Label("Customer key :"), 1, 1);
-            gridPane.add(new Label(data.getString(1)), 2, 1);
+            gridPane.add(key, 2, 1);
             gridPane.add(new Label("Login :"), 3, 1);
-            gridPane.add(new Label(data.getString(2)), 4, 1);
+            gridPane.add(login, 4, 1);
             gridPane.add(new Label("Name :"), 1, 2);
-            gridPane.add(new Label(data.getString(3)), 2, 2);
+            gridPane.add(name, 2, 2);
             gridPane.add(new Label("Last Name :"), 3, 2);
-            gridPane.add(new Label(data.getString(4)), 4, 2);
+            gridPane.add(lastName, 4, 2);
             gridPane.setVgap(10);
             gridPane.setHgap(30);
             data.close();

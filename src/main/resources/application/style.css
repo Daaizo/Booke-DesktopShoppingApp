@@ -5,9 +5,9 @@
     -backgroundColorB: #fc766a; 		// orange
 }
 #adminSceneUserInformationGridPane{
-    -fx-font-size :20px;
+    -fx-font-size :22px;
     -fx-font-weight: bolder  ;
-    -fx-text-fill: white;
+
 }
 .CategoryPickingButtons{
     -fx-background-color : -backgroundColorA;
@@ -41,11 +41,7 @@
     -fx-background-color :transparent;
 }
 
-#adminSceneDeleteOrderButton{
-      -fx-border-color : red;
-        -fx-border-width : 2px;
-        -fx-background-color : red;
-}
+
 .DeleteButtons{
     -fx-border-color : red;
     -fx-border-width : 2px;
@@ -56,8 +52,11 @@
     -fx-text-alignment : center ;
     -fx-background-color : transparent;
 }
-.DeleteButtons:hover,
 #adminSceneDeleteOrderButton:hover{
+   -fx-background-color : #ff4d4d;
+}
+.DeleteButtons:hover
+{
     -fx-background-color : #ff4d4d;
     -fx-background-radius :10px;
     -fx-background-insets: 0;

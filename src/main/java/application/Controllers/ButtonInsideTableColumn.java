@@ -14,7 +14,7 @@ public class ButtonInsideTableColumn<T, V> extends TableCell<T, V> {
     protected EventHandler<MouseEvent> eventHandler;
     protected String cssId;
     protected String cssClassId;
-    private T rowId;
+    protected T rowId;
 
     public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText) {
         this.iconName = iconNameWithExtension;
