@@ -40,7 +40,6 @@ public class AllOrdersController extends AdminStartSceneController {
 
     @FXML
     private void initialize() {
-        createGoBackButton();
         try {
             displayOrders();
         } catch (SQLException e) {
@@ -52,17 +51,21 @@ public class AllOrdersController extends AdminStartSceneController {
             if (o1.equals("In progress")) return 1;
             else return 0;
         });
+        createGoBackButton();
+
     }
 
     protected void createSortingButtons() {
         sortingButtonsBox = new ComboBox<>();
+        sortingButtonsBox.setMaxWidth(175);
         sortingButtonsBox.getItems().addAll("Id", "Total value (High -> Low)", "Total value (Low -> High)", "Status", "To approve first");
-        sortingButtonsBox.setLayoutX(795);
-        sortingButtonsBox.setLayoutY(65);
+        sortingButtonsBox.setLayoutX(840);
+        sortingButtonsBox.setLayoutY(93);
         sortingButtonsBox.getStyleClass().add("OrangeButtons");
         sortingButtonsBox.setId("sortingButtons");
         anchor.getChildren().add(sortingButtonsBox);
         sortingButtonsBox.setVisible(false);
+        sortingButtonsBox.setStyle("-fx-font-size:13px");
     }
 
     protected void prepareSortingButtons(TableView<OrderTable> tableView) {
@@ -102,6 +105,7 @@ public class AllOrdersController extends AdminStartSceneController {
             orderDetailsPane.setVisible(false);
             ordersPane.setVisible(true);
             goBackButton.setVisible(false);
+            sortingButtonsBox.setVisible(true);
         });
         goBackButton.fire();
         fixGoBackButtonPosition();
@@ -237,6 +241,7 @@ public class AllOrdersController extends AdminStartSceneController {
         orderDetailsPane.getChildren().add(loader.load());
         goBackButton.setVisible(true);
         orderDetailsPane.setVisible(true);
+        sortingButtonsBox.setVisible(false);
     }
 
     static class ButtonInsideOrdersTableView extends ButtonInsideTableColumn<OrderTable, String> {

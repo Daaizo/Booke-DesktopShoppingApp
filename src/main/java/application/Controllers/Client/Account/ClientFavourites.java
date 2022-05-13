@@ -100,7 +100,7 @@ public class ClientFavourites extends ClientAccountStartSceneController {
     }
 
     private ButtonInsideTableColumn<ProductTable, String> createDeleteFromFavouritesButton() {
-        ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ButtonInsideTableColumn<>("delete.png", "delete from favourites");
+        ButtonInsideTableColumn<ProductTable, String> deleteFromFavouritesButton = new ButtonInsideTableColumn<>("Others/delete.png", "delete from favourites");
         deleteFromFavouritesButton.setEventHandler(mouseEvent -> {
             String productName = deleteFromFavouritesButton.getRowId().getProductName();
             Optional<ButtonType> result = deleteProductAlert(productName, "1", "favourites");
