@@ -113,7 +113,6 @@ public class OrderTable {
                 listOfProducts.add(new OrderTable(new Order(productName, quantity, price, totalValue)));
             }
         } catch (SQLException exception) {
-            System.out.println(exception.getMessage());
             exception.printStackTrace();
         }
         return listOfProducts;

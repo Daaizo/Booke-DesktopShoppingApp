@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
@@ -24,7 +25,7 @@ public class AdminStartSceneController extends ClientAccountDetails {
     @FXML
     private Pane mainPane, startPane, topMenuPane;
     private Label title;
-
+    protected ComboBox<String> sortingButtonsBox;
 
     @FXML
     private void initialize() {
@@ -54,6 +55,7 @@ public class AdminStartSceneController extends ClientAccountDetails {
         title.setText("All users");
         setButtonLightingEffect(usersButton);
     }
+
 
     interface InterfaceToRunMethod {
         void myMethod();
