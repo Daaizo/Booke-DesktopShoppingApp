@@ -11,7 +11,7 @@ public class Client {
 
     public static ResultSet getUsersFromDataBase(Connection connection) {
         try {
-            String query = "select * from customer";
+            String query = "select * from customer where customerkey != 1";
             Statement stm = connection.createStatement();
             return stm.executeQuery(query);
         } catch (SQLException e) {
@@ -66,7 +66,6 @@ public class Client {
         this.name = n;
         this.lastName = ln;
         this.password = pas;
-
     }
 
     public Client(Integer d, String un, String ln, String n, String p) {
@@ -179,7 +178,7 @@ public class Client {
         preparedStatement.close();
     }
 
-    public void deleteClient(Connection connection) throws SQLException {
+    public static void deleteClient(Connection connection, String login) throws SQLException {
         String deleteUser = """
                 delete from customer
                      where customerlogin = ?
