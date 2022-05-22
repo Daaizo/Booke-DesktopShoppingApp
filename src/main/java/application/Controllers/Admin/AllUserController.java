@@ -1,5 +1,6 @@
 package application.Controllers.Admin;
 
+import application.Controllers.ButtonInsideTableColumn;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,11 +12,12 @@ import users.ClientTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 public class AllUserController extends AdminStartSceneController {
     @FXML
-    private TableColumn<ClientTable, String> userFirstNameColumn, userLoginColumn, userLastNameColumn, userPasswordColumn;
+    private TableColumn<ClientTable, String> userFirstNameColumn, userLoginColumn, userLastNameColumn, userPasswordColumn, userDeleteColumn, userDetailsColumn;
     @FXML
     private TableColumn<ClientTable, Integer> userIDColumn;
     @FXML
@@ -23,12 +25,9 @@ public class AllUserController extends AdminStartSceneController {
 
     @FXML
     private void initialize() {
-        try {
-            displayUsers();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        displayUsers();
         createButtons();
+        setSorting(userTableView);
     }
 
     private void createButtons() {
@@ -76,11 +75,7 @@ public class AllUserController extends AdminStartSceneController {
                 client.addUserToDatabase(getConnection());
                 showNotification("User added successfully");
                 clearAllFields(listOfTextFields);
-                try {
-                    displayUsers();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                displayUsers();
             });
         }
     }
@@ -128,7 +123,7 @@ public class AllUserController extends AdminStartSceneController {
         gridPane.add(addNewUserButton, 4, 0);
     }
 
-    private void displayUsers() throws SQLException {
+    private void displayUsers() {
         checkConnectionWithDb();
         ResultSet users = Client.getUsersFromDataBase(getConnection());
         assert users != null;
@@ -142,7 +137,56 @@ public class AllUserController extends AdminStartSceneController {
         userLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+        userDeleteColumn.setCellFactory(clientTableStringTableColumn -> createDeleteUserButton());
+        userDetailsColumn.setCellFactory(clientTableStringTableColumn -> createUserDetailsButton());
         userTableView.setItems(list);
         prepareTableView(userTableView, null);
     }
+
+    ButtonInsideTableColumn<ClientTable, String> createDeleteUserButton() {
+        ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete user");
+        button.setEventHandler(mouseEvent -> {
+            createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
+                try {
+                    Client.deleteClient(getConnection(), button.getRowId().getLogin());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                showNotification("User deleted");
+                displayUsers();
+            });
+        });
+        button.setId("adminSceneDeleteOrderButton");
+        return button;
+    }
+
+    ButtonInsideTableColumn<ClientTable, String> createUserDetailsButton() {
+        ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("", "details");
+        //TODO acc details ex. number of orders or all of them
+        button.setEventHandler(mouseEvent -> System.out.println("some acc details"));
+        button.setCssId("orderDetailsButton");
+        return button;
+    }
+
+    private void setSorting(TableView<ClientTable> tableView) {
+        createSortingButtons();
+        sortingButtonsBox.setLayoutY(70);
+        sortingButtonsBox.getItems().addAll("Id", "Login", "Name", "Last Name");
+        sortingButtonsBox.setValue("Choose sorting type :");
+        sortingButtonsBox.setVisible(true);
+        sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
+            tableView.getSortOrder().clear();
+            if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(0))) {
+                setSortingType(tableView, 1, TableColumn.SortType.ASCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(1))) {
+                setSortingType(tableView, 2, TableColumn.SortType.ASCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(2))) {
+                setSortingType(tableView, 3, TableColumn.SortType.ASCENDING);
+            } else if (Objects.equals(selectedValue, sortingButtonsBox.getItems().get(3))) {
+                setSortingType(tableView, 4, TableColumn.SortType.ASCENDING);
+            }
+            tableView.requestFocus();
+        });
+    }
+
 }

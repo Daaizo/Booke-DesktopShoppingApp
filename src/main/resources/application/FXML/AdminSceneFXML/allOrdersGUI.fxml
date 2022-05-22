@@ -7,7 +7,7 @@
     <Pane fx:id="ordersPane" prefHeight="640.0" prefWidth="1018.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <TableView fx:id="ordersTableView" layoutX="28.0" layoutY="95.0" prefHeight="493.0" prefWidth="994.0"
-                   styleClass="adminAllOrdersTableview">
+                   styleClass="adminSceneTableview">
             <columns>
                 <TableColumn fx:id="ordersDetailButtonColumn" prefWidth="101.0" resizable="false"/>
                 <TableColumn fx:id="ordersIdColumn" prefWidth="52.0" resizable="false" text="ID"/>
@@ -15,8 +15,7 @@
                 <TableColumn fx:id="ordersDeliveryDateColumn" prefWidth="214.0" resizable="false" text="Delivery date"/>
                 <TableColumn fx:id="ordersPriceColumn" prefWidth="117.0" resizable="false" text="Total price"/>
                 <TableColumn fx:id="ordersStatusColumn" prefWidth="195.0" resizable="false"/>
-                <TableColumn fx:id="ordersAcceptColumn" editable="false" minWidth="0.0" prefWidth="254.0"
-                             resizable="false"/>
+                <TableColumn fx:id="ordersAcceptColumn" editable="false" minWidth="0.0" prefWidth="254.0"/>
                 <TableColumn fx:id="deleteButtonColumn" minWidth="0.0" prefWidth="230.0" resizable="false"/>
             </columns>
         </TableView>
