@@ -3,10 +3,7 @@ package application.Controllers.Admin;
 import application.Controllers.Client.Account.ClientAccountDetails;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.layout.Pane;
@@ -87,6 +84,23 @@ public class AdminStartSceneController extends ClientAccountDetails {
                 });
             }
         });
+    }
+
+    protected void createSortingButtons() {
+        sortingButtonsBox = new ComboBox<>();
+        sortingButtonsBox.setMaxWidth(175);
+        sortingButtonsBox.setLayoutX(840);
+        sortingButtonsBox.setLayoutY(93);
+        sortingButtonsBox.getStyleClass().add("OrangeButtons");
+        sortingButtonsBox.setId("sortingButtons");
+        anchor.getChildren().add(sortingButtonsBox);
+        sortingButtonsBox.setVisible(false);
+        sortingButtonsBox.setStyle("-fx-font-size:13px");
+    }
+
+    protected <T> void setSortingType(TableView<T> tableView, int columnNumber, TableColumn.SortType sortType) {
+        tableView.getColumns().get(columnNumber).setSortType(sortType);
+        tableView.getSortOrder().add(tableView.getColumns().get(columnNumber));
     }
 
     private void createLightingEffect() {

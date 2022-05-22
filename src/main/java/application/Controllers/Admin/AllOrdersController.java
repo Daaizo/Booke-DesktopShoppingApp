@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -55,20 +54,10 @@ public class AllOrdersController extends AdminStartSceneController {
 
     }
 
-    protected void createSortingButtons() {
-        sortingButtonsBox = new ComboBox<>();
-        sortingButtonsBox.setMaxWidth(175);
-        sortingButtonsBox.getItems().addAll("Id", "Total value (High -> Low)", "Total value (Low -> High)", "Status", "To approve first");
-        sortingButtonsBox.setLayoutX(840);
-        sortingButtonsBox.setLayoutY(93);
-        sortingButtonsBox.getStyleClass().add("OrangeButtons");
-        sortingButtonsBox.setId("sortingButtons");
-        anchor.getChildren().add(sortingButtonsBox);
-        sortingButtonsBox.setVisible(false);
-        sortingButtonsBox.setStyle("-fx-font-size:13px");
-    }
+
 
     protected void prepareSortingButtons(TableView<OrderTable> tableView) {
+        sortingButtonsBox.getItems().addAll("Id", "Total value (High -> Low)", "Total value (Low -> High)", "Status", "To approve first");
         sortingButtonsBox.setValue("Choose sorting type :");
         sortingButtonsBox.setVisible(true);
         sortingButtonsBox.valueProperty().addListener((observableValue, s, selectedValue) -> {
@@ -88,10 +77,6 @@ public class AllOrdersController extends AdminStartSceneController {
         });
     }
 
-    private void setSortingType(TableView<OrderTable> tableView, int columnNumber, TableColumn.SortType sortType) {
-        tableView.getColumns().get(columnNumber).setSortType(sortType);
-        tableView.getSortOrder().add(tableView.getColumns().get(columnNumber));
-    }
 
     void displayOrders() throws SQLException {
         checkConnectionWithDb();
