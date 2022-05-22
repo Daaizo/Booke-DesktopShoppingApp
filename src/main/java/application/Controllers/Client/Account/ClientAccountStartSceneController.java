@@ -8,7 +8,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -106,7 +105,7 @@ public class ClientAccountStartSceneController extends Controller {
     }
 
     protected void setLogoAndCssToCustomDialog(Dialog<?> dialog) {
-        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(iconsUrl + "transparentLogo.png"));
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(setImage("Logo", "transparentLogo"));
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
         dialog.getDialogPane().getStyleClass().add("alert");
     }

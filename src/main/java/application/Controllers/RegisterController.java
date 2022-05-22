@@ -126,23 +126,24 @@ public class RegisterController extends Controller {
     }
 
     private void setPasswordVisibilityButtons() {
-        String hiddenPassIconName = "hiddenPassword.png";
-        String showPassIconName = "showPassword.png";
-        showPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
-        showRepeatPasswordButton.setGraphic(setImageFromIconsFolder("hiddenPassword.png"));
+        String hiddenPassIconName = "hiddenPassword";
+        String showPassIconName = "showPassword";
+        String iconsFolder = "PasswordIcons";
+        showPasswordButton.setGraphic(setImageFromIconsFolder(iconsFolder, hiddenPassIconName));
+        showRepeatPasswordButton.setGraphic(setImageFromIconsFolder(iconsFolder, hiddenPassIconName));
         showPasswordButton.setBackground(Background.EMPTY);
         showRepeatPasswordButton.setBackground(Background.EMPTY);
         showPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
             tfPassword.textProperty().removeListener(passwordFieldListener);
-            showPasswordButtonPressed(tfPassword, showPasswordButton, setImageFromIconsFolder(showPassIconName));
+            showPasswordButtonPressed(tfPassword, showPasswordButton, setImageFromIconsFolder(iconsFolder, hiddenPassIconName));
         });
 
         showPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> {
             tfPassword.textProperty().addListener(passwordFieldListener);
-            showPasswordButtonReleased(tfPassword, showPasswordButton, setImageFromIconsFolder(hiddenPassIconName));
+            showPasswordButtonReleased(tfPassword, showPasswordButton, setImageFromIconsFolder(iconsFolder, hiddenPassIconName));
         });
-        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(showPassIconName)));
-        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(hiddenPassIconName)));
+        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> showPasswordButtonPressed(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(iconsFolder, showPassIconName)));
+        showRepeatPasswordButton.addEventFilter(MouseEvent.MOUSE_RELEASED, e -> showPasswordButtonReleased(tfPasswordRepeat, showRepeatPasswordButton, setImageFromIconsFolder(iconsFolder, hiddenPassIconName)));
     }
 
 
@@ -244,15 +245,15 @@ public class RegisterController extends Controller {
 
     private void checkPasswordRequirementAndSetProperImage(ImageView name, String regexPattern) {
         if (Pattern.matches(regexPattern, tfPassword.getText())) {
-            name.setImage(new Image(iconsUrl + "check.png"));
+            name.setImage(setImage("PasswordIcons", "check"));
         } else {
-            name.setImage(new Image(iconsUrl + "no_check.png"));
+            name.setImage(setImage("PasswordIcons", "no_check"));
         }
     }
 
     private void setAllPasswordRequirementImages(boolean visible) {
-        Image check = new Image(iconsUrl + "check.png");
-        Image noCheck = new Image(iconsUrl + "no_check.png");
+        Image check = setImage("PasswordIcons", "check");
+        Image noCheck = setImage("PasswordIcons", "no_check");
         if (visible) {
             passLowercaseLetterImage.setImage(check);
             passUppercaseLetterImage.setImage(check);

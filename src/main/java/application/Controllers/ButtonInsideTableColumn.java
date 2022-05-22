@@ -14,13 +14,18 @@ public class ButtonInsideTableColumn<T, V> extends TableCell<T, V> {
     protected EventHandler<MouseEvent> eventHandler;
     protected String cssId;
     protected String cssClassId;
-    private T rowId;
+    protected T rowId;
 
     public ButtonInsideTableColumn(String iconNameWithExtension, String buttonText) {
         this.iconName = iconNameWithExtension;
         this.button = new Button();
         this.button.setText(buttonText);
         button.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
+    }
+
+    public ButtonInsideTableColumn() {
+        this.iconName = "";
+        this.button = new Button();
     }
 
     public void setCssId(String cssId) {

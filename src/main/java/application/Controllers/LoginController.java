@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import users.Client;
 
 import java.sql.ResultSet;
@@ -20,10 +21,12 @@ public class LoginController extends Controller {
     private TextField tfLogin, tfPassword;
     @FXML
     private Label passwordLabel, loginLabel;
-
+    @FXML
+    private ImageView logo;
 
     @FXML
     public void initialize() {
+
         setAnchorSizeAndColors();
         createExitButton();
         setPasswordVisibilityButton(showPasswordButton, tfPassword);

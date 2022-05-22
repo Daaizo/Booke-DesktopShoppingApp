@@ -74,7 +74,7 @@ public class ShoppingCartController extends Controller {
     }
 
     private void createClearCartButton() {
-        clearCartButton = createButton("", 800, 80);
+        clearCartButton = createButton(800, 80);
         clearCartButton.setText("Delete whole cart");
         clearCartButton.getStyleClass().add("DeleteButtons");
         clearCartButton.setMinWidth(200);
@@ -157,7 +157,7 @@ public class ShoppingCartController extends Controller {
 
 
     private ButtonInsideTableColumn<ProductTable, String> plusButtonClicked() {
-        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("plus.png", "");
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("TableViewIcons/plus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
@@ -180,7 +180,7 @@ public class ShoppingCartController extends Controller {
 
 
     private ButtonInsideTableColumn<ProductTable, String> minusButtonClicked() {
-        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("minus.png", "");
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("TableViewIcons/minus.png", "");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {
@@ -203,7 +203,7 @@ public class ShoppingCartController extends Controller {
     }
 
     private ButtonInsideTableColumn<ProductTable, String> deleteButtonClicked() {
-        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("delete.png", "delete from cart");
+        ButtonInsideTableColumn<ProductTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete from cart");
         EventHandler<MouseEvent> buttonClicked = mouseEvent -> {
             String productName = button.getRowId().getProductName();
             try {

@@ -41,8 +41,8 @@
       <Button fx:id="payOrderButton" layoutX="74.0" layoutY="493.0" maxHeight="-Infinity" maxWidth="-Infinity"
               minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="350.0"
               styleClass="OrangeButtons" text="Pay now"/>
-      <Label id="titleLabel" layoutX="369.0" layoutY="35.0" prefHeight="52.0" prefWidth="278.0"
-             style="-fx-font-size: 45;" text="Order details"/>
+      <Label id="titleLabel" contentDisplay="TEXT_ONLY" layoutX="346.0" layoutY="27.0" prefHeight="74.0"
+             prefWidth="300.0" style="-fx-font-size: 45; -fx-background-color: #5B84B1FF;" text="Order details"/>
       <Label id="informationLabel" fx:id="informationLabel" layoutX="508.0" layoutY="112.0" prefHeight="43.0"
              prefWidth="472.0"/>
    </Pane>

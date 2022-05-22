@@ -4,7 +4,11 @@
     -backgroundColorA: #5B84B1FF; 	// bluish
     -backgroundColorB: #fc766a; 		// orange
 }
+#adminSceneUserInformationGridPane{
+    -fx-font-size :22px;
+    -fx-font-weight: bolder  ;
 
+}
 .CategoryPickingButtons{
     -fx-background-color : -backgroundColorA;
     -fx-border-color : -backgroundColorB;
@@ -48,7 +52,11 @@
     -fx-text-alignment : center ;
     -fx-background-color : transparent;
 }
-.DeleteButtons:hover{
+#adminSceneDeleteOrderButton:hover{
+   -fx-background-color : #ff4d4d;
+}
+.DeleteButtons:hover
+{
     -fx-background-color : #ff4d4d;
     -fx-background-radius :10px;
     -fx-background-insets: 0;
@@ -226,10 +234,10 @@
 
 
 .table-view,
+.table-view .column-header-background, // right corner filler
 .table-view .column-header-background .filler,
 .tab-pane:top .tab-header-area .tab-header-background,
 .table-view .corner,
-.table-view:row-selection:unconstrained-resize .placeholder,
 .table-view:row-selection:unconstrained-resize .filler,
 .table-view:row-selection:unconstrained-resize .corner
 {
@@ -301,14 +309,15 @@
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
-
+.table-view *.scroll-bar:vertical *.increment-arrow,
+.table-view *.scroll-bar:vertical *.decrement-arrow{
+    -fx-background-color:white;
+}
 .table-view *.scroll-bar:horizontal *.increment-arrow,
 .table-view *.scroll-bar:horizontal *.decrement-arrow {
     -fx-background-color: null;
     -fx-background-radius: 0;
-    -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-shape: null;
 }
 
 .table-view .virtual-flow .scroll-bar:vertical,
@@ -329,3 +338,14 @@
     -fx-background-color : transparent;
     -fx-padding: 2;
  }
+ .adminAllOrdersTableview  .scroll-bar:horizontal .thumb{
+      -fx-background-color:  -backgroundColorB;
+     -fx-border-color :-backgroundColorB;
+     -fx-border-width : 3px;
+     -fx-border-radius :3px;
+ }
+ .adminAllOrdersTableview *.scroll-bar:horizontal *.increment-arrow,
+ .adminAllOrdersTableview *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-background-color :white;
+    -fx-padding: 2.5;
+  }

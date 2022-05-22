@@ -28,7 +28,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
     private TextField tfLogin, tfName, tfLastName;
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         checkConnectionWithDb();
         setDetailsOfOrdersLabels();
         try {
@@ -42,8 +42,8 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
     }
 
     @FXML
-    void deleteAccountButtonClicked(ActionEvent event) {
-        Optional<String> result = createAndShowConfirmPasswordAlert();
+    private void deleteAccountButtonClicked(ActionEvent event) {
+        Optional<String> result = createAndShowConfirmPasswordAlert("Confirm that it is you ");
         result.ifPresent(s -> {
             if (result.get().equals(currentUser.getPassword())) {
                 deleteConfirmation(event);
@@ -79,7 +79,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
 
     @FXML
     private void changePasswordButtonClicked() {
-        Optional<String> result = createAndShowConfirmPasswordAlert();
+        Optional<String> result = createAndShowConfirmPasswordAlert("Confirm that it is you ");
         result.ifPresent(s -> {
             if (result.get().equals(currentUser.getPassword())) {
                 Optional<String> newAlert = enterNewPasswordAlert();
@@ -177,7 +177,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         }
     }
 
-    private Optional<String> enterNewPasswordAlert() {
+    protected Optional<String> enterNewPasswordAlert() {
         PasswordField passwordField = new PasswordField();
         Dialog<String> dialog = createCustomEnterPasswordAlert(passwordField);
         dialog.setTitle("New password");
@@ -215,7 +215,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
     }
 
 
-    private Optional<String> createAndShowConfirmPasswordAlert() {
+    protected Optional<String> createAndShowConfirmPasswordAlert(String headerText) {
         PasswordField passwordField = new PasswordField();
         Dialog<String> dialog = createCustomEnterPasswordAlert(passwordField);
         dialog.setResultConverter(buttonType -> {
@@ -225,7 +225,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
             return null;
         });
         dialog.setTitle("Password");
-        dialog.setHeaderText("Confirm that it is you ");
+        dialog.setHeaderText(headerText);
         return dialog.showAndWait();
     }
 

@@ -4,10 +4,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import users.Client;
 import users.Order;
 import users.OrderTable;
 import users.Product;
@@ -38,6 +41,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private int orderNumber;
     private OrderTable orderTable;
+    private boolean isLunchedByAdmin = false;
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
@@ -51,26 +55,97 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         this.allOrdersPane = pane;
     }
 
+    public void setGoBackButton(Button button) {
+        goBackButton = button;
+    }
+
+    public void isLunchedByAdmin(boolean isLunchedByAdmin) {
+        this.isLunchedByAdmin = isLunchedByAdmin;
+    }
+
     public void initialize() {
         detailsPane.requestFocus();
-        setButtons();
         displayOrderDetails(orderNumber);
         if (orderTable == null) {
             orderTable = getOrdersInformationFromDataBase();
-            goBackButton.setVisible(false);
+            if (goBackButton != null) goBackButton.setVisible(false);
+        }
+        if (isLunchedByAdmin) {
+            hideAllButtons();
+            setClientDataToGridPane();
+        } else {
+            setButtons();
+            makeProperButtonsVisible(orderStatusLabel.getText());
         }
         fillOrderDetailLabels(orderTable);
-        makeProperButtonsVisible(orderStatusLabel.getText());
         createInformationImageAndAttachItToLabel();
         setInformationAboutOrderStatus(orderStatusHashMap);
+    }
 
+    private void hideAllButtons() {
+        payOrderButton.setVisible(false);
+        cancelOrderButton.setVisible(false);
+        changePaymentMethodButton.setVisible(false);
+    }
+
+    private ResultSet getClientData() throws SQLException {
+        return Client.getUserInformationById(getConnection(), orderTable.getCustomerId());
+    }
+
+    private void setClientDataToGridPane() {
+        GridPane gridPane = createGridPane();
+        try {
+            fillGridPaneWithData(getClientData(), gridPane);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private GridPane createGridPane() {
+        GridPane grid = new GridPane();
+        double padding = 10;
+        grid.setPadding(new Insets(padding));
+        grid.setHgap(padding);
+        grid.setVgap(padding);
+        grid.setLayoutY(470);
+        grid.setLayoutX(20);
+        grid.setId("adminSceneUserInformationGridPane");
+        detailsPane.getChildren().add(grid);
+        return grid;
+    }
+
+    private void fillGridPaneWithData(ResultSet data, GridPane gridPane) throws SQLException {
+        if (data.next()) {
+            Label key = new Label(data.getString(1));
+            Label login = new Label(data.getString(2));
+            Label name = new Label(data.getString(3));
+            Label lastName = new Label(data.getString(4));
+            key.getStyleClass().add("importantDataLabels");
+            login.getStyleClass().add("importantDataLabels");
+            name.getStyleClass().add("importantDataLabels");
+            lastName.getStyleClass().add("importantDataLabels");
+
+            gridPane.add(new Label("Data of the orderer :"), 0, 0, 4, 1);
+            gridPane.add(new Label("Customer key :"), 1, 1);
+            gridPane.add(key, 2, 1);
+            gridPane.add(new Label("Login :"), 3, 1);
+            gridPane.add(login, 4, 1);
+            gridPane.add(new Label("Name :"), 1, 2);
+            gridPane.add(name, 2, 2);
+            gridPane.add(new Label("Last Name :"), 3, 2);
+            gridPane.add(lastName, 4, 2);
+            gridPane.setVgap(10);
+            gridPane.setHgap(30);
+            data.close();
+        }
     }
 
     private OrderTable getOrdersInformationFromDataBase() {
         try {
             Order order = new Order(currentUser.getLogin());
             ResultSet orderInformation = order.getOrderDetailedInformation(getConnection(), orderNumber);
-            ObservableList<OrderTable> listOfOrders = OrderTable.getOrder(orderInformation);
+            ObservableList<OrderTable> listOfOrders = OrderTable.getOrderBasicInformation(orderInformation);
             orderInformation.close();
             return listOfOrders.get(0);
         } catch (SQLException e) {
@@ -80,27 +155,23 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     }
 
 
-    private void changeGoBuckButtonAction() {
+    public void changeGoBackButtonAction(String fxmlPath, String fxmlNameToDisplay) {
         if (goBackButton == null) {
             goBackButton = createGoBackButton(null);
         }
         EventHandler<ActionEvent> oldEvent = goBackButton.getOnAction();
         goBackButton.setOnAction(event -> {
             detailsPane.getChildren().clear();
-            loadFXMLAndInitializeController(pathToFxml + "clientOrdersGUI.fxml", allOrdersPane);
+            loadFXMLAndInitializeController(fxmlPath + fxmlNameToDisplay, allOrdersPane);
             allOrdersPane.setVisible(true);
             goBackButton.setOnAction(oldEvent);
         });
-
-
     }
 
     private void setButtons() {
         setCancelOrderButtonAction();
         setPayOrderButtonAction();
         setChangePaymentMethodButtonAction();
-        changeGoBuckButtonAction();
-
     }
 
     private void setPayOrderButtonAction() {
@@ -209,9 +280,9 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private HashMap<String, String> createHashMapWithOrderStatuses() {
         HashMap<String, String> orderStatus = new HashMap<>();
-        orderStatus.put("Canceled", "Your order has been cancelled and your payment will be refunded");
-        orderStatus.put("In progress", "Your order has been paid and is awaiting approval");
-        orderStatus.put("Finished", "Order has been sent to the email assigned to your account");
+        orderStatus.put("Canceled", "This order has been cancelled and the payment will be refunded");
+        orderStatus.put("In progress", "This order has been paid and is awaiting approval");
+        orderStatus.put("Sent", "Order has been sent to the email assigned to this account");
         orderStatus.put("Waiting for payment", "The order has not been paid");
         return orderStatus;
     }
@@ -247,7 +318,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
 
     private void createInformationImageAndAttachItToLabel() {
-        ImageView informationImage = setImageFromIconsFolder("information.png");
+        ImageView informationImage = setImageFromIconsFolder("Others", "information");
         informationImage.setLayoutX(725);
         informationImage.setLayoutY(91);
         orderStatusLabel.setGraphic(informationImage);

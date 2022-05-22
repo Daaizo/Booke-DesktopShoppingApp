@@ -37,10 +37,11 @@ public class GamesCategoriesController extends ClientStartSceneController {
     }
 
     private void prepareAllImages() {
-        adventure.setGraphic(setImageFromIconsFolder("/CategoryIcons/adventure.png"));
-        shooters.setGraphic(setImageFromIconsFolder("/CategoryIcons/shooters.png"));
-        sport.setGraphic(setImageFromIconsFolder("/CategoryIcons/sport.png"));
-        mmorpg.setGraphic(setImageFromIconsFolder("/CategoryIcons/mmorpg.png"));
+        String iconsFolderName = "ClientIcons/CategoryIcons";
+        adventure.setGraphic(setImageFromIconsFolder(iconsFolderName, "adventure"));
+        shooters.setGraphic(setImageFromIconsFolder(iconsFolderName, "shooters"));
+        sport.setGraphic(setImageFromIconsFolder(iconsFolderName, "sport"));
+        mmorpg.setGraphic(setImageFromIconsFolder(iconsFolderName, "mmorpg"));
     }
 
     private void initializeButtons() {

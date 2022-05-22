@@ -2,14 +2,70 @@ package users;
 
 import java.sql.*;
 
-public class Client extends User {
+public class Client {
+    private String login;
+    private String password;
+    private String name;
+    private String lastName;
+    private Integer id;
+
+    public static ResultSet getUsersFromDataBase(Connection connection) {
+        try {
+            String query = "select * from customer where customerkey != 1";
+            Statement stm = connection.createStatement();
+            return stm.executeQuery(query);
+        } catch (SQLException e) {
+            System.out.println("error with executing SQL query");
+        }
+        return null;
+    }
+
+    public String getLogin() {
+        return this.login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 
     public Client(String un, String ln, String n, String pas) {
         this.login = un;
         this.name = n;
         this.lastName = ln;
         this.password = pas;
-
     }
 
     public Client(Integer d, String un, String ln, String n, String p) {
@@ -22,6 +78,17 @@ public class Client extends User {
 
     public Client(String login) {
         this.login = login;
+    }
+
+    public static String getClientPassword(Connection connection, String login) throws SQLException {
+        String data = """
+                select customerpassword from customer where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(data);
+        preparedStatement.setString(1, login);
+        ResultSet clientPass = preparedStatement.executeQuery();
+        clientPass.next();
+        return clientPass.getString(1);
     }
 
     public static boolean isClientInDataBase(Connection connection, String login) throws SQLException {
@@ -111,7 +178,7 @@ public class Client extends User {
         preparedStatement.close();
     }
 
-    public void deleteClient(Connection connection) throws SQLException {
+    public static void deleteClient(Connection connection, String login) throws SQLException {
         String deleteUser = """
                 delete from customer
                      where customerlogin = ?
@@ -294,6 +361,16 @@ public class Client extends User {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static ResultSet getUserInformationById(Connection connection, int userId) throws SQLException {
+        String totalValue = """
+                    select * from customer
+                        where customerkey =?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(totalValue);
+        preparedStatement.setInt(1, userId);
+        return preparedStatement.executeQuery();
     }
 
 

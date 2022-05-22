@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="640.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/17"
+            fx:controller="application.Controllers.Admin.AllProductsController">
+   <children>
+      <TableView fx:id="productTableView" layoutX="14.0" layoutY="90.0" prefHeight="537.0" prefWidth="1004">
+         <columns>
+            <TableColumn fx:id="productIdColumn" prefWidth="297.0" text="ID"/>
+            <TableColumn fx:id="productNameColumn" prefWidth="125.0" text="Name"/>
+            <TableColumn fx:id="productPriceColumn" prefWidth="170.0" text="Price"/>
+            <TableColumn fx:id="productSubcategoryColumn" prefWidth="174.0" text="Subcategory"/>
+            <TableColumn fx:id="productCategoryColumn" prefWidth="237.0" text="Category"/>
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+         </columnResizePolicy>
+      </TableView>
+      <Button layoutX="14.0" layoutY="597.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="132.0"
+              text="Add new product"/>
+   </children>
+</AnchorPane>
