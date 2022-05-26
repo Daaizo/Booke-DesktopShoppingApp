@@ -30,6 +30,16 @@ public class ClientOrders extends ClientAccountStartSceneController {
     @FXML
     private ComboBox<String> sortingButtonsBox;
 
+
+    private final boolean isLunchedByAdmin;
+    private final String userId;
+
+    public ClientOrders(boolean isLunchedByAdmin, String userId) {
+        this.isLunchedByAdmin = isLunchedByAdmin;
+        this.userId = userId;
+        createEmptyTableViewLabel();
+    }
+
     @FXML
     private void initialize() {
         try {
@@ -99,7 +109,13 @@ public class ClientOrders extends ClientAccountStartSceneController {
 
     private ObservableList<OrderTable> getOrdersFromDb() throws SQLException {
         checkConnectionWithDb();
-        Order order = new Order(currentUser.getLogin());
+        Order order;
+        if (isLunchedByAdmin) {
+            order = new Order(userId);
+        } else {
+            //TODO we need to set controller because it was removed
+            order = new Order(currentUser.getLogin());
+        }
         ResultSet orders = order.getOrdersFromCustomer(getConnection());
         ObservableList<OrderTable> listOfOrders = OrderTable.getOrders(orders);
         orders.close();

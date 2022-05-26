@@ -1,14 +1,20 @@
 package application.Controllers.Admin;
 
 import application.Controllers.ButtonInsideTableColumn;
+import application.Controllers.Client.Account.ClientOrders;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import users.Client;
 import users.ClientTable;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,6 +28,8 @@ public class AllUserController extends AdminStartSceneController {
     private TableColumn<ClientTable, Integer> userIDColumn;
     @FXML
     private TableView<ClientTable> userTableView;
+    @FXML
+    private Pane ordersPane;
 
     @FXML
     private void initialize() {
@@ -163,10 +171,29 @@ public class AllUserController extends AdminStartSceneController {
     ButtonInsideTableColumn<ClientTable, String> createUserDetailsButton() {
         ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("", "details");
         //TODO acc details ex. number of orders or all of them
-        button.setEventHandler(mouseEvent -> System.out.println("some acc details"));
+        button.setEventHandler(openOrderDetails(button));
         button.setCssId("orderDetailsButton");
         return button;
     }
+
+    private EventHandler<MouseEvent> openOrderDetails(ButtonInsideTableColumn<ClientTable, String> button) {
+        return mouseEvent -> {
+            System.out.println(button.getRowId().getLogin());
+            //TODO when there are no orders label is not visible
+            ClientOrders clientOrderDetailsController = new ClientOrders(true, button.getRowId().getLogin());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
+            loader.setController(clientOrderDetailsController);
+            ordersPane.setVisible(true);
+            ordersPane.toFront();
+            try {
+                ordersPane.getChildren().add(loader.load());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        };
+    }
+
 
     private void setSorting(TableView<ClientTable> tableView) {
         createSortingButtons();
