@@ -130,7 +130,8 @@ public class ClientOrders extends ClientAccountStartSceneController {
 
     private EventHandler<MouseEvent> createActionOnClick(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
-            FXMLLoader loader = createLoaderWithCustomController(button);
+            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button);
+            FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, ordersPane, "clientOrderDetailsGUI");
             try {
                 displayOrderDetails(loader);
             } catch (IOException e) {
@@ -139,16 +140,6 @@ public class ClientOrders extends ClientAccountStartSceneController {
         };
     }
 
-    private FXMLLoader createLoaderWithCustomController(ButtonInsideTableColumn<OrderTable, String> button) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
-        ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
-        clientOrderDetailsController.setOrder(button.getRowId());
-        clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
-        clientOrderDetailsController.setAllOrdersPane(ordersPane);
-        clientOrderDetailsController.changeGoBackButtonAction(pathToFxml, "clientOrdersGUI.fxml");
-        loader.setController(clientOrderDetailsController);
-        return loader;
-    }
 
     private void displayOrderDetails(FXMLLoader loader) throws IOException {
         ordersPane.getChildren().clear();
