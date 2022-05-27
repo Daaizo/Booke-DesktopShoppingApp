@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -29,26 +30,31 @@ public class ClientOrders extends ClientAccountStartSceneController {
     private TableView<OrderTable> ordersTableView;
     @FXML
     private ComboBox<String> sortingButtonsBox;
-
+    private final String title;
 
     private final boolean isLunchedByAdmin;
     private final String userId;
+    @FXML
+    Label titleLabel;
 
-    public ClientOrders(boolean isLunchedByAdmin, String userId) {
+    public ClientOrders(boolean isLunchedByAdmin, String userId, String title) {
         this.isLunchedByAdmin = isLunchedByAdmin;
         this.userId = userId;
-        createEmptyTableViewLabel();
+        this.title = title;
+
     }
 
     @FXML
     private void initialize() {
+        createEmptyTableViewLabel();
+        titleLabel.setText(title);
+        if (!isLunchedByAdmin) titleLabel.setLayoutX(titleLabel.getLayoutX() + 110);
         try {
             displayOrders();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        createSortingButtons();
-        prepareSortingButtons();
+
     }
 
     private void createSortingButtons() {
@@ -90,16 +96,31 @@ public class ClientOrders extends ClientAccountStartSceneController {
 
     }
 
+    private void setEmptyTableViewLabel() {
+        ordersPane.getChildren().clear();
+        ordersPane.getChildren().add(emptyTableViewLabel);
+        emptyTableViewLabel.setLayoutX(250);
+        emptyTableViewLabel.setLayoutY(200);
+
+    }
+
     private void displayOrders() throws SQLException {
         ObservableList<OrderTable> listOfOrders = getOrdersFromDb();
         if (listOfOrders.isEmpty()) {
+            setEmptyTableViewLabel();
+            if (isLunchedByAdmin)
+                displayLabelWithGivenText(emptyTableViewLabel, "User number " + userId + "have no orders");
             displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
-            makeLabelVisible(ordersPane);
+            emptyTableViewLabel.setVisible(true);
+            emptyTableViewLabel.toFront();
         } else {
+            createSortingButtons();
+            prepareSortingButtons();
             displayTableWithOrders(listOfOrders);
             makePaneVisible(ordersPane);
         }
     }
+
 
     private void displayTableWithOrders(ObservableList<OrderTable> listOfOrders) {
         fillOrdersColumnsWithData();
@@ -147,6 +168,7 @@ public class ClientOrders extends ClientAccountStartSceneController {
     private EventHandler<MouseEvent> createActionOnClick(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
             ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button);
+            if (isLunchedByAdmin) sceneController.isLunchedByAdmin(true);
             FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, ordersPane, "clientOrderDetailsGUI");
             try {
                 displayOrderDetails(loader);
