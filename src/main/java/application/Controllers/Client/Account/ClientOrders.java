@@ -108,11 +108,12 @@ public class ClientOrders extends ClientAccountStartSceneController {
         ObservableList<OrderTable> listOfOrders = getOrdersFromDb();
         if (listOfOrders.isEmpty()) {
             setEmptyTableViewLabel();
-            if (isLunchedByAdmin)
+            if (isLunchedByAdmin) {
                 displayLabelWithGivenText(emptyTableViewLabel, "User number " + userId + "have no orders");
-            displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
+            } else displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
+
             emptyTableViewLabel.setVisible(true);
-            emptyTableViewLabel.toFront();
+
         } else {
             createSortingButtons();
             prepareSortingButtons();
@@ -134,7 +135,6 @@ public class ClientOrders extends ClientAccountStartSceneController {
         if (isLunchedByAdmin) {
             order = new Order(userId);
         } else {
-            //TODO we need to set controller because it was removed
             order = new Order(currentUser.getLogin());
         }
         ResultSet orders = order.getOrdersFromCustomer(getConnection());
@@ -167,8 +167,7 @@ public class ClientOrders extends ClientAccountStartSceneController {
 
     private EventHandler<MouseEvent> createActionOnClick(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
-            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button);
-            if (isLunchedByAdmin) sceneController.isLunchedByAdmin(true);
+            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button, isLunchedByAdmin);
             FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, ordersPane, "clientOrderDetailsGUI");
             try {
                 displayOrderDetails(loader);

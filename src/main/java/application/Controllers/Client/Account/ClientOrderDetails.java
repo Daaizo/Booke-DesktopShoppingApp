@@ -38,10 +38,13 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     //all fields are assigned in FXML but controller is set on run time
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+    private boolean isLunchedByAdmin;
     private int orderNumber;
     private OrderTable orderTable;
-    private boolean isLunchedByAdmin = false;
+
+    public ClientOrderDetails(boolean isLunchedByAdmin) {
+        this.isLunchedByAdmin = isLunchedByAdmin;
+    }
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
@@ -93,6 +96,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     }
 
     private void setClientDataToGridPane() {
+        System.out.println("tworzenie grid pane");
         GridPane gridPane = createGridPane();
         try {
             fillGridPaneWithData(getClientData(), gridPane);

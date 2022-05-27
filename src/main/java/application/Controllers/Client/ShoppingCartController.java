@@ -304,7 +304,7 @@ public class ShoppingCartController extends Controller {
     private void displayPostPlacingOrderInformation(int orderNumber) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
-            ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
+            ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails(false);
             clientOrderDetailsController.setOrderNumber(orderNumber);
             clientOrderDetailsController.setAllOrdersPane(orderPlacedPane);
             loader.setController(clientOrderDetailsController);
