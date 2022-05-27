@@ -29,13 +29,18 @@ public class AllUserController extends AdminStartSceneController {
     @FXML
     private TableView<ClientTable> userTableView;
     @FXML
-    private Pane ordersPane;
+    private Pane ordersPane, allUsersPane, orderDetailsPane;
 
     @FXML
     private void initialize() {
         displayUsers();
         createButtons();
         setSorting(userTableView);
+        goBackButton = createGoBackButton(event -> {
+            sortingButtonsBox.setVisible(true);
+            orderDetailsPane.setVisible(false);
+        });
+        goBackButton.fire();
     }
 
     private void createButtons() {
@@ -50,6 +55,8 @@ public class AllUserController extends AdminStartSceneController {
             }
 
             anchor.requestFocus();
+        });
+        createGoBackButton(event -> {
         });
     }
 
@@ -122,7 +129,7 @@ public class AllUserController extends AdminStartSceneController {
         GridPane gridPane = new GridPane();
         gridPane.setLayoutX(92);
         gridPane.setLayoutY(565);
-        anchor.getChildren().add(gridPane);
+        allUsersPane.getChildren().add(gridPane);
         gridPane.setHgap(30);
         gridPane.add(fieldArrayList.get(2), 0, 0);
         gridPane.add(fieldArrayList.get(0), 1, 0);
@@ -178,19 +185,21 @@ public class AllUserController extends AdminStartSceneController {
 
     private EventHandler<MouseEvent> openOrderDetails(ButtonInsideTableColumn<ClientTable, String> button) {
         return mouseEvent -> {
-            System.out.println(button.getRowId().getLogin());
             //TODO when there are no orders label is not visible
-            ClientOrders clientOrderDetailsController = new ClientOrders(true, button.getRowId().getLogin());
+            String userLogin = button.getRowId().getLogin();
+            ClientOrders clientOrderDetailsController = new ClientOrders(true, userLogin, "All orders of user '" + userLogin + "'");
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
             loader.setController(clientOrderDetailsController);
-            ordersPane.setVisible(true);
-            ordersPane.toFront();
+
             try {
-                ordersPane.getChildren().add(loader.load());
+                orderDetailsPane.getChildren().add(loader.load());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            orderDetailsPane.setVisible(true);
+            allUsersPane.setVisible(false);
+            sortingButtonsBox.setVisible(false);
         };
     }
 
