@@ -373,5 +373,15 @@ public class Client {
         return preparedStatement.executeQuery();
     }
 
+    public static ResultSet getUserInformationByLogin(Connection connection, String userLogin) throws SQLException {
+        String totalValue = """
+                    select * from customer
+                        where customerlogin =?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(totalValue);
+        preparedStatement.setString(1, userLogin);
+        return preparedStatement.executeQuery();
+    }
+
 
 }
