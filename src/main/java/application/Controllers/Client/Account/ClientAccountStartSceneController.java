@@ -2,6 +2,7 @@ package application.Controllers.Client.Account;
 
 import application.Controllers.Controller;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
@@ -14,6 +15,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import users.Client;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class ClientAccountStartSceneController extends Controller {
@@ -32,14 +34,12 @@ public class ClientAccountStartSceneController extends Controller {
 
     protected final String pathToFxml = "/ClientSceneFXML/ClientAccountFXML/";
 
-
     @FXML
     private void initialize() {
         prepareScene();
         goBackButton = createGoBackButton(event -> {
             clearPane(mainPane);
             switchScene(event, clientScene);
-
         });
         createLightingEffect();
         createEmptyTableViewLabel();
@@ -48,7 +48,7 @@ public class ClientAccountStartSceneController extends Controller {
 
     @FXML
     private void allOrdersButtonClicked() {
-        loadScene("clientOrdersGUI.fxml");
+        displayOrderScene(initializeController());
         setButtonLightingEffect(ordersButton);
     }
 
@@ -64,6 +64,23 @@ public class ClientAccountStartSceneController extends Controller {
         setButtonLightingEffect(accountSettingsButton);
     }
 
+    private FXMLLoader initializeController() {
+        ClientOrders clientOrderDetailsController = new ClientOrders(false, CURRENT_USER_LOGIN, "All orders");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
+        loader.setController(clientOrderDetailsController);
+        return loader;
+    }
+
+    private void displayOrderScene(FXMLLoader loader) {
+        clearPane(mainPane);
+        try {
+            mainPane.getChildren().add(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        menuPane.setVisible(true);
+        startPane.setVisible(false);
+    }
 
     private void loadScene(String fxmlName) {
         loadFXMLAndInitializeController(pathToFxml + fxmlName, mainPane);
@@ -77,7 +94,7 @@ public class ClientAccountStartSceneController extends Controller {
         lighting.setLight(light);
     }
 
-    private void createEmptyTableViewLabel() {
+    void createEmptyTableViewLabel() {
         emptyTableViewLabel = new Label();
         emptyTableViewLabel.setId("titleLabel");
         emptyTableViewLabel.setVisible(false);

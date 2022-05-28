@@ -1,5 +1,6 @@
 package application.Controllers;
 
+import application.Controllers.Client.Account.ClientOrderDetails;
 import dataBase.SqlConnection;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -24,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import users.OrderTable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -138,6 +140,22 @@ public abstract class Controller {
                         The last names like :
                             D'Arco, De Boo, Kowalski-Jablkowsy are allowed.
                         """);
+    }
+
+    protected FXMLLoader createLoaderForSceneWithOrders(ClientOrderDetails clientOrderDetailsController, Pane paneToLunchScene, String fxmlName) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/" + fxmlName + ".fxml"));
+        clientOrderDetailsController.setAllOrdersPane(paneToLunchScene);
+        loader.setController(clientOrderDetailsController);
+        return loader;
+    }
+
+    protected ClientOrderDetails createAndInitializeControllerForSceneWithOrders(ButtonInsideTableColumn<OrderTable, String> button, boolean isLunchedByAdmin, String userLogin) {
+        ClientOrderDetails clientOrderDetailsController;
+        if (userLogin.isEmpty()) clientOrderDetailsController = new ClientOrderDetails(isLunchedByAdmin);
+        else clientOrderDetailsController = new ClientOrderDetails(isLunchedByAdmin, userLogin);
+        clientOrderDetailsController.setOrder(button.getRowId());
+        clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
+        return clientOrderDetailsController;
     }
 
     protected boolean checkRegex(String login, String name, String lastName) {

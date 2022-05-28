@@ -21,7 +21,7 @@ public class AdminStartSceneController extends ClientAccountDetails {
     private Button ordersButton, productsButton, usersButton;
     @FXML
     private Pane mainPane, startPane, topMenuPane;
-    private Label title;
+    Label title;
     protected ComboBox<String> sortingButtonsBox;
 
     @FXML
@@ -35,7 +35,6 @@ public class AdminStartSceneController extends ClientAccountDetails {
     @FXML
     private void ordersButtonClicked() {
         loadScene("allOrdersGUI.fxml");
-        title.setText("All orders");
         setButtonLightingEffect(ordersButton);
     }
 
@@ -140,6 +139,10 @@ public class AdminStartSceneController extends ClientAccountDetails {
         title.setTextAlignment(TextAlignment.CENTER);
         title.setPrefHeight(68);
         title.setPrefWidth(1000);
+    }
+
+    void displayAllOrdersFromUser(int userID) {
+
     }
 
 

@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,6 +16,7 @@ import users.Order;
 import users.OrderTable;
 import users.Product;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -38,10 +40,19 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     //all fields are assigned in FXML but controller is set on run time
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+    private final boolean isLunchedByAdmin;
     private int orderNumber;
     private OrderTable orderTable;
-    private boolean isLunchedByAdmin = false;
+    private String userLogin;
+
+    public ClientOrderDetails(boolean isLunchedByAdmin, String userLogin) {
+        this.userLogin = userLogin;
+        this.isLunchedByAdmin = isLunchedByAdmin;
+    }
+
+    public ClientOrderDetails(boolean isLunchedByAdmin) {
+        this.isLunchedByAdmin = isLunchedByAdmin;
+    }
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
@@ -55,20 +66,25 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         this.allOrdersPane = pane;
     }
 
-    public void setGoBackButton(Button button) {
-        goBackButton = button;
-    }
-
-    public void isLunchedByAdmin(boolean isLunchedByAdmin) {
-        this.isLunchedByAdmin = isLunchedByAdmin;
+    public void hideGoBackButton() {
+        goBackButton.setVisible(false);
     }
 
     public void initialize() {
         detailsPane.requestFocus();
         displayOrderDetails(orderNumber);
+        checkIfAdminLunchedScene();
+
+        fillOrderDetailLabels(orderTable);
+        createInformationImageAndAttachItToLabel();
+        setInformationAboutOrderStatus(orderStatusHashMap);
+        changeGoBackButtonAction();
+    }
+
+    private void checkIfAdminLunchedScene() {
+
         if (orderTable == null) {
             orderTable = getOrdersInformationFromDataBase();
-            if (goBackButton != null) goBackButton.setVisible(false);
         }
         if (isLunchedByAdmin) {
             hideAllButtons();
@@ -77,9 +93,20 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
             setButtons();
             makeProperButtonsVisible(orderStatusLabel.getText());
         }
-        fillOrderDetailLabels(orderTable);
-        createInformationImageAndAttachItToLabel();
-        setInformationAboutOrderStatus(orderStatusHashMap);
+    }
+
+    public void changeGoBackButtonAction() {
+        if (goBackButton == null) {
+            goBackButton = createGoBackButton(null);
+        }
+        EventHandler<ActionEvent> oldEvent = goBackButton.getOnAction();
+        goBackButton.setOnAction(event -> {
+            detailsPane.getChildren().clear();
+            loadUserOrdersScene();
+            allOrdersPane.setVisible(true);
+            goBackButton.setOnAction(oldEvent);
+        });
+        goBackButton.setVisible(true);
     }
 
     private void hideAllButtons() {
@@ -89,6 +116,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     }
 
     private ResultSet getClientData() throws SQLException {
+        if (orderTable.getCustomerId() == 0) return Client.getUserInformationByLogin(getConnection(), userLogin);
         return Client.getUserInformationById(getConnection(), orderTable.getCustomerId());
     }
 
@@ -143,7 +171,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private OrderTable getOrdersInformationFromDataBase() {
         try {
-            Order order = new Order(currentUser.getLogin());
+            Order order = new Order(userLogin);//tu zmiana
             ResultSet orderInformation = order.getOrderDetailedInformation(getConnection(), orderNumber);
             ObservableList<OrderTable> listOfOrders = OrderTable.getOrderBasicInformation(orderInformation);
             orderInformation.close();
@@ -155,17 +183,18 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
     }
 
 
-    public void changeGoBackButtonAction(String fxmlPath, String fxmlNameToDisplay) {
-        if (goBackButton == null) {
-            goBackButton = createGoBackButton(null);
+    private void loadUserOrdersScene() {
+        String title = "All orders";
+        if (isLunchedByAdmin) title += " of user number '" + "'";
+        ClientOrders clientOrderController = new ClientOrders(isLunchedByAdmin, userLogin, title);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
+        loader.setController(clientOrderController);
+        try {
+            allOrdersPane.getChildren().clear();
+            allOrdersPane.getChildren().add(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        EventHandler<ActionEvent> oldEvent = goBackButton.getOnAction();
-        goBackButton.setOnAction(event -> {
-            detailsPane.getChildren().clear();
-            loadFXMLAndInitializeController(fxmlPath + fxmlNameToDisplay, allOrdersPane);
-            allOrdersPane.setVisible(true);
-            goBackButton.setOnAction(oldEvent);
-        });
     }
 
     private void setButtons() {

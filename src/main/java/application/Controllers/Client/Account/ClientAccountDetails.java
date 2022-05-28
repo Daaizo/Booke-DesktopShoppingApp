@@ -235,7 +235,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         if (buttonAlert.isPresent() && buttonAlert.get() == ButtonType.OK) {
             try {
                 checkConnectionWithDb();
-                currentUser.deleteClient(getConnection());
+                Client.deleteClient(getConnection(), currentUser.getLogin());
                 createAndShowAlert(Alert.AlertType.WARNING, "", "", "The account has been successfully deleted.");
                 switchScene(event, loginScene);
 
@@ -245,13 +245,14 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         }
     }
 
-    private boolean isLoginUnique(String login) throws SQLException {
+    boolean isLoginUnique(String login) throws SQLException {
         if (Client.isClientInDataBase(getConnection(), login)) {
             createAndShowAlert(Alert.AlertType.WARNING, "A user with this login already exists.", "Login", "Please choose a new login and try again.");
             return false;
         } else return true;
 
     }
+
     private boolean updateChangesInDatabase() throws SQLException {
         String login = tfLogin.getText();
         String name = tfName.getText();
@@ -262,7 +263,7 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         if (!login.equals(currentUser.getLogin())) {
             if (isLoginUnique(login)) {
                 currentUser.updateClientLogin(getConnection(), login);
-                CURRENT_USER_LOGIN = login;
+                if (!login.equals("admin")) CURRENT_USER_LOGIN = login;
                 return true;
             }
         }

@@ -1,14 +1,20 @@
 package application.Controllers.Admin;
 
 import application.Controllers.ButtonInsideTableColumn;
+import application.Controllers.Client.Account.ClientOrders;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import users.Client;
 import users.ClientTable;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,15 +28,31 @@ public class AllUserController extends AdminStartSceneController {
     private TableColumn<ClientTable, Integer> userIDColumn;
     @FXML
     private TableView<ClientTable> userTableView;
+    @FXML
+    private Pane allUsersPane, userOrdersPane;
 
     @FXML
     private void initialize() {
         displayUsers();
-        createButtons();
+        createAddUserSection();
         setSorting(userTableView);
+        createGoBackButton();
+
     }
 
-    private void createButtons() {
+    private void createGoBackButton() {
+        goBackButton = createGoBackButton(event -> {
+            sortingButtonsBox.setVisible(true);
+            userOrdersPane.setVisible(false);
+            allUsersPane.setVisible(true);
+            goBackButton.setVisible(false);
+        });
+        goBackButton.setLayoutY(goBackButton.getLayoutY() - 50);
+        goBackButton.setLayoutX(goBackButton.getLayoutX() + 20);
+        goBackButton.fire();
+    }
+
+    private void createAddUserSection() {
         Button addNewUserButton = new Button("Add new user");
         addNewUserButton.getStyleClass().add("OrangeButtons");
         ArrayList<TextField> listOfTextFields = createTextFields();
@@ -114,7 +136,7 @@ public class AllUserController extends AdminStartSceneController {
         GridPane gridPane = new GridPane();
         gridPane.setLayoutX(92);
         gridPane.setLayoutY(565);
-        anchor.getChildren().add(gridPane);
+        allUsersPane.getChildren().add(gridPane);
         gridPane.setHgap(30);
         gridPane.add(fieldArrayList.get(2), 0, 0);
         gridPane.add(fieldArrayList.get(0), 1, 0);
@@ -138,35 +160,54 @@ public class AllUserController extends AdminStartSceneController {
         userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
         userDeleteColumn.setCellFactory(clientTableStringTableColumn -> createDeleteUserButton());
-        userDetailsColumn.setCellFactory(clientTableStringTableColumn -> createUserDetailsButton());
+        userDetailsColumn.setCellFactory(clientTableStringTableColumn -> createUserOrdersButton());
         userTableView.setItems(list);
         prepareTableView(userTableView, null);
     }
 
     ButtonInsideTableColumn<ClientTable, String> createDeleteUserButton() {
         ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete user");
-        button.setEventHandler(mouseEvent -> {
-            createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
-                try {
-                    Client.deleteClient(getConnection(), button.getRowId().getLogin());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                showNotification("User deleted");
-                displayUsers();
-            });
-        });
+        button.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
+            try {
+                Client.deleteClient(getConnection(), button.getRowId().getLogin());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            showNotification("User deleted");
+            displayUsers();
+        }));
         button.setId("adminSceneDeleteOrderButton");
         return button;
     }
 
-    ButtonInsideTableColumn<ClientTable, String> createUserDetailsButton() {
-        ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("", "details");
-        //TODO acc details ex. number of orders or all of them
-        button.setEventHandler(mouseEvent -> System.out.println("some acc details"));
+    ButtonInsideTableColumn<ClientTable, String> createUserOrdersButton() {
+        ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("", "orders");
+        button.setEventHandler(openUserOrders(button));
         button.setCssId("orderDetailsButton");
         return button;
     }
+
+    private EventHandler<MouseEvent> openUserOrders(ButtonInsideTableColumn<ClientTable, String> button) {
+        return mouseEvent -> {
+            String userLogin = button.getRowId().getLogin();
+            int userId = button.getRowId().getId();
+            ClientOrders clientOrderController = new ClientOrders(true, userLogin, "All orders of user number '" + userId + "'");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
+            loader.setController(clientOrderController);
+
+            try {
+                userOrdersPane.getChildren().clear();
+                userOrdersPane.getChildren().add(loader.load());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            userOrdersPane.setVisible(true);
+            allUsersPane.setVisible(false);
+            sortingButtonsBox.setVisible(false);
+            goBackButton.setVisible(true);
+        };
+    }
+
 
     private void setSorting(TableView<ClientTable> tableView) {
         createSortingButtons();

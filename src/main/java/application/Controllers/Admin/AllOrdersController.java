@@ -78,7 +78,7 @@ public class AllOrdersController extends AdminStartSceneController {
     }
 
 
-    void displayOrders() throws SQLException {
+    protected void displayOrders() throws SQLException {
         checkConnectionWithDb();
         ResultSet allOrdersFromDb = Order.getAllOrders(getConnection());
         ObservableList<OrderTable> orders = OrderTable.getAllOrdersFromDb(allOrdersFromDb);
@@ -131,7 +131,7 @@ public class AllOrdersController extends AdminStartSceneController {
         showNotification("Order status changed");
     }
 
-    EventHandler<MouseEvent> cancelOrderButtonClicked(ButtonInsideOrdersTableView button) {
+    private EventHandler<MouseEvent> cancelOrderButtonClicked(ButtonInsideOrdersTableView button) {
         return mouseEvent -> createAndShowConfirmAdminPasswordAlert("change order status", () -> {
             int orderNumber = button.getRowId().getOrderNumber();
             String orderName = "Canceled";
@@ -140,7 +140,7 @@ public class AllOrdersController extends AdminStartSceneController {
         });
     }
 
-    EventHandler<MouseEvent> approveOrderButtonClicked(ButtonInsideOrdersTableView button) {
+    private EventHandler<MouseEvent> approveOrderButtonClicked(ButtonInsideOrdersTableView button) {
         return mouseEvent -> {
             int orderNumber = button.getRowId().getOrderNumber();
             createAndShowConfirmAdminPasswordAlert("change order status", () -> {
@@ -151,7 +151,7 @@ public class AllOrdersController extends AdminStartSceneController {
         };
     }
 
-    ButtonInsideOrdersTableView createStatusButtons() {
+    private ButtonInsideOrdersTableView createStatusButtons() {
         Button acceptButton = new Button("approve");
         Button cancelButton = new Button("cancel");
         ButtonInsideOrdersTableView button = new ButtonInsideOrdersTableView(acceptButton, cancelButton);
@@ -160,14 +160,14 @@ public class AllOrdersController extends AdminStartSceneController {
         return button;
     }
 
-    ButtonInsideTableColumn<OrderTable, String> createOrderIdButton() {
+    private ButtonInsideTableColumn<OrderTable, String> createOrderIdButton() {
         ButtonInsideTableColumn<OrderTable, String> button = new ButtonInsideTableColumn<>("", "details");
         button.setEventHandler(openOrderDetails(button));
         button.setCssId("orderDetailsButton");
         return button;
     }
 
-    ButtonInsideTableColumn<OrderTable, String> createDeleteOrderButton() {
+    private ButtonInsideTableColumn<OrderTable, String> createDeleteOrderButton() {
         ButtonInsideTableColumn<OrderTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete order");
         button.setEventHandler(deleteOrder(button));
         button.setId("adminSceneDeleteOrderButton");
@@ -177,7 +177,9 @@ public class AllOrdersController extends AdminStartSceneController {
 
     private EventHandler<MouseEvent> openOrderDetails(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
-            FXMLLoader loader = createLoaderWithCustomController(button);
+            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button, true, "");
+            sceneController.hideGoBackButton();
+            FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, ordersPane, "clientOrderDetailsGUI");
             try {
                 displayOrderDetails(loader);
             } catch (IOException e) {
@@ -200,24 +202,6 @@ public class AllOrdersController extends AdminStartSceneController {
                 e.printStackTrace();
             }
         });
-    }
-
-
-    private FXMLLoader createLoaderWithCustomController(ButtonInsideTableColumn<OrderTable, String> button) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrderDetailsGUI.fxml"));
-        ClientOrderDetails clientOrderDetailsController = initializeController(button);
-        loader.setController(clientOrderDetailsController);
-        return loader;
-    }
-
-    private ClientOrderDetails initializeController(ButtonInsideTableColumn<OrderTable, String> button) {
-        ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
-        clientOrderDetailsController.setOrder(button.getRowId());
-        clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
-        clientOrderDetailsController.setAllOrdersPane(ordersPane);
-        clientOrderDetailsController.setGoBackButton(goBackButton);
-        clientOrderDetailsController.isLunchedByAdmin(true);
-        return clientOrderDetailsController;
     }
 
     private void displayOrderDetails(FXMLLoader loader) throws IOException {
