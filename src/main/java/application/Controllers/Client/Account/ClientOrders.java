@@ -33,22 +33,25 @@ public class ClientOrders extends ClientAccountStartSceneController {
     private final String title;
 
     private final boolean isLunchedByAdmin;
-    private final String userId;
+    private final String userLogin;
     @FXML
     Label titleLabel;
 
     public ClientOrders(boolean isLunchedByAdmin, String userId, String title) {
         this.isLunchedByAdmin = isLunchedByAdmin;
-        this.userId = userId;
+        this.userLogin = userId;
         this.title = title;
-
     }
 
     @FXML
     private void initialize() {
         createEmptyTableViewLabel();
         titleLabel.setText(title);
-        if (!isLunchedByAdmin) titleLabel.setLayoutX(titleLabel.getLayoutX() + 110);
+        if (isLunchedByAdmin) {
+            titleLabel.setLayoutX(titleLabel.getLayoutX() - 200);
+            titleLabel.setStyle("  -fx-font-size :45px;");
+            titleLabel.setMaxWidth(600);
+        }
         try {
             displayOrders();
         } catch (SQLException e) {
@@ -99,9 +102,10 @@ public class ClientOrders extends ClientAccountStartSceneController {
     private void setEmptyTableViewLabel() {
         ordersPane.getChildren().clear();
         ordersPane.getChildren().add(emptyTableViewLabel);
-        emptyTableViewLabel.setLayoutX(250);
-        emptyTableViewLabel.setLayoutY(200);
-
+        emptyTableViewLabel.setLayoutX(220);
+        emptyTableViewLabel.setLayoutY(185);
+        emptyTableViewLabel.setMaxWidth(600);
+        emptyTableViewLabel.setWrapText(true);
     }
 
     private void displayOrders() throws SQLException {
@@ -109,11 +113,9 @@ public class ClientOrders extends ClientAccountStartSceneController {
         if (listOfOrders.isEmpty()) {
             setEmptyTableViewLabel();
             if (isLunchedByAdmin) {
-                displayLabelWithGivenText(emptyTableViewLabel, "User number " + userId + "have no orders");
-            } else displayLabelWithGivenText(emptyTableViewLabel, "There are no orders !");
-
+                displayLabelWithGivenText(emptyTableViewLabel, "User '" + userLogin + "' have no orders");
+            } else displayLabelWithGivenText(emptyTableViewLabel, "List of orders is empty");
             emptyTableViewLabel.setVisible(true);
-
         } else {
             createSortingButtons();
             prepareSortingButtons();
@@ -133,7 +135,7 @@ public class ClientOrders extends ClientAccountStartSceneController {
         checkConnectionWithDb();
         Order order;
         if (isLunchedByAdmin) {
-            order = new Order(userId);
+            order = new Order(userLogin);
         } else {
             order = new Order(currentUser.getLogin());
         }
@@ -167,8 +169,15 @@ public class ClientOrders extends ClientAccountStartSceneController {
 
     private EventHandler<MouseEvent> createActionOnClick(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
-            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button, isLunchedByAdmin);
-            FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, ordersPane, "clientOrderDetailsGUI");
+            makePaneVisible(orderDetailsPane);
+            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button, isLunchedByAdmin, userLogin);
+            orderDetailsPane.getChildren().clear();
+            orderDetailsPane.getChildren().removeAll();
+            ordersPane.getChildren().clear();
+            ordersPane.getChildren().removeAll();
+            ordersPane.getChildren().remove(emptyTableViewLabel);
+            sceneController.setAllOrdersPane(orderDetailsPane);
+            FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, orderDetailsPane, "clientOrderDetailsGUI");
             try {
                 displayOrderDetails(loader);
             } catch (IOException e) {
@@ -179,8 +188,12 @@ public class ClientOrders extends ClientAccountStartSceneController {
 
 
     private void displayOrderDetails(FXMLLoader loader) throws IOException {
+
+        orderDetailsPane.getChildren().add(loader.load());
+        orderDetailsPane.setVisible(true);
+        orderDetailsPane.toFront();
+        emptyTableViewLabel.setVisible(false);
         ordersPane.getChildren().clear();
         ordersPane.setVisible(false);
-        orderDetailsPane.getChildren().add(loader.load());
     }
 }

@@ -177,8 +177,8 @@ public class AllOrdersController extends AdminStartSceneController {
 
     private EventHandler<MouseEvent> openOrderDetails(ButtonInsideTableColumn<OrderTable, String> button) {
         return mouseEvent -> {
-            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button, true);
-            sceneController.setGoBackButton(goBackButton);
+            ClientOrderDetails sceneController = createAndInitializeControllerForSceneWithOrders(button, true, "");
+            sceneController.hideGoBackButton();
             FXMLLoader loader = createLoaderForSceneWithOrders(sceneController, ordersPane, "clientOrderDetailsGUI");
             try {
                 displayOrderDetails(loader);

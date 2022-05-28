@@ -29,21 +29,30 @@ public class AllUserController extends AdminStartSceneController {
     @FXML
     private TableView<ClientTable> userTableView;
     @FXML
-    private Pane ordersPane, allUsersPane, orderDetailsPane;
+    private Pane allUsersPane, userOrdersPane;
 
     @FXML
     private void initialize() {
         displayUsers();
-        createButtons();
+        createAddUserSection();
         setSorting(userTableView);
+        createGoBackButton();
+
+    }
+
+    private void createGoBackButton() {
         goBackButton = createGoBackButton(event -> {
             sortingButtonsBox.setVisible(true);
-            orderDetailsPane.setVisible(false);
+            userOrdersPane.setVisible(false);
+            allUsersPane.setVisible(true);
+            goBackButton.setVisible(false);
         });
+        goBackButton.setLayoutY(goBackButton.getLayoutY() - 50);
+        goBackButton.setLayoutX(goBackButton.getLayoutX() + 20);
         goBackButton.fire();
     }
 
-    private void createButtons() {
+    private void createAddUserSection() {
         Button addNewUserButton = new Button("Add new user");
         addNewUserButton.getStyleClass().add("OrangeButtons");
         ArrayList<TextField> listOfTextFields = createTextFields();
@@ -55,8 +64,6 @@ public class AllUserController extends AdminStartSceneController {
             }
 
             anchor.requestFocus();
-        });
-        createGoBackButton(event -> {
         });
     }
 
@@ -153,53 +160,51 @@ public class AllUserController extends AdminStartSceneController {
         userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
         userDeleteColumn.setCellFactory(clientTableStringTableColumn -> createDeleteUserButton());
-        userDetailsColumn.setCellFactory(clientTableStringTableColumn -> createUserDetailsButton());
+        userDetailsColumn.setCellFactory(clientTableStringTableColumn -> createUserOrdersButton());
         userTableView.setItems(list);
         prepareTableView(userTableView, null);
     }
 
     ButtonInsideTableColumn<ClientTable, String> createDeleteUserButton() {
         ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete user");
-        button.setEventHandler(mouseEvent -> {
-            createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
-                try {
-                    Client.deleteClient(getConnection(), button.getRowId().getLogin());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                showNotification("User deleted");
-                displayUsers();
-            });
-        });
+        button.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
+            try {
+                Client.deleteClient(getConnection(), button.getRowId().getLogin());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            showNotification("User deleted");
+            displayUsers();
+        }));
         button.setId("adminSceneDeleteOrderButton");
         return button;
     }
 
-    ButtonInsideTableColumn<ClientTable, String> createUserDetailsButton() {
-        ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("", "details");
-        //TODO acc details ex. number of orders or all of them
-        button.setEventHandler(openOrderDetails(button));
+    ButtonInsideTableColumn<ClientTable, String> createUserOrdersButton() {
+        ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("", "orders");
+        button.setEventHandler(openUserOrders(button));
         button.setCssId("orderDetailsButton");
         return button;
     }
 
-    private EventHandler<MouseEvent> openOrderDetails(ButtonInsideTableColumn<ClientTable, String> button) {
+    private EventHandler<MouseEvent> openUserOrders(ButtonInsideTableColumn<ClientTable, String> button) {
         return mouseEvent -> {
-            //TODO when there are no orders label is not visible
             String userLogin = button.getRowId().getLogin();
-            ClientOrders clientOrderDetailsController = new ClientOrders(true, userLogin, "All orders of user '" + userLogin + "'");
-
+            int userId = button.getRowId().getId();
+            ClientOrders clientOrderController = new ClientOrders(true, userLogin, "All orders of user number '" + userId + "'");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
-            loader.setController(clientOrderDetailsController);
+            loader.setController(clientOrderController);
 
             try {
-                orderDetailsPane.getChildren().add(loader.load());
+                userOrdersPane.getChildren().clear();
+                userOrdersPane.getChildren().add(loader.load());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            orderDetailsPane.setVisible(true);
+            userOrdersPane.setVisible(true);
             allUsersPane.setVisible(false);
             sortingButtonsBox.setVisible(false);
+            goBackButton.setVisible(true);
         };
     }
 

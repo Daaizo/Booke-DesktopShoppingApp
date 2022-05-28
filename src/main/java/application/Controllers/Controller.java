@@ -149,8 +149,10 @@ public abstract class Controller {
         return loader;
     }
 
-    protected ClientOrderDetails createAndInitializeControllerForSceneWithOrders(ButtonInsideTableColumn<OrderTable, String> button) {
-        ClientOrderDetails clientOrderDetailsController = new ClientOrderDetails();
+    protected ClientOrderDetails createAndInitializeControllerForSceneWithOrders(ButtonInsideTableColumn<OrderTable, String> button, boolean isLunchedByAdmin, String userLogin) {
+        ClientOrderDetails clientOrderDetailsController;
+        if (userLogin.isEmpty()) clientOrderDetailsController = new ClientOrderDetails(isLunchedByAdmin);
+        else clientOrderDetailsController = new ClientOrderDetails(isLunchedByAdmin, userLogin);
         clientOrderDetailsController.setOrder(button.getRowId());
         clientOrderDetailsController.setOrderNumber(button.getRowId().getOrderNumber());
         return clientOrderDetailsController;
