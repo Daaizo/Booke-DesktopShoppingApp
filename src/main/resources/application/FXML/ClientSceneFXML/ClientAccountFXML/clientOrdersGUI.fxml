@@ -2,9 +2,9 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.Pane?>
-<Pane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17">
+<Pane xmlns:fx="http://javafx.com/fxml/1" prefHeight="548.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/17">
    <Pane fx:id="orderDetailsPane" prefHeight="548.0" prefWidth="1050.0"/>
-   <Pane fx:id="ordersPane" prefHeight="548.0" prefWidth="1050.0">
+   <Pane fx:id="ordersPane" prefHeight="545.0" prefWidth="1030.0" style="-fx-background-color: #5B84B1FF;">
       <TableView fx:id="ordersTableView" layoutX="14.0" layoutY="82.0" prefHeight="500.0" prefWidth="1005.0">
          <columns>
             <TableColumn fx:id="ordersButtonColumn" prefWidth="112.0"/>
@@ -19,7 +19,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
          </columnResizePolicy>
       </TableView>
-      <Label id="titleLabel" fx:id="titleLabel" layoutX="280.0" layoutY="14.0" prefHeight="68.0" prefWidth="500.0"
+      <Label id="titleLabel" fx:id="titleLabel" layoutX="390.0" layoutY="14.0" prefHeight="68.0" prefWidth="650.0"
              style="-fx-font-size: 55;"/>
    </Pane>
 </Pane>
