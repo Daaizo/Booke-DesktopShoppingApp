@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -48,9 +49,15 @@ public class ClientOrders extends ClientAccountStartSceneController {
         createEmptyTableViewLabel();
         titleLabel.setText(title);
         if (isLunchedByAdmin) {
-            titleLabel.setLayoutX(titleLabel.getLayoutX() - 200);
+            titleLabel.setPrefWidth(750);
+            titleLabel.setLayoutX(titleLabel.getLayoutX() - 250);
             titleLabel.setStyle("  -fx-font-size :45px;");
-            titleLabel.setMaxWidth(600);
+            if (userLogin.length() > 7) {
+                titleLabel.setAlignment(Pos.CENTER_LEFT);
+                titleLabel.setStyle("  -fx-font-size :40px ;");
+            } else titleLabel.setAlignment(Pos.CENTER);
+
+
         }
         try {
             displayOrders();
