@@ -178,6 +178,19 @@ public class Client {
         preparedStatement.close();
     }
 
+    public static void updateClientPasswordByLogin(Connection connection, String newPassword, String login) throws SQLException {
+        String setData = """
+                update customer
+                    set customerPassword = ?
+                    where customerlogin = ?
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(setData);
+        preparedStatement.setString(1, newPassword);
+        preparedStatement.setString(2, login);
+        preparedStatement.executeQuery();
+        preparedStatement.close();
+    }
+
     public static void deleteClient(Connection connection, String login) throws SQLException {
         String deleteUser = """
                 delete from customer
