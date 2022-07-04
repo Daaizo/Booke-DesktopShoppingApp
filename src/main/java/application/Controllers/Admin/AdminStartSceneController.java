@@ -35,6 +35,7 @@ public class AdminStartSceneController extends ClientAccountDetails {
     @FXML
     private void ordersButtonClicked() {
         loadScene("allOrdersGUI.fxml");
+        title.setText("All orders");
         setButtonLightingEffect(ordersButton);
     }
 

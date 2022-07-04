@@ -78,6 +78,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         fillOrderDetailLabels(orderTable);
         createInformationImageAndAttachItToLabel();
         setInformationAboutOrderStatus(orderStatusHashMap);
+        makeProperButtonsVisible(orderTable.getOrderStatusName());
         changeGoBackButtonAction();
     }
 

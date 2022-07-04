@@ -209,7 +209,7 @@ public class AllUserController extends AdminStartSceneController {
 
     private ButtonInsideTableColumn<ClientTable, String> createDeleteUserButton() {
         ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete user");
-        button.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
+        button.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete user number " + button.getRowId().getId(), () -> {
             try {
                 Client.deleteClient(getConnection(), button.getRowId().getLogin());
             } catch (SQLException e) {
