@@ -26,6 +26,7 @@ public class ButtonInsideTableColumn<T, V> extends TableCell<T, V> {
     public ButtonInsideTableColumn() {
         this.iconName = "";
         this.button = new Button();
+        button.setOnAction(mouseEvent -> rowId = getTableView().getItems().get(getIndex()));
     }
 
     public void setCssId(String cssId) {

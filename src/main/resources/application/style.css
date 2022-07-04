@@ -53,7 +53,7 @@
     -fx-background-color : transparent;
 }
 #adminSceneDeleteOrderButton:hover{
-   -fx-background-color : #ff4d4d;
+   -fx-background-color :#ff6666;
 }
 .DeleteButtons:hover
 {
@@ -338,14 +338,14 @@
     -fx-background-color : transparent;
     -fx-padding: 2;
  }
- .adminAllOrdersTableview  .scroll-bar:horizontal .thumb{
+ .adminSceneTableview  .scroll-bar:horizontal .thumb{
       -fx-background-color:  -backgroundColorB;
      -fx-border-color :-backgroundColorB;
      -fx-border-width : 3px;
      -fx-border-radius :3px;
  }
- .adminAllOrdersTableview *.scroll-bar:horizontal *.increment-arrow,
- .adminAllOrdersTableview *.scroll-bar:horizontal *.decrement-arrow {
+ .adminSceneTableview *.scroll-bar:horizontal *.increment-arrow,
+ .adminSceneTableview *.scroll-bar:horizontal *.decrement-arrow {
     -fx-background-color :white;
     -fx-padding: 2.5;
   }

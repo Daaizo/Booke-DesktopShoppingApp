@@ -2,10 +2,10 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="640.0" prefWidth="887.0" xmlns="http://javafx.com/javafx/17"
-            fx:controller="application.Controllers.Admin.AllProductsController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchor" prefHeight="640.0" prefWidth="887.0"
+            xmlns="http://javafx.com/javafx/17" fx:controller="application.Controllers.Admin.AllProductsController">
    <children>
-      <TableView fx:id="productTableView" layoutX="14.0" layoutY="90.0" prefHeight="537.0" prefWidth="1004">
+      <TableView fx:id="productTableView" layoutX="14.0" layoutY="78.0" prefHeight="502.0" prefWidth="1004">
          <columns>
             <TableColumn fx:id="productIdColumn" prefWidth="297.0" text="ID"/>
             <TableColumn fx:id="productNameColumn" prefWidth="125.0" text="Name"/>
@@ -17,7 +17,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
          </columnResizePolicy>
       </TableView>
-      <Button layoutX="14.0" layoutY="597.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="132.0"
-              text="Add new product"/>
+      <Button layoutX="369.0" layoutY="568.0" mnemonicParsing="false" onAction="#addProductButtonClicked"
+              prefHeight="25.0" prefWidth="281.0" styleClass="OrangeButtons" text="Add new product"/>
    </children>
 </AnchorPane>
