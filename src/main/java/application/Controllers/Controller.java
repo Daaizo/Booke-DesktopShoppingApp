@@ -342,6 +342,16 @@ public abstract class Controller {
         anchor.getChildren().add(notification);
     }
 
+    //https://stackoverflow.com/questions/36009764/how-to-align-ok-button-of-a-dialog-pane-in-javafx code form stack to center buttons in any dialog
+    protected void centerButtons(DialogPane dialogPane) {
+        Region spacer = new Region();
+        ButtonBar.setButtonData(spacer, ButtonBar.ButtonData.BIG_GAP);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        dialogPane.applyCss();
+        HBox hboxDialogPane = (HBox) dialogPane.lookup(".container");
+        hboxDialogPane.getChildren().add(spacer);
+    }
+
     protected void showNotification(String notificationText) {
         if (notification == null) {
             createNotification();
