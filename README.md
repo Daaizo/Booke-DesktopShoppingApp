@@ -1,8 +1,9 @@
-<h1>Brief introduction</h1>
-Bokke is a desktop project that mimics a shopping application. It can be run on any computer with an oracle server installed. Since the database is local, there was no need to share it, but it has all the functionality to do so. This is my biggest project and I have devoted all my free time to it.
+<h1 id="start">Brief introduction</h1>
+Bokke is a desktop project that mimics a shopping application. It can be run on any computer with an oracle server installed but. Since the database is local, there was no need to share it, but it has all the functionality to do so. This is my biggest project and I have devoted all my free time to it. Running the application on another computer is possible, but it is not that easy. A person must have a database created, all the products and a link to the database in the code, for this reason it is mainly my local project for educational purposes and at the bottom are videos of the use of the application.
 
+<a href="#videoSection"> go to the videos, which shows how the application works </a>
 <h1>Features</h1>
-All screenshots were taken from an existing account that I used for testing.Some features, such as hover effects and alerts, can't be shown in screenshots (I'll make a gif or video in the future).
+All screenshots were taken from an existing account that I used for testing.
 <ul>
     <li>
       <h2>Logging</h2> the home page that opens with the application. 
@@ -44,31 +45,16 @@ All screenshots were taken from an existing account that I used for testing.Some
       <h2>List of user's favourites</h2> 
       <img src=https://user-images.githubusercontent.com/84875747/167005571-852ec66b-e46d-44fe-970f-32e6ffd371ad.png>
     </li>
-  
-
-  
-
- 
-
-  
-
+     <li>
+      <h2>Admin page</h2> 
+      <p> He can manage orders (accept and reject) and basically see everything, including orders of a specific user, all orders, products, users, etc. He can also change a user's password, add a new product, and even cancel an order</p>
+      <img src=https://user-images.githubusercontent.com/84875747/167005571-852ec66b-e46d-44fe-970f-32e6ffd371ad.png>
+    </li>
+     <li>
+      <h2>And much more</h2> 
+        <a href="#videoSection"> go to the videos, which shows how the application works </a>
+    </li>
  </ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <h1>Technology used</h1>
 <p>
@@ -77,4 +63,13 @@ and most of them are made by :<a href="https://www.flaticon.com/authors/juicy-fi
 some of them I changed using GIMP, added background, some text or just changed resolution.<p>
 
 
+<h1 id="videoSection"> Videos </h1>
+<ul>
+   <li>
+   <p>Login with bad data and account creation.
 
+[<img src="" width="100%">](https://user-images.githubusercontent.com/84875747/177435004-1021ab37-9d49-4ff3-bf77-e048c0bd1e22.mp4 "Now in Android: 55")
+</p>
+    </li>
+ </ul>
+  <a href="#start">back to the top </a> 
