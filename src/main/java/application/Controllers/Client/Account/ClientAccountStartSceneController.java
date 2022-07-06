@@ -5,18 +5,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import users.Client;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class ClientAccountStartSceneController extends Controller {
 
@@ -119,12 +116,6 @@ public class ClientAccountStartSceneController extends Controller {
     protected void makeLabelVisible(Pane pane) {
         pane.setVisible(false);
         emptyTableViewLabel.setVisible(true);
-    }
-
-    protected void setLogoAndCssToCustomDialog(Dialog<?> dialog) {
-        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(setImage("Logo", "transparentLogo"));
-        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
-        dialog.getDialogPane().getStyleClass().add("alert");
     }
 
 

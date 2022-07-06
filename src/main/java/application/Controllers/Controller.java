@@ -342,6 +342,16 @@ public abstract class Controller {
         anchor.getChildren().add(notification);
     }
 
+    //https://stackoverflow.com/questions/36009764/how-to-align-ok-button-of-a-dialog-pane-in-javafx code form stack to center buttons in any dialog
+    protected void centerButtons(DialogPane dialogPane) {
+        Region spacer = new Region();
+        ButtonBar.setButtonData(spacer, ButtonBar.ButtonData.BIG_GAP);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        dialogPane.applyCss();
+        HBox hboxDialogPane = (HBox) dialogPane.lookup(".container");
+        hboxDialogPane.getChildren().add(spacer);
+    }
+
     protected void showNotification(String notificationText) {
         if (notification == null) {
             createNotification();
@@ -396,7 +406,47 @@ public abstract class Controller {
         return buttonClicked;
     }
 
+    protected Dialog<String> createCustomEnterPasswordAlert(PasswordField passwordField) {
+        Button button = new Button();
+        setPasswordVisibilityButton(button, passwordField);
+        Dialog<String> dialog = new Dialog<>();
+        passwordField.setPrefSize(600, 30);
+        HBox content = new HBox();
+        content.setAlignment(Pos.CENTER_LEFT);
+        content.setSpacing(10);
+        content.getChildren().addAll(new Label("Enter password here :"), passwordField, button);
+        dialog.getDialogPane().setContent(content);
+        setLogoAndCssToCustomDialog(dialog);
+        dialog.getDialogPane().setMinWidth(650);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        return dialog;
+    }
 
+    protected void setLogoAndCssToCustomDialog(Dialog<?> dialog) {
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(setImage("Logo", "transparentLogo"));
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(cssUrl).toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("alert");
+    }
+
+    protected Optional<String> enterNewPasswordAlert() {
+        PasswordField passwordField = new PasswordField();
+        Dialog<String> dialog = createCustomEnterPasswordAlert(passwordField);
+        dialog.setTitle("New password");
+        dialog.setHeaderText("A password can only be saved if the following conditions are met :\n6-20 characters, one number, one uppercase letter, one lowercase letter, one special character ");
+        ButtonType savePass = new ButtonType("Save new password", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(savePass);
+        Node savaPasswordButton = dialog.getDialogPane().lookupButton(savePass);
+        dialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK);
+        savaPasswordButton.setDisable(true);
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == savePass) {
+                return passwordField.getText();
+            }
+            return null;
+        });
+        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> savaPasswordButton.setDisable(!checkPasswordRegex(newValue)));
+        return dialog.showAndWait();
+    }
 
     protected void setPasswordVisibilityButton(Button showPasswordButton, TextField passwordTextField) {
         String hiddenPassIconName = "hiddenPassword";

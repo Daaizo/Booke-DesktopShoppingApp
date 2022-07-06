@@ -3,11 +3,8 @@ package application.Controllers.Client.Account;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import users.Client;
@@ -177,42 +174,6 @@ public class ClientAccountDetails extends ClientAccountStartSceneController {
         }
     }
 
-    protected Optional<String> enterNewPasswordAlert() {
-        PasswordField passwordField = new PasswordField();
-        Dialog<String> dialog = createCustomEnterPasswordAlert(passwordField);
-        dialog.setTitle("New password");
-        dialog.setHeaderText("A password can only be saved if the following conditions are met :\n6-20 characters, one number, one uppercase letter, one lowercase letter, one special character ");
-        ButtonType savePass = new ButtonType("Save new password", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(savePass);
-        Node savaPasswordButton = dialog.getDialogPane().lookupButton(savePass);
-        dialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK);
-        savaPasswordButton.setDisable(true);
-        dialog.setResultConverter(buttonType -> {
-            if (buttonType == savePass) {
-                return passwordField.getText();
-            }
-            return null;
-        });
-        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> savaPasswordButton.setDisable(!checkPasswordRegex(newValue)));
-        return dialog.showAndWait();
-    }
-
-
-    private Dialog<String> createCustomEnterPasswordAlert(PasswordField passwordField) {
-        Button button = new Button();
-        setPasswordVisibilityButton(button, passwordField);
-        Dialog<String> dialog = new Dialog<>();
-        passwordField.setPrefSize(600, 30);
-        HBox content = new HBox();
-        content.setAlignment(Pos.CENTER_LEFT);
-        content.setSpacing(10);
-        content.getChildren().addAll(new Label("Enter password here :"), passwordField, button);
-        dialog.getDialogPane().setContent(content);
-        setLogoAndCssToCustomDialog(dialog);
-        dialog.getDialogPane().setMinWidth(650);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        return dialog;
-    }
 
 
     protected Optional<String> createAndShowConfirmPasswordAlert(String headerText) {

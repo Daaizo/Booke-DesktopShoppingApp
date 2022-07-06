@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import users.Client;
@@ -23,7 +24,7 @@ import java.util.Optional;
 
 public class AllUserController extends AdminStartSceneController {
     @FXML
-    private TableColumn<ClientTable, String> userFirstNameColumn, userLoginColumn, userLastNameColumn, userPasswordColumn, userDeleteColumn, userDetailsColumn;
+    private TableColumn<ClientTable, String> userFirstNameColumn, userLoginColumn, userLastNameColumn, userPasswordColumn, userDeleteColumn, userDetailsColumn, userShowPasswordColumn;
     @FXML
     private TableColumn<ClientTable, Integer> userIDColumn;
     @FXML
@@ -159,15 +160,56 @@ public class AllUserController extends AdminStartSceneController {
         userLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         userFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+        userPasswordColumn.setVisible(false);
+        userShowPasswordColumn.setCellFactory(clientTableStringCellDataFeature -> createShowPasswordButton());
         userDeleteColumn.setCellFactory(clientTableStringTableColumn -> createDeleteUserButton());
         userDetailsColumn.setCellFactory(clientTableStringTableColumn -> createUserOrdersButton());
         userTableView.setItems(list);
+        userTableView.getStyleClass().add("adminSceneTableview");
         prepareTableView(userTableView, null);
     }
 
-    ButtonInsideTableColumn<ClientTable, String> createDeleteUserButton() {
+    ButtonInsideTableColumn<ClientTable, String> createShowPasswordButton() {
+        ButtonInsideTableColumn<ClientTable, String> showPasswordButton = new ButtonInsideTableColumn<>("PasswordIcons/hiddenPassword.png", "Display password");
+        showPasswordButton.setBackground(Background.EMPTY);
+        showPasswordButton.setCssClassId("clientTableviewButtons");
+        showPasswordButton.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("to display password of user '" + showPasswordButton.getRowId().getLogin() + "'",
+                () -> showUserPasswordEvent(showPasswordButton)
+        ));
+        return showPasswordButton;
+
+    }
+
+    private void showUserPasswordEvent(ButtonInsideTableColumn<ClientTable, String> showPasswordButton) {
+
+        ButtonType editPass = new ButtonType("Edit user's password");
+
+        Optional<ButtonType> result = createAndShowAlert(editPass, ButtonType.OK,
+                "Password of user " + showPasswordButton.getRowId().getLogin() + " is \" " + showPasswordButton.getRowId().getPassword() + "\"",
+                "Password");
+        result.ifPresent(s -> {
+            if (result.get() == editPass) {
+                Optional<String> newAlert = enterNewPasswordAlert();
+                newAlert.ifPresent(newPassword -> {
+                    if (checkPasswordRegex(newPassword)) {
+                        try {
+                            Client.updateClientPasswordByLogin(getConnection(), newPassword, showPasswordButton.getRowId().getLogin());
+                            showNotification("Password changed");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        displayUsers();
+                    }
+                });
+            }
+
+        });
+    }
+
+
+    private ButtonInsideTableColumn<ClientTable, String> createDeleteUserButton() {
         ButtonInsideTableColumn<ClientTable, String> button = new ButtonInsideTableColumn<>("Others/delete.png", "delete user");
-        button.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete user " + button.getRowId().getId(), () -> {
+        button.setEventHandler(mouseEvent -> createAndShowConfirmAdminPasswordAlert("delete user number " + button.getRowId().getId(), () -> {
             try {
                 Client.deleteClient(getConnection(), button.getRowId().getLogin());
             } catch (SQLException e) {
@@ -190,8 +232,7 @@ public class AllUserController extends AdminStartSceneController {
     private EventHandler<MouseEvent> openUserOrders(ButtonInsideTableColumn<ClientTable, String> button) {
         return mouseEvent -> {
             String userLogin = button.getRowId().getLogin();
-            int userId = button.getRowId().getId();
-            ClientOrders clientOrderController = new ClientOrders(true, userLogin, "All orders of user number '" + userId + "'");
+            ClientOrders clientOrderController = new ClientOrders(true, userLogin, "All orders of user '" + userLogin + "'");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
             loader.setController(clientOrderController);
 

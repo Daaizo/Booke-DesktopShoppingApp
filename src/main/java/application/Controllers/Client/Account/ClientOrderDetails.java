@@ -78,6 +78,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
         fillOrderDetailLabels(orderTable);
         createInformationImageAndAttachItToLabel();
         setInformationAboutOrderStatus(orderStatusHashMap);
+        makeProperButtonsVisible(orderTable.getOrderStatusName());
         changeGoBackButtonAction();
     }
 
@@ -171,7 +172,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private OrderTable getOrdersInformationFromDataBase() {
         try {
-            Order order = new Order(userLogin);//tu zmiana
+            Order order = new Order(orderNumber);
             ResultSet orderInformation = order.getOrderDetailedInformation(getConnection(), orderNumber);
             ObservableList<OrderTable> listOfOrders = OrderTable.getOrderBasicInformation(orderInformation);
             orderInformation.close();
@@ -185,7 +186,7 @@ public class ClientOrderDetails extends ClientAccountStartSceneController {
 
     private void loadUserOrdersScene() {
         String title = "All orders";
-        if (isLunchedByAdmin) title += " of user number '" + "'";
+        if (isLunchedByAdmin) title += "of user '" + userLogin + "'";
         ClientOrders clientOrderController = new ClientOrders(isLunchedByAdmin, userLogin, title);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/FXML/ClientSceneFXML/ClientAccountFXML/clientOrdersGUI.fxml"));
         loader.setController(clientOrderController);

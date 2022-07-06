@@ -64,8 +64,15 @@ public class Product {
         this.isFavourite = isFavourite;
     }
 
-    public static ResultSet getAllProductsOrderedByUser(Connection connection, String currentUserLogin) throws SQLException {
+    public static ResultSet getAllCategories(Connection connection) throws SQLException {
+        String allCategories = """
+                select subcategoryname from subcategory
+                """;
+        PreparedStatement preparedStatement = connection.prepareStatement(allCategories);
+        return preparedStatement.executeQuery();
+    }
 
+    public static ResultSet getAllProductsOrderedByUser(Connection connection, String currentUserLogin) throws SQLException {
         String allProducts = """
                 select distinct p.productname,p.catalogprice,sc.subcategoryname from orderheader oh
                                 inner join orderdetail od on od.orderheaderkey = oh.orderheaderkey

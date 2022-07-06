@@ -142,14 +142,11 @@ public class Order {
                                    inner join product p on p.productkey = od.productkey
                                    inner join paymentmethod pm on pm.paymentmethodkey = oh.paymentmethodkey
                                    inner join orderstatus os on os.orderstatuskey = oh.orderstatuskey
-                                   where oh.customerkey =
-                                                           (select customerkey from customer where customerlogin = ?)
-                                                           and oh.orderheaderkey = ?
+                                                           where oh.orderheaderkey = ?
                                    group by oh.orderheaderkey ,oh.orderdate ,oh.deliverydate,pm.paymentmethodname , os.orderstatusname
                 """;
         PreparedStatement preparedStatement = connection.prepareStatement(getOrders);
-        preparedStatement.setString(1, customerLogin);
-        preparedStatement.setInt(2, orderNumber);
+        preparedStatement.setInt(1, orderNumber);
         return preparedStatement.executeQuery();
     }
 
