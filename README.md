@@ -89,5 +89,22 @@ https://user-images.githubusercontent.com/84875747/177517108-f50a9286-0ef6-4089-
 
 </p>
     </li>
+      <li>
+   <p>Admin - product management
+
+https://user-images.githubusercontent.com/84875747/177519363-818868a6-61b3-4fd6-a427-17cb8c582b30.mp4
+
+</p>
+    </li>
+       <li>
+   <p>Admin - users and orders management
+
+
+https://user-images.githubusercontent.com/84875747/177519893-e8c6910c-9346-407f-a188-f203e3006253.mp4
+
+
+
+</p>
+    </li>
  </ul>
   <a href="#start">back to the top </a> 
