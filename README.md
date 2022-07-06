@@ -72,5 +72,22 @@ some of them I changed using GIMP, added background, some text or just changed r
 
 </p>
     </li>
+    <li>
+   <p> Account usage
+
+
+https://user-images.githubusercontent.com/84875747/177517663-56807c98-b871-43ee-9053-8de07d02910c.mp4
+
+
+</p>
+    </li>
+     <li>
+   <p> Account management
+
+https://user-images.githubusercontent.com/84875747/177517108-f50a9286-0ef6-4089-adeb-925529efe4ff.mp4
+
+
+</p>
+    </li>
  </ul>
   <a href="#start">back to the top </a> 
