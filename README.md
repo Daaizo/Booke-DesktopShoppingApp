@@ -2,6 +2,7 @@
 Bokke is a desktop project that mimics a shopping application. It can be run on any computer with an oracle server installed but. Since the database is local, there was no need to share it, but it has all the functionality to do so. This is my biggest project and I have devoted all my free time to it. Running the application on another computer is possible, but it is not that easy. A person must have a database created, all the products and a link to the database in the code, for this reason it is mainly my local project for educational purposes and at the bottom are videos of the use of the application.
 
 <a href="#videoSection"> go to the videos, which shows how the application works </a>
+
 <h1>Features</h1>
 All screenshots were taken from an existing account that I used for testing.
 <ul>
@@ -62,13 +63,21 @@ The project is completely my idea, the look and code are built from scratch by m
 and most of them are made by :<a href="https://www.flaticon.com/authors/juicy-fish" title="icons"> juicy_fish - Flaticon</a>
 some of them I changed using GIMP, added background, some text or just changed resolution.<p>
 
+ <h1>Database info </h1>
+ <p>
+ database made in Oracle SQL developer. Used with Oracle local server.
+entity-relationship diagram </p>
+<img src= https://user-images.githubusercontent.com/84875747/159306732-acc3b33d-9f51-4a5e-94e1-2aaf892c316a.png>
+
+Relational model
+<img src= https://user-images.githubusercontent.com/84875747/159305512-baec01bc-53e0-4540-ba61-279801a83d97.png>
 
 <h1 id="videoSection"> Videos </h1>
 <ul>
    <li>
    <p>Login with bad data and account creation.
-
-[<img src="" width="100%">](https://user-images.githubusercontent.com/84875747/177515013-718b4710-425b-4216-ba9b-8a9a763b9ae2.mp4)
+   
+https://user-images.githubusercontent.com/84875747/177515013-718b4710-425b-4216-ba9b-8a9a763b9ae2.mp4
 
 </p>
     </li>
@@ -84,7 +93,7 @@ https://user-images.githubusercontent.com/84875747/177517663-56807c98-b871-43ee-
      <li>
    <p> Account management
 
-https://user-images.githubusercontent.com/84875747/177517108-f50a9286-0ef6-4089-adeb-925529efe4ff.mp4
+https://user-images.githubusercontent.com/84875747/201477412-a5fb1807-731e-4e62-b47b-e47d9836e28c.mp4
 
 
 </p>
@@ -103,8 +112,9 @@ https://user-images.githubusercontent.com/84875747/177519363-818868a6-61b3-4fd6-
 https://user-images.githubusercontent.com/84875747/177519893-e8c6910c-9346-407f-a188-f203e3006253.mp4
 
 
-
 </p>
     </li>
  </ul>
+
+
   <a href="#start">back to the top </a> 
